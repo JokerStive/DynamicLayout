@@ -3,6 +3,7 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -13,18 +14,22 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HttpMethods {
     public static final String BASE_URL = "http://222.182.202.94:3000/api/";
 
-    private static final int DEFAULT_TIMEOUT = 5;
+    private static final int DEFAULT_TIMEOUT = 3;
 
     private Retrofit retrofit;
 //    private MovieService movieService;
 
     private HttpMethods() {
         //手动创建一个OkHttpClient并设置超时时间
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
-        httpClientBuilder.connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                                        .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                                        .retryOnConnectionFailure(true)
+                                        .addInterceptor(interceptor).build();
 
         retrofit = new Retrofit.Builder()
-                .client(httpClientBuilder.build())
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(BASE_URL)

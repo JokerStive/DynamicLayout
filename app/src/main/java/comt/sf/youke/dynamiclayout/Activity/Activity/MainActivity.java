@@ -7,8 +7,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import comt.sf.youke.dynamiclayout.Activity.Activity.base.BaseActivity;
@@ -16,9 +14,7 @@ import comt.sf.youke.dynamiclayout.Activity.Activity.bean.AclUser;
 import comt.sf.youke.dynamiclayout.Activity.Activity.net.User.UserApi;
 import comt.sf.youke.dynamiclayout.R;
 import retrofit2.Response;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends BaseActivity {
 
@@ -42,17 +38,13 @@ public class MainActivity extends BaseActivity {
     public void next(View v) {
         /*Intent intent = new Intent(this, SecondActivity.class);
         startActivityForResult(intent, 0);*/
-
-        subscription.add(new UserApi()
-                        .getAllUser()
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Response<List<AclUser>>>() {
+        subscription.add(new UserApi().register(new AclUser())
+                        .subscribe(new Action1<Response<AclUser>>() {
                             @Override
-                            public void call(Response<List<AclUser>> listResponse) {
-                                tvContent.setText(listResponse.body().get(0).getId()+"-------------------");
+                            public void call(Response<AclUser> aclUserResponse) {
+
                             }
                         })
-
         );
 
     }
@@ -72,6 +64,7 @@ public class MainActivity extends BaseActivity {
         btnDynamic.setLayoutParams(lp);
         btnDynamic.setVisibility(View.VISIBLE);
     }
+
 
 
 }

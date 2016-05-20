@@ -20,6 +20,10 @@ public class UserApi extends BaseApi{
     }
 
     public Observable<Response<List<AclUser>>> getAllUser(){
-        return getRes(userService.getAllUser());
+        return getRes(userService.getAll(),null);
+    }
+
+    public Observable<Response<AclUser>> register(AclUser user){
+        return getRes(userService.register(user), null);
     }
 }
