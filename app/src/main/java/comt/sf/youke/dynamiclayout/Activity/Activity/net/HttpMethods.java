@@ -2,6 +2,7 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net;
 
 import java.util.concurrent.TimeUnit;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.net.retrofit.CommonHeaderInterceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -24,9 +25,11 @@ public class HttpMethods {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
-                                        .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                                        .retryOnConnectionFailure(true)
-                                        .addInterceptor(interceptor).build();
+                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addNetworkInterceptor(new CommonHeaderInterceptor())
+//                .addInterceptor(new CommonHeaderInterceptor())
+                .addInterceptor(interceptor).build();
 
         retrofit = new Retrofit.Builder()
                 .client(client)
@@ -39,6 +42,7 @@ public class HttpMethods {
     }
 
     //在访问HttpMethods时创建单例
+
     private static class SingletonHolder{
         private static final HttpMethods INSTANCE = new HttpMethods();
     }

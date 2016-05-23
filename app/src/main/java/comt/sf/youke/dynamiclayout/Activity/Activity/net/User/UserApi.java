@@ -2,10 +2,9 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net.User;
 
 import java.util.List;
 
-import comt.sf.youke.dynamiclayout.Activity.Activity.bean.AclUser;
+import comt.sf.youke.dynamiclayout.Activity.Activity.bean.Account;
 import comt.sf.youke.dynamiclayout.Activity.Activity.net.BaseApi;
 import comt.sf.youke.dynamiclayout.Activity.Activity.net.UserService;
-import retrofit2.Response;
 import rx.Observable;
 
 /**
@@ -19,11 +18,16 @@ public class UserApi extends BaseApi{
         userService = retrofit.create(UserService.class);
     }
 
-    public Observable<Response<List<AclUser>>> getAllUser(){
+    public Observable<List<Account>> getAllUser(){
         return getRes(userService.getAll(),null);
+
     }
 
-    public Observable<Response<AclUser>> register(AclUser user){
+    public Observable<Integer> delete(String id) {
+        return getRes(userService.delete(id),null);
+    }
+
+    public Observable<Account> register(Account user){
         return getRes(userService.register(user), null);
     }
 }

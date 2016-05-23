@@ -3,7 +3,7 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.bean;
 /**
  * Created by Administrator on 2016/5/19.
  */
-public class AclUser {
+public class Account {
 
     /**
      * mobile : string
@@ -30,6 +30,16 @@ public class AclUser {
     private String created;
     private String lastUpdated;
     private int id;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private String password;
 
     public String getMobile() {
         return mobile;
