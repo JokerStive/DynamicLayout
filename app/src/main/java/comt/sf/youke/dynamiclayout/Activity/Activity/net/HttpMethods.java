@@ -21,24 +21,27 @@ public class HttpMethods {
 //    private MovieService movieService;
 
     private HttpMethods() {
-        //手动创建一个OkHttpClient并设置超时时间
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
-                .retryOnConnectionFailure(true)
-                .addNetworkInterceptor(new CommonHeaderInterceptor())
+        try {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(true)
+                    .addNetworkInterceptor(new CommonHeaderInterceptor())
 //                .addInterceptor(new CommonHeaderInterceptor())
-                .addInterceptor(interceptor).build();
+                    .addInterceptor(interceptor).build();
 
-        retrofit = new Retrofit.Builder()
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(BASE_URL)
-                .build();
+            retrofit = new Retrofit.Builder()
+                    .client(client)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .baseUrl(BASE_URL)
+                    .build();
 
-//        movieService = retrofit.create(MovieService.class);
+        }catch (Exception e){
+
+        }
+
     }
 
     //在访问HttpMethods时创建单例

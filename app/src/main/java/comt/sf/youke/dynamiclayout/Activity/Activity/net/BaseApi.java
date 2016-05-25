@@ -1,5 +1,6 @@
 package comt.sf.youke.dynamiclayout.Activity.Activity.net;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.net.rxjava.RetroUtil;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import rx.Observable;
@@ -48,40 +49,14 @@ public class BaseApi {
     }
 
 
-   /* public static <T> Observable<Response<T>> getRes(Observable<Response<T>> observable,ViewProxyInterface viewProxy) {
-        return observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e("",throwable.getMessage()+"----------------------");
-                    }
-                })
-                .filter((Func1<? super Response<T>, Boolean>) DataFilter.getFilter(viewProxy));
-
-    }*/
 
     public static <T> Observable getRes(Observable<Response<T>> observable, final ViewProxyInterface viewProxy) {
         return observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .filter(new DataFilter())
-                .flatMap(new DataTrans())
-                /*.doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e("", throwable.getMessage() + "--------------");
-                        onFailed(viewProxy);
-                    }
-                })
-                .doOnError(new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        Log.e("", throwable.getMessage() + "--------------");
-                        Timber.e(throwable, throwable.getMessage());
-                    }
-                })*/
-//                .filter((Func1<? super T, Boolean>) DataFilter.getFilter(viewProxy))
-                ;
+//                .filter(new DataFilter())
+                .flatMap(RetroUtil::flatResult);
+
+
     }
 
 
