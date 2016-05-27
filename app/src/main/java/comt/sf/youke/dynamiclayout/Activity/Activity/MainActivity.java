@@ -10,12 +10,12 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import comt.sf.youke.dynamiclayout.Activity.Activity.base.BaseActivity;
-import comt.sf.youke.dynamiclayout.Activity.Activity.bean.Account;
-import comt.sf.youke.dynamiclayout.Activity.Activity.net.User.UserApi;
+import comt.sf.youke.dynamiclayout.Activity.Activity.utils.ProgressDialogHelper;
 import comt.sf.youke.dynamiclayout.R;
-import rx.functions.Action1;
 
 public class MainActivity extends BaseActivity {
+
+    private static final String TAG="OkHttp";
 
     @Bind(R.id.btn_dynamic)
     Button btnDynamic;
@@ -35,42 +35,36 @@ public class MainActivity extends BaseActivity {
 
 
     public void next(View v) {
-        Account user = new Account();
-        user.setUsername("xixi");
-        user.setPassword("1234");
+        ProgressDialogHelper.createLoadingDialog(this,"加载中...").show();
+        /*subscription.add(new UserApi().getAllUser()
+                .subscribe(new ProgressSubscriber<List<Account>>(new SubscriberOnNextListener<List<Account>>() {
+                    @Override
+                    public void onNext(List<Account> accounts) {
+                        Log.i(TAG, "success" + "---");
+                    }
+                },MainActivity.this)));*/
+    /*    Account user = new Account();
+        user.setUsername("huhu");
         subscription.add(new UserApi().register(user)
-                        .subscribe(new Action1<Account>() {
-                            @Override
-                            public void call(Account account) {
-
-                            }
+                        .subscribe(account -> {
+                            Log.i(TAG, account.getUsername() + "---");
+                        }, throwable -> {
+                            Log.i(TAG, throwable.getMessage() + "---");
                         })
         );
 
-       /* subscription.add(new UserApi().getAllUser()
-                        .subscribe(new Action1<List<Account>>() {
-                            @Override
-                            public void call(List<Account> accounts) {
-                                tvContent.setText(accounts.get(0).getId()+"----");
-                            }
+        subscription.add(new UserApi().delete("0").subscribe());*/
+
+
+
+        /*subscription.add(new UserApi().getAllUser()
+                        .subscribe(accounts -> {
+                            tvContent.setText(accounts.get(0).getId() + "----");
+                        }, throwable -> {
+                            Log.e("OkHttp",throwable.getMessage()+"----");
+                            tvContent.setText(throwable.getMessage() + "----");
                         }));*/
-/*
-        subscription.add(new UserApi().delete("0").subscribe(new Subscriber<Integer>() {
-            @Override
-            public void onCompleted() {
 
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Integer integer) {
-                Toast.makeText(MainActivity.this,"delete success",Toast.LENGTH_SHORT).show();
-            }
-        }));*/
 
     }
 

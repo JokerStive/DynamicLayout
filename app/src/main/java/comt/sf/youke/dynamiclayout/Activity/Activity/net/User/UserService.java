@@ -1,4 +1,4 @@
-package comt.sf.youke.dynamiclayout.Activity.Activity.net;
+package comt.sf.youke.dynamiclayout.Activity.Activity.net.User;
 
 import java.util.List;
 
@@ -16,21 +16,13 @@ import rx.Observable;
  */
 public interface UserService {
 
-    /*@Headers({
-            "Content-Type: application/json",
-            "Accept: application/json"
-    })*/
+
     @GET("Accounts")
     Observable<Response<List<Account>>>  getAll();
 
-
-   /* @Headers({
-            "Content-Type: application/json",
-            "Accept: application/json"
-    })*/
     @POST("Accounts")
     Observable<Response<Account>>  register(@Body Account user );
 
     @DELETE("Accounts/{id}")
-    Observable<Response<Integer>> delete(@Path("id") String id);
+    Observable<Response<String>> delete(@Path("id") String id);
 }

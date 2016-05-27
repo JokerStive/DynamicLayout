@@ -4,7 +4,6 @@ import java.util.List;
 
 import comt.sf.youke.dynamiclayout.Activity.Activity.bean.Account;
 import comt.sf.youke.dynamiclayout.Activity.Activity.net.BaseApi;
-import comt.sf.youke.dynamiclayout.Activity.Activity.net.UserService;
 import rx.Observable;
 
 /**
@@ -19,11 +18,13 @@ public class UserApi extends BaseApi{
     }
 
     public Observable<List<Account>> getAllUser(){
+
         return getRes(userService.getAll(),null);
+
 
     }
 
-    public Observable<Integer> delete(String id) {
+    public Observable<String> delete(String id) {
         return getRes(userService.delete(id),null);
     }
 

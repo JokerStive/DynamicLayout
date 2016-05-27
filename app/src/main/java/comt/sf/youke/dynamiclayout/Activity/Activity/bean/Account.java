@@ -23,23 +23,9 @@ public class Account {
     private String email;
     private String realm;
     private String username;
-    private CredentialsBean credentials;
-    private ChallengesBean challenges;
     private boolean emailVerified;
+
     private String status;
-    private String created;
-    private String lastUpdated;
-    private int id;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    private String password;
 
     public String getMobile() {
         return mobile;
@@ -71,22 +57,6 @@ public class Account {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public CredentialsBean getCredentials() {
-        return credentials;
-    }
-
-    public void setCredentials(CredentialsBean credentials) {
-        this.credentials = credentials;
-    }
-
-    public ChallengesBean getChallenges() {
-        return challenges;
-    }
-
-    public void setChallenges(ChallengesBean challenges) {
-        this.challenges = challenges;
     }
 
     public boolean isEmailVerified() {
@@ -129,9 +99,13 @@ public class Account {
         this.id = id;
     }
 
-    public static class CredentialsBean {
-    }
+    private String created;
+    private String lastUpdated;
+    private int id;
 
-    public static class ChallengesBean {
-    }
+
+
+
+
+
 }
