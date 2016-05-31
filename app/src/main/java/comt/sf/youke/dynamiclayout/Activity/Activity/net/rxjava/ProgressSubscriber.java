@@ -3,19 +3,20 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net.rxjava;
 import android.content.Context;
 import android.widget.Toast;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.utils.ToastHelper;
 import rx.Subscriber;
 
 /**
  * Created by Administrator on 2016/5/27.
  */
 public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCancelListener {
-    private SubscriberOnNextListener mSubscriberOnNextListener;
+    private OnNext mOnNext;
     private ProgressDialogHandler mProgressDialogHandler;
 
     private Context context;
 
-    public ProgressSubscriber(SubscriberOnNextListener mSubscriberOnNextListener, Context context) {
-        this.mSubscriberOnNextListener = mSubscriberOnNextListener;
+    public ProgressSubscriber(OnNext mOnNext, Context context) {
+        this.mOnNext = mOnNext;
         this.context = context;
         mProgressDialogHandler = new ProgressDialogHandler(context, this, true);
     }
@@ -41,19 +42,20 @@ public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCanc
     @Override
     public void onCompleted() {
         dismissProgressDialog();
-        Toast.makeText(context, "Get Top Movie Completed", Toast.LENGTH_SHORT).show();
+//        ToastHelper.get(context).showShort("");
     }
 
     @Override
     public void onError(Throwable e) {
         dismissProgressDialog();
-        Toast.makeText(context, "error:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        ToastHelper.get(context).showShort(e.getMessage());
+//        Toast.makeText(context, "error:" + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onNext(T t) {
         dismissProgressDialog();
-        mSubscriberOnNextListener.onNext(t);
+        mOnNext.onNext(t);
     }
 
     @Override

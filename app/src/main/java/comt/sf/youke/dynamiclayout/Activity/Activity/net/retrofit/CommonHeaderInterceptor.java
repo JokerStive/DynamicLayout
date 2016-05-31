@@ -7,7 +7,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * Created by Administrator on 2016/5/23.
+ * Created by youke on 2016/5/23.
  */
 public class CommonHeaderInterceptor implements Interceptor {
     @Override

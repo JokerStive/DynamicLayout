@@ -15,7 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HttpMethods {
     public static final String BASE_URL = "http://222.182.202.94:3000/api/";
 
-    private static final int DEFAULT_TIMEOUT = 10;
+    private static final int DEFAULT_TIMEOUT = 5;
 
     private Retrofit retrofit;
 //    private MovieService movieService;
@@ -23,7 +23,7 @@ public class HttpMethods {
     private HttpMethods() {
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
@@ -36,7 +36,6 @@ public class HttpMethods {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .baseUrl(BASE_URL)
                 .build();
-
 
     }
 

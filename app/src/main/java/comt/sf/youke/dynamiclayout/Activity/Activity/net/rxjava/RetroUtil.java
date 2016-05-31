@@ -3,6 +3,7 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net.rxjava;
 import android.util.Log;
 
 import comt.sf.youke.dynamiclayout.Activity.Activity.exception.ApiException;
+import comt.sf.youke.dynamiclayout.Activity.Activity.utils.LogUtils;
 import retrofit2.Response;
 import rx.Observable;
 
@@ -15,7 +16,7 @@ public class RetroUtil {
    public static <T> Observable<T> flatResult(Response<T> response) {
         return Observable.create(subscriber->{
             if (response.isSuccess()){
-                Log.i("OkHttp","onNext will execute---");
+                LogUtils.D("onNext");
                 subscriber.onNext(response.body());
             }else{
                 Log.i("OkHttp", "onError  will execute---");
