@@ -1,9 +1,10 @@
 package comt.sf.youke.dynamiclayout.Activity.Activity.exception;
 
 /**
- * Created by Administrator on 2016/5/25.
+ * Created by youke on 2016/5/25.
+ * 请求fail抛出的异常
  */
-public class ApiException extends Exception {
+public class ApiException extends Throwable {
     private int code;
     private String message;
 

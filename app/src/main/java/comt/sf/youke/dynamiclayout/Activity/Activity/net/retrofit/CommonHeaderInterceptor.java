@@ -2,6 +2,8 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net.retrofit;
 
 import java.io.IOException;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.common.AccountManager;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -26,6 +28,11 @@ public class CommonHeaderInterceptor implements Interceptor {
                     .header("Accept", "application/json")
                     .build();
         }
+/*
+        //添加token
+        String url = request.url().toString();
+//        url = url+"?"+*/
+
 
 
         return chain.proceed(request);

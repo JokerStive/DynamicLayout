@@ -1,9 +1,13 @@
-package comt.sf.youke.dynamiclayout.Activity.Activity.net;
+package comt.sf.youke.dynamiclayout.Activity.Activity.net.retrofit;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import comt.sf.youke.dynamiclayout.Activity.Activity.net.retrofit.CommonHeaderInterceptor;
+import comt.sf.youke.dynamiclayout.Activity.Activity.common.AccountManager;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -22,12 +26,28 @@ public class HttpMethods {
 
     private HttpMethods() {
 
+        //log拦截器
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        //token拦截器
+        Interceptor mTokenInterceptor = chain -> {
+            Request originalRequest = chain.request();
+            if (AccountManager.sToken == null ) {
+                return chain.proceed(originalRequest);
+            }
+            Request authorised = originalRequest.newBuilder()
+                    .header("Authorization", AccountManager.sToken)
+                    .build();
+            return chain.proceed(authorised);
+        };
+
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .addNetworkInterceptor(new CommonHeaderInterceptor())
+                //设置token拦截器
+                .addNetworkInterceptor(mTokenInterceptor)
                 .addInterceptor(interceptor).build();
 
         retrofit = new Retrofit.Builder()

@@ -3,19 +3,25 @@ package comt.sf.youke.dynamiclayout.Activity.Activity.net.rxjava;
 import android.content.Context;
 import android.widget.Toast;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.exception.ApiException;
+import comt.sf.youke.dynamiclayout.Activity.Activity.exception.NetException;
+import comt.sf.youke.dynamiclayout.Activity.Activity.net.User.DealErrorUtils;
+import comt.sf.youke.dynamiclayout.Activity.Activity.utils.NetUtil;
 import comt.sf.youke.dynamiclayout.Activity.Activity.utils.ToastHelper;
+import comt.sf.youke.dynamiclayout.R;
 import rx.Subscriber;
 
 /**
- * Created by Administrator on 2016/5/27.
+ * Created by youke on 2016/5/27.
+ * 数据统一处理，只暴露onNext()的subscribe
  */
-public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCancelListener {
+public class PgSubscriber<T> extends Subscriber<T> implements ProgressCancelListener {
     private OnNext mOnNext;
     private ProgressDialogHandler mProgressDialogHandler;
 
     private Context context;
 
-    public ProgressSubscriber(OnNext mOnNext, Context context) {
+    public PgSubscriber(OnNext mOnNext, Context context) {
         this.mOnNext = mOnNext;
         this.context = context;
         mProgressDialogHandler = new ProgressDialogHandler(context, this, true);
@@ -34,22 +40,34 @@ public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCanc
         }
     }
 
+
+
     @Override
     public void onStart() {
+
         showProgressDialog();
+       /* if(!NetUtil.checkNet(context)){
+            try {
+                throw new NetException();
+            }  catch (NetException e) {
+//                e.printStackTrace();
+            }
+        }else{
+            showProgressDialog();
+        }*/
     }
 
     @Override
     public void onCompleted() {
         dismissProgressDialog();
-//        ToastHelper.get(context).showShort("");
     }
 
     @Override
     public void onError(Throwable e) {
         dismissProgressDialog();
-        ToastHelper.get(context).showShort(e.getMessage());
-//        Toast.makeText(context, "error:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        DealErrorUtils.dealError(e,context);
+
+
     }
 
     @Override

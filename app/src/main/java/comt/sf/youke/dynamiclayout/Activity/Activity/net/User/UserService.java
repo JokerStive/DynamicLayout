@@ -12,7 +12,7 @@ import retrofit2.http.Path;
 import rx.Observable;
 
 /**
- * Created by Administrator on 2016/5/19.
+ * Created by youke on 2016/5/19.
  */
 public interface UserService {
 
@@ -25,4 +25,6 @@ public interface UserService {
 
     @DELETE("Accounts/{id}")
     Observable<Response<String>> delete(@Path("id") String id);
+
+
 }

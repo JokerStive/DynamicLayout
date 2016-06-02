@@ -1,10 +1,12 @@
 package comt.sf.youke.dynamiclayout.Activity.Activity.net;
 
+import comt.sf.youke.dynamiclayout.Activity.Activity.net.retrofit.HttpMethods;
 import comt.sf.youke.dynamiclayout.Activity.Activity.net.rxjava.RetroUtil;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.schedulers.Schedulers;
 
 /**
@@ -53,7 +55,7 @@ public class BaseApi {
     public static <T> Observable getRes(Observable<Response<T>> observable, final ViewProxyInterface viewProxy) {
         return observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-//                .filter(new DataFilter())
+
                 .flatMap(RetroUtil::flatResult);
 
 

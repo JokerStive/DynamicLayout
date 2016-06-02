@@ -9,7 +9,7 @@ import rx.Observable;
 
 /**
  * Created by youke on 2016/5/25.
- * 数据预处理
+ * 数据预处理，如果返回码不是200，抛出自定义异常
  */
 public class RetroUtil {
 
