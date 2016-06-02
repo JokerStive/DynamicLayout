@@ -7,7 +7,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "comt.sf.youke.dynamiclayout"
+        applicationId "com.lilang.passionlife"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
