@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/default_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="17dp"
+        android:paddingRight="17dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/head"
+                style="@style/def_textview"
+                android:layout_centerVertical="true"
+                android:text="@string/head_portrait" />
+
+            <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
+                android:id="@+id/iv_head"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_toRightOf="@id/head"
+                android:src="@drawable/head_portrait" />
+        </RelativeLayout>
+
+        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            android:id="@+id/input_service_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:reg_hint="@string/service_et1"
+            app:reg_title="@string/service_name" />
+
+        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            android:id="@+id/input_service_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:reg_hint="@string/service_et2"
+            app:reg_title="@string/service_detail" />
+
+        <!--  高度和宽度选择-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+
+                <TextView
+
+                    style="@style/def_textview"
+                    android:text="@string/service_height" />
+
+                <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
+                    android:id="@+id/input_service_height"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+
+                    style="@style/def_textview"
+                    android:text="@string/service_column" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center_vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+
+                <TextView
+
+                    style="@style/def_textview"
+                    android:text="@string/service_wigth" />
+
+                <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
+                    android:id="@+id/input_service_wigth"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    style="@style/def_textview"
+                    android:text="@string/service_line" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--功能选择-->
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                style="@style/def_textview"
+                android:text="@string/service_choise" />
+
+            <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
+                android:id="@+id/input_service"
+                android:layout_marginLeft="@dimen/hint_left_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <!--功能选择-->
+        <LinearLayout
+            android:id="@+id/ll_hint"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+
+            <TextView
+                style="@style/def_textview"
+                android:text="@string/service_hint" />
+
+            <TextView
+                android:id="@+id/tv_hint"
+                style="@style/def_textview"
+                android:background="@drawable/selector_btn_choise"
+                android:layout_marginLeft="30dp"
+                android:enabled="false"
+                />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+    <Button
+        android:id="@+id/save"
+        style="@style/btn_green"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:text="@string/save" />
+</RelativeLayout>

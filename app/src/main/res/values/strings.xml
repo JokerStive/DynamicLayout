@@ -1,6 +1,125 @@
 <resources>
-    <string name="app_name">DynamicLayout</string>
     <string name="net_error">无可用网络</string>
+    <string name="net_time_out">连接超时,稍后再试</string>
+
+    <!--首页-->
+    <string name="app_name">励生活</string>
+    <string name="save">保存</string>
+    <string name="no_services_list">没有功能服务</string>
 
 
+    <!--登录界面-->
+    <string name="moble_num">手机号</string>
+    <string name="login_pwd">励生活登录密码</string>
+    <string name="login">登录</string>
+    <string name="reg">注册</string>
+    <string name="login_res">请重新登录</string>
+    <string name="login_success">登录成功</string>
+
+    <!--注册界面-->
+    <string name="nick_name">昵&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;称</string>
+    <string name="username">账&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;号</string>
+    <string name="get_auth_code">获取验证码</string>
+    <string name="auth_code">通&#160;&#160;行&#160;&#160;证</string>
+    <string name="pwd">登录密码</string>
+    <string name="user_reg">用户注册</string>
+
+    <string name="reg_et1">例如 "哈哈"</string>
+    <string name="reg_et2">请输入手机号</string>
+    <string name="reg_et3">请输入验证码</string>
+    <string name="reg_et4">需组合数字,字母,符号</string>
+
+
+    <!--系统配置-->
+    <string name="system_config">系统配置</string>
+    <string name="organization">组织机构</string>
+    <string name="role_manager">角色管理</string>
+    <string name="staff_manager">员工管理</string>
+    <string name="module_manager">模块管理</string>
+
+    <!--组织机构管理-->
+    <string name="add">新增</string>
+    <!--新增组织-->
+    <string name="add_orgi">新增组织</string>
+    <string name="edit_orgi">编辑组织</string>
+    <string name="add_orgi_success">新增组织成功</string>
+    <string name="delete_orgi_success">删除组织成功</string>
+    <string name="put_orgi_success">更新组织成功</string>
+    <string name="head_portrait">图标</string>
+    <string name="orgi_name">组织名称</string>
+    <string name="orgi_desc">组织描述</string>
+    <string name="orgi_et1">请输入你的组织名</string>
+    <string name="orgi_et2">请输入你的组织描述</string>
+    <string name="belong_department">部门列表</string>
+    <string name="extend_fatfer">继承自父组织</string>
+    <string name="not_orginame_empty">输入不能为空</string>
+    <!--新增部门-->
+    <string name="add_department">新增部门</string>
+    <string name="put_department_success">更新部门成功</string>
+    <string name="put_department_false">更新部门失败</string>
+    <string name="depar_name">部门名称</string>
+    <string name="depar_et1">请输入你的部门名称</string>
+    <string name="depar_desc">部门描述</string>
+    <string name="depar_et2">请输入你的部门描述</string>
+    <string name="depar_duty">部门职务</string>
+    <!--新增职务-->
+    <string name="add_duty">新增职位</string>
+    <string name="position_name">职位名称</string>
+    <string name="position_name_et1">请输入职位名称</string>
+    <string name="position_duty">职位职务</string>
+
+
+    <!--模块管理-->
+    <string name="service_add">新增功能</string>
+    <string name="service_edit">功能编辑</string>
+    <string name="delete_orgservice_success">删除功能成功</string>
+    <!--新增功能-->
+    <string name="service_name">功能名称</string>
+    <string name="service_et1">请输入你的功能名</string>
+    <string name="service_detail">功能详情</string>
+    <string name="service_et2">请输入此功能的描述</string>
+    <string name="service_height">高度</string>
+    <string name="service_wigth">宽度</string>
+    <string name="service_line">行</string>
+    <string name="service_column">列</string>
+    <string name="service_choise">功能选择</string>
+    <string name="service_hint">隐藏</string>
+
+
+    <!--角色管理-->
+    <string name="role_add">新增角色</string>
+    <string name="delete_orgRole_success">刪除角色成功</string>
+    <!--新增角色-->
+    <string name="role_name">角色名称</string>
+    <string name="add_orgRole_success">添加角色成功</string>
+    <string name="empty_authrovity_list">权限列表为空</string>
+    <string name="role_name_et1">请输入你的角色名</string>
+    <string name="role_authority_list">权限列表</string>
+    <!--新增权限-->
+    <string name="authority_add">新增权限</string>
+
+
+    <!--员工管理-->
+    <string name="staff_add">新增员工</string>
+    <string name="delete_staff_success">刪除员工成功</string>
+    <!--新增员工-->
+    <string name="staff_name">姓名</string>
+    <string name="staff_photo">照片</string>
+    <string name="staff_username">登录名</string>
+    <string name="staff_password">密码</string>
+    <string name="staff_name_eet1">请输入姓名</string>
+    <string name="staff_name_eet2">请输入登录名</string>
+    <string name="staff_name_eet3">请输入密码</string>
+    <string name="staff_department_list">部门列表</string>
+    <string name="belong_role">所属职位</string>
+    <string name="belong_dept">所属部门</string>
+    <string name="staff_add_department">新增部门</string>
+    <string name="empty_orgi_list">组织列表为空</string>
+
+
+    <!--权限-->
+    <string name="no_view_permissoion">对不起,你不具备查看权限</string>
+    <string name="empty_depart_list">部门列表为空</string>
+    <string name="Write_Open">暂未开放</string>
+    <string name="delete_dept_false">删除部门失败</string>
 </resources>

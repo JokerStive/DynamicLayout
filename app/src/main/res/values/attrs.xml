@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--圆形imageView的属性，边框的宽度和大小-->
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+    </declare-styleable>
+
+    <!--systemConfigView-->
+    <declare-styleable name="SystemConfigViw">
+        <attr name="module_icon" format="reference" />
+        <attr name="module_title" format="string" />
+    </declare-styleable>
+
+    <!--RegItemView-->
+    <declare-styleable name="RegItemView">
+        <attr name="reg_title" format="string" />
+        <attr name="reg_hint" format="string" />
+    </declare-styleable>
+
+    <!--ExtendItem-->
+    <declare-styleable name="ExtendItem">
+        <attr name="extend_title" format="string" />
+        <attr name="extend_hint" format="string" />
+        <attr name="add_btn" format="string" />
+        <attr name="is_show_add_btn" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="CrumbViewAttrs">
+        <attr name="light_color" format="color"/>
+        <attr name="dark_color" format="color"/>
+        <attr name="padding" format="dimension"/>
+    </declare-styleable>
+
+
+</resources>

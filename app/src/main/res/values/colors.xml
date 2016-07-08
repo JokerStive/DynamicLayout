@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="home_title">#fafafa</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!--字体、白色背景-->
+    <color name="default_white">#ffffff</color>
+    <color name="default_black">#0e0e0e</color>
+    <color name="default_tv_gray">#b8b8b8</color>
+
+    <!--默认灰色-->
+    <color name="default_bg_gray">#efefef</color>
+    <!--深灰色-->
+    <color name="default_line_grag">#d6d6d6</color>
+
+    <!--默认的绿色-->
+    <color name="default_bg_green">#0dcd9d</color>
+
+
 </resources>

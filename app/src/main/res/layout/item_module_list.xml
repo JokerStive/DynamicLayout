@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="30dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
+            android:id="@+id/module_list_icon"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            tools:background="@drawable/add" />
+        <ImageView
+            android:id="@+id/module_list_delete"
+            android:layout_toRightOf="@id/module_list_icon"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/delete"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/module_list_title"
+        style="@style/def_textview"
+        android:layout_marginTop="15dp"
+        android:maxLines="1"
+        tools:text="这是功能" />
+
+
+</LinearLayout>

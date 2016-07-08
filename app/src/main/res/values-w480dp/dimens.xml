@@ -1,0 +1,5 @@
+<resources>
+
+    <dimen name="head_height">40.6dp</dimen>
+    <dimen name="title_size">20sp</dimen>
+</resources>

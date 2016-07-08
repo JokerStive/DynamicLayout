@@ -1,5 +1,21 @@
 <resources>
     <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="head_height">40.6dp</dimen>
+    <dimen name="title_size">20sp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!--自定义组合控件-->
+    <dimen name="hint_left_title">15dp</dimen>
+    <dimen name="lv_to_tv">13dp</dimen>
+
+    <!--模块列表-->
+    <dimen name="module_list_top">25dp</dimen>
+
+    <!--面包屑-->
+    <dimen name="crumb_view_padding_left">0dp</dimen>
+    <dimen name="crumb_view_padding">0dp</dimen>
+
+
 </resources>

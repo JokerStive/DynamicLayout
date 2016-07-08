@@ -1,17 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lilang.passionlife">
+    package="com.lilun.passionlife">
 
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
+        android:name="com.lilun.passionlife.cloudplatform.ui.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".cloudplatform.ui.activity.HomeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
 
-        <activity android:name=".cloudplatform.ui.MainActivity">
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+        <activity
+            android:name=".cloudplatform.ui.activity.SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cloudplatform.ui.activity.RegestActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cloudplatform.ui.activity.LoginActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,8 +42,34 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"/>
+        <!-- 系统配置 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.SystemConfigActivity"
+            android:screenOrientation="portrait" />
 
+        <!-- 组织机构管理 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.OrganizationActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 角色管理 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.RoleManagerActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 员工管理 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.StaffManagerActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- 模块管理 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.ModuleManagerActivity"
+            android:screenOrientation="portrait" />
+
+        <!--引导页-->
+        <activity android:name=".cloudplatform.ui.activity.GuideActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

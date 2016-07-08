@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/default_bg_gray"
+    android:layout_height="match_parent">
+
+
+
+    <LinearLayout
+        android:id="@+id/first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/title_bar"
+        android:layout_margin="10dp"
+        >
+        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
+            android:id="@+id/orgi_manager"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            app:module_icon="@drawable/orgin_manager"
+            app:module_title="@string/organization"
+            />
+        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
+            android:id="@+id/role_manager"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            app:module_icon="@drawable/staff_manager"
+            app:module_title="@string/role_manager"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/first"
+        android:layout_margin="10dp"
+        >
+        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
+            android:id="@+id/staff_manager"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            app:module_icon="@drawable/role_manager"
+            app:module_title="@string/staff_manager"
+            />
+        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
+            android:id="@+id/module_manager"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="20dp"
+            app:module_icon="@drawable/module_manager"
+            app:module_title="@string/module_manager"
+            />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#6000"
+        android:visibility="gone"
+        >
+
+    </FrameLayout>
+
+</RelativeLayout>

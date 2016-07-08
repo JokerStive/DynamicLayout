@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/default_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="17dp"
+        android:paddingRight="17dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="17dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/head"
+                style="@style/def_textview"
+                android:layout_centerVertical="true"
+                android:text="@string/head_portrait" />
+
+            <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
+                android:id="@+id/iv_head"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="50dp"
+                android:layout_toRightOf="@id/head"
+                android:src="@drawable/head_portrait" />
+        </RelativeLayout>
+
+        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            android:id="@+id/input_orgi_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:reg_hint="@string/role_name_et1"
+            app:reg_title="@string/role_name" />
+
+       <RelativeLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="40dp">
+
+           <TextView
+               android:id="@+id/tv_aut"
+               style="@style/def_textview"
+               android:text="@string/role_authority_list"/>
+           <Button
+               android:id="@+id/btn_auth_add"
+              style="@style/btn_green"
+               android:layout_toRightOf="@id/tv_aut"
+               android:layout_alignBottom="@id/tv_aut"
+               android:layout_marginLeft="@dimen/hint_left_title"
+               android:visibility="gone"
+               android:text="@string/authority_add"/>
+           <ListView
+               android:background="@drawable/shape_green"
+               android:id="@+id/lv_auth_list"
+               android:layout_below="@id/tv_aut"
+               android:layout_alignLeft="@id/tv_aut"
+               android:layout_marginTop="@dimen/lv_to_tv"
+               android:divider="@null"
+               android:listSelector="@android:color/transparent"
+               android:scrollbars="none"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"/>
+       </RelativeLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/save"
+        style="@style/btn_green"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:text="@string/save"
+        />
+</RelativeLayout>

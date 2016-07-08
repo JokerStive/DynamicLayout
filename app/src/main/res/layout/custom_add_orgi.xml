@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/def_textview"
+        tools:text="所属部门" />
+
+    <LinearLayout
+        android:id="@+id/ll"
+        android:layout_toRightOf="@id/item_title"
+        android:layout_marginLeft="17dp"
+        android:layout_width="match_parent"
+        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+
+            <ImageView
+                android:paddingLeft="10dp"
+                android:id="@+id/item_btn"
+                android:clickable="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_btn_choise"/>
+
+            <TextView
+                android:id="@+id/item_extend"
+                style="@style/def_textview"
+                android:clickable="false"
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@id/item_btn"
+                tools:text="继承自父组织" />
+
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/add_what"
+            style="@style/btn_green"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginLeft="10dp"
+            tools:text="新增部门" />
+
+    </LinearLayout>
+
+
+
+    <ListView
+        android:id="@+id/extend_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/ll"
+        android:layout_below="@id/ll"
+        android:layout_marginTop="@dimen/lv_to_tv"
+        android:background="@drawable/gb"
+        android:divider="@null"
+        android:listSelector="@android:color/transparent"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+    </ListView>
+
+
+
+
+    <!--<LinearLayout
+        android:id="@+id/ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="17dp"
+        android:layout_toRightOf="@id/item_title"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_btn_choise"
+                android:clickable="true" />
+
+            <TextView
+                android:id="@+id/item_extend"
+                style="@style/def_textview"
+                android:layout_marginLeft="4dp"
+                android:layout_toRightOf="@id/item_btn"
+                tools:text="继承自父组织" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/add_what"
+            style="@style/btn_green"
+            tools:text="新增部门" />
+
+
+    </LinearLayout>
+-->
+
+
+</RelativeLayout>

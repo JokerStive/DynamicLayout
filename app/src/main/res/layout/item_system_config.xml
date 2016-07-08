@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="30dp"
+    android:orientation="vertical"
+    android:background="@drawable/shape_corner_gray"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/module_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:background="@drawable/launcher"/>
+
+    <TextView
+        android:id="@+id/module_title"
+        android:layout_marginTop="15dp"
+        style="@style/def_textview"
+        tools:text="这是功能"
+        />
+
+
+
+</LinearLayout>

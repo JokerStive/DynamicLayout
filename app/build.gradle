@@ -7,7 +7,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.lilang.passionlife"
+        applicationId "com.lilun.passionlife"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1
@@ -44,16 +44,32 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.flyco.pageindicator:FlycoPageIndicator_Lib:1.0.0@aar'
+
+    //
     compile 'org.greenrobot:eventbus:3.0.0'
+    //rxjava+rxAmdroid
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'io.reactivex:rxandroid:1.1.0'
+    //retrofit2.0
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
+    //适配retrofit2.0的OKhttp3
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.1.+'
+    compile 'com.github.orhanobut:logger:1.12'
+//    compile 'com.github.manuelpeinado.multichoiceadapter:multichoiceadapter:3.0.0'
+
+    //iso格式转换
+    compile 'joda-time:joda-time:2.9.4'
+
+    //缓存仓库
+    compile('com.github.lowlevel-studios:storo:1.0.3') {
+        transitive = true
+    }
+
+    compile 'com.inthecheesefactory.thecheeselibrary:stated-fragment-support-v4:0.10.0'
+
 }
