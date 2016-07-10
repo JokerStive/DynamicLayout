@@ -63,15 +63,16 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     Button save;
 
     private List<Role> roles;
-    private AuthrovityListAdapter adapter;
+    private AuthrovityListAdapter adapter_role;
     private List<Organization> departments;
 
-    private List<Integer>  roleIndex=new ArrayList<>();
-    private List<Integer>  deptIndex=new ArrayList<>();
+    private List<Integer> roleIndex = new ArrayList<>();
+    private List<Integer> deptIndex = new ArrayList<>();
 
-    private int dex_dept;
-    private int dex_role;
+
     private int userId;
+    private addStaff_deptListAdapter adapter_dept;
+    private int dex_dept;
 
     @Override
     public View setView() {
@@ -88,31 +89,27 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     }
 
     /**
-    *获取部门列表
-    */
+     * 获取部门列表
+     */
     private void getDepartmentList() {
         rootActivity.getOrgaDepartment(SpUtils.getString(Constants.key_defOrginaId), depts -> {
             departments = depts;
-            if (depts.size()==0){
+            if (depts.size() == 0) {
                 ToastHelper.get(mCx).showShort("部门列表为空");
                 return;
             }
-            addStaff_deptListAdapter adapter =  new addStaff_deptListAdapter(depts, false, new addStaff_deptListAdapter.OnItemClickListen() {
+            //当所属部门被选择的时候记下来
+            adapter_dept = new addStaff_deptListAdapter(depts, false, new addStaff_deptListAdapter.OnItemClickListen() {
                 @Override
                 public void onItemDelete(addStaff_deptListAdapter authrovityListAdapter, int position) {
 
                 }
-
-                @Override
-                public void onItemChoise(int position) {
-                    //当所属部门被选择的时候记下来
-                    deptIndex.add(position);
-                }
             });
 
             belongDept.init(position -> {
-
-            },adapter);
+                Logger.d("--"+depts.get(position).getName());
+                belongDept.setShow_data(depts.get(position).getName());
+            }, adapter_dept);
 
         });
     }
@@ -123,8 +120,8 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     private void getRoleList() {
         List<Role> cache = (List<Role>) CacheUtils.getCache(Constants.cacheKey_role);
         if (cache != null && cache.size() != 0) {
-            adapter = new AuthrovityListAdapter(cache, false, this);
-            lvRole.setAdapter(adapter);
+            adapter_role = new AuthrovityListAdapter(cache, false, this);
+            lvRole.setAdapter(adapter_role);
             return;
         }
         String filter = "{\"where\": {\"name\":{\"like\": \"" + orgiId + "%\"}}}";
@@ -134,8 +131,8 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
                 roles = roless;
                 CacheUtils.putCache(Constants.cacheKey_role, roles);
                 Logger.d(roless.size() + "");
-                adapter = new AuthrovityListAdapter(roles, false, AddStaffFragment.this);
-                lvRole.setAdapter(adapter);
+                adapter_role = new AuthrovityListAdapter(roles, false, AddStaffFragment.this);
+                lvRole.setAdapter(adapter_role);
             }
         });
     }
@@ -146,57 +143,54 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
 
     }
 
-    @Override
-    public void onItemChoise(int position) {
-        //当所属职位被选中的时候记下来
-        roleIndex.add(position);
-    }
+
 
 
     @OnClick(R.id.save)
-    void save(){
-       if (checkData()){
-           Account account = new Account();
-           account.setName(inputStaffName.getInput());
-           account.setUsername(inputStaffUsername.getInput());
-           account.setPassword(inputStaffPassword.getInput());
-           rootActivity.addSubscription(ApiFactory.register(account), new PgSubscriber<Account>(rootActivity) {
-               @Override
-               public void on_Next(Account account) {
-                   //新增account成功之后
-                   userId = account.getId();
-                   postDepartment(account.getId());
-                   postRole();
+    void save() {
+        if (checkData()) {
+            Account account = new Account();
+            account.setId(StringUtils.randow());
+            account.setName(inputStaffName.getInput());
+            account.setUsername(inputStaffUsername.getInput());
+            account.setPassword(inputStaffPassword.getInput());
+            rootActivity.addSubscription(ApiFactory.register(account), new PgSubscriber<Account>(rootActivity) {
+                @Override
+                public void on_Next(Account account) {
+                    //新增account成功之后
+                    userId = account.getId();
+                    postDepartment(account.getId());
+                    postRole();
 
-               }
+                }
 
-           });
-       }
+            });
+        }
 
     }
 
     /**
-    *给account post 一个role
+     * 给account post 一个role
      */
     private void postRole() {
 
     }
 
     /**
-    *给account post一个depat
+     * 给account post一个depat
+     *
      * @param id
      */
     private void postDepartment(int id) {
-        List<Integer> integers = StringUtils.removeRepet(deptIndex);
-        for (Integer index:integers){
+        for (Integer index : deptIndex) {
             OrganizationAccount oa = new OrganizationAccount();
             oa.setId(StringUtils.randow());
-            oa.setOrganizationId(departments.get(index).getId()+"/#staff");
-            Logger.d(" orig ="+departments.get(index).getId());
+            oa.setOrganizationId(departments.get(index).getId() + "/#staff");
+            Logger.d(" orig =" + departments.get(index).getId());
             rootActivity.addSubscription(ApiFactory.postAccOrganization(id, oa), new PgSubscriber<OrganizationAccount>(rootActivity) {
                 @Override
                 public void on_Next(OrganizationAccount organizationAccount) {
-                    then_dept(integers.size());
+                    then_dept(deptIndex.size());
                 }
 
             });
@@ -204,7 +198,7 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     }
 
     private void then_dept(int size) {
-        if (dex_dept==size-1){
+        if (dex_dept == size - 1) {
 //            postRole();
             rootActivity.backStack();
             ToastHelper.get(mCx).showShort("员工添加成功");
@@ -214,21 +208,39 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     }
 
     private boolean checkData() {
-        if (TextUtils.isEmpty(inputStaffName.getInput())  || TextUtils.isEmpty(inputStaffPassword.getInput()) || TextUtils.isEmpty(inputStaffUsername.getInput())){
+        if (TextUtils.isEmpty(inputStaffName.getInput()) || TextUtils.isEmpty(inputStaffPassword.getInput()) || TextUtils.isEmpty(inputStaffUsername.getInput())) {
             ToastHelper.get(mCx).showShort("输入不能为空");
             return false;
         }
 
-        if (roleIndex.size()==0){
-            ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
-            return false;
+
+        //检查是否至少选择了一个部门
+        if (adapter_dept != null && adapter_dept.mCBFlag.size() != 0) {
+            deptIndex.clear();
+            for (int i = 0; i < adapter_dept.mCBFlag.size(); i++) {
+                if (adapter_dept.mCBFlag.get(i)) {
+                    deptIndex.add(i);
+                }
+            }
+            if (deptIndex.size()==0){
+                ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
+                return false;
+            }
         }
 
-        if (deptIndex.size()==0){
-            ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
-            return false;
+        //检查是否至少选择了一个所属职位
+        if (adapter_role != null && adapter_role.mCBFlag.size() != 0) {
+            roleIndex.clear();
+            for (int i = 0; i < adapter_role.mCBFlag.size(); i++) {
+                if (adapter_role.mCBFlag.get(i)) {
+                    roleIndex.add(i);
+                }
+            }
+            if (roleIndex.size()==0){
+                ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
+                return false;
+            }
         }
-
         return true;
     }
 

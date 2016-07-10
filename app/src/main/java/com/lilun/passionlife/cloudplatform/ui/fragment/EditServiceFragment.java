@@ -69,6 +69,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     private List<Service> allService;
     private String serviceId;
     private List<String> wigthList;
+    private String orgaServiceId;
 
     @OnClick(R.id.ll_hint)
     void hint() {
@@ -81,11 +82,11 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     @Override
     public View setView() {
         Bundle bundle = getArguments();
-        if (bundle!=null){
+        if (bundle != null) {
             service = (OrganizationService) bundle.get("service");
 
         }
-        crumb_title =  mCx.getString(R.string.service_edit);
+        crumb_title = mCx.getString(R.string.service_edit);
         View view = inflater.inflate(R.layout.fragment_add_servcice, null);
         return view;
     }
@@ -94,7 +95,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     @Override
     public void onStart() {
         super.onStart();
-        Logger.d("on star");
+//        Logger.d("on star");
         setInitData();
         getData();
         setSettingData();
@@ -119,23 +120,28 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         inputService.setShow_data(service.getServiceName());
         tv_hint.setEnabled(!Boolean.parseBoolean(service.getSettings().getVisible()));
 
-        serviceId=service.getServiceId();
+        serviceId = service.getServiceId();
+        orgaServiceId = service.getId();
     }
 
     private void getData() {
         rootActivity.addSubscription(ApiFactory.getServicess(), new PgSubscriber<List<Service>>(rootActivity) {
             @Override
             public void on_Next(List<Service> servicess) {
-                if (servicess.size()==0){ToastHelper.get(App.app).showShort("服务流为空");return;}
+                if (servicess.size() == 0) {
+                    ToastHelper.get(App.app).showShort("服务流为空");
+                    return;
+                }
                 allService = servicess;
-                for(Service service :servicess){
+                for (Service service : servicess) {
                     list.add(service.getTitle());
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, list);
                 inputService.init(EditServiceFragment.this, adapter);
             }
 
-        });}
+        });
+    }
 
     @OnClick(R.id.save)
     void save() {
@@ -143,27 +149,23 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         String serviceName = inputServiceName.getInput();
         String serviceDesc = inputServiceDetail.getInput();
 
-        if (checkData(serviceName,serviceDesc) && !TextUtils.isEmpty(orgiId)){
-            OrganizationService.SettingsBean setting  = new OrganizationService.SettingsBean();
+        if (checkData(serviceName, serviceDesc) && !TextUtils.isEmpty(orgiId)) {
+            OrganizationService.SettingsBean setting = new OrganizationService.SettingsBean();
             OrganizationService service = new OrganizationService();
 
-            service.setId(orgiId+":"+serviceName);
+//            service.setId(orgiId+":"+serviceName);
             service.setServiceId(serviceId);
             service.setOrganizationId(orgiId);
             service.setDescription(serviceDesc);
 
 
-
-            setting.setVisible(!tv_hint.isEnabled()+"");
+            setting.setVisible(!tv_hint.isEnabled() + "");
             service.setSettings(setting);
 
-            rootActivity.addSubscription(ApiFactory.postOrgiServices(service), new PgSubscriber<OrganizationService>(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.putOrgaService(orgaServiceId, service), new PgSubscriber<OrganizationService>(rootActivity) {
                 @Override
-                public void on_Next(OrganizationService  services) {
-                    if (Boolean.parseBoolean(setting.getVisible())){
-                        Logger.d("post a service success");
-                        EventBus.getDefault().post(new Event.addNewService(services));
-                    }
+                public void on_Next(OrganizationService services) {
+                    EventBus.getDefault().post(new Event.putService(services));
                     rootActivity.backStack();
                 }
             });
@@ -172,7 +174,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
 
 
     private boolean checkData(String serviceName, String serviceDesc) {
-        if (TextUtils.isEmpty(serviceName)  || TextUtils.isEmpty(serviceDesc)){
+        if (TextUtils.isEmpty(serviceName) || TextUtils.isEmpty(serviceDesc)) {
             ToastHelper.get(mCx).showShort("输入不能为空");
             return false;
         }

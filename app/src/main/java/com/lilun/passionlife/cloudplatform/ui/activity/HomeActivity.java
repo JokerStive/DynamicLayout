@@ -110,8 +110,8 @@ public class HomeActivity extends BaseActivity {
      * 获取组织列表
      */
     private void getorgiList() {
-        defOrgaName= SpUtils.getString(Constants.key_defOrgina);
-        if (!TextUtils.isEmpty(defOrgaName)){
+        defOrgaName = SpUtils.getString(Constants.key_defOrgina);
+        if (!TextUtils.isEmpty(defOrgaName)) {
             getServiceList();
             tvDeforgi.setText(defOrgaName);
             return;
@@ -144,7 +144,8 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
-     *根据id获取对应的组织
+     * 根据id获取对应的组织
+     *
      * @param defOrgaId
      */
 
@@ -153,7 +154,7 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void on_Next(Organization organizationBean) {
                 defOrgaName = organizationBean.getName();
-                SpUtils.setString(Constants.key_defOrgina,defOrgaName);
+                SpUtils.setString(Constants.key_defOrgina, defOrgaName);
                 tvDeforgi.setText(defOrgaName);
             }
 
@@ -197,7 +198,7 @@ public class HomeActivity extends BaseActivity {
      * 更新了服务，刷新缓存
      */
     @Subscribe
-    public void addNewService(Event.addNewService event) {
+    public void addNewService(Event.postService event) {
         Logger.d("get add new service");
         OrganizationService service = event.getService();
         if (visibleOrgiService != null) {
@@ -207,6 +208,7 @@ public class HomeActivity extends BaseActivity {
                 }
             }
             visibleOrgiService.add(service);
+            Logger.d("service size = "+visibleOrgiService.size());
             aCache.put(Constants.cacheKey_service, (Serializable) visibleOrgiService);
             showServices(visibleOrgiService);
         } else {
@@ -215,12 +217,33 @@ public class HomeActivity extends BaseActivity {
 
     }
 
+    //更新了一个服务
+    @Subscribe
+    public void putService(Event.putService event) {
+        OrganizationService service = event.getService();
+        String visible = service.getSettings().getVisible();
+        if (visibleOrgiService != null) {
+            for (int i = 0; i < visibleOrgiService.size(); i++) {
+                if (visibleOrgiService.get(i).getId().equals(service.getId())) {
+                    visibleOrgiService.remove(i);
+                }
+            }
+        }
+        if (Boolean.parseBoolean(visible)) {
+            //如果是可见的在添加进来
+            visibleOrgiService.add(service);
+        }
+        aCache.put(Constants.cacheKey_service, (Serializable) visibleOrgiService);
+        showServices(visibleOrgiService);
+    }
+
     /**
      * 删除了一个服务，从网络获取最新的服务，刷新缓存
      */
     @Subscribe
     public void deleteOrganiService(Event.deleteOrganiService event) {
         getSerListFromNet(visibleOrgiService1 -> {
+            visibleOrgiService=visibleOrgiService1;
             showServices(visibleOrgiService1);
         });
     }
@@ -230,7 +253,7 @@ public class HomeActivity extends BaseActivity {
         gvModule.setNumColumns(data.size() == 1 ? 1 : 2);
         gvModule.setAdapter(new HomeGvAdapter(mCx, data));
         gvModule.setOnItemClickListener((parent, view, position, id) -> {
-            if (data.get(position).getServiceId()!=null && data.get(position).getServiceId().equals("SysConfig")) {
+            if (data.get(position).getServiceId() != null && data.get(position).getServiceId().equals("SysConfig")) {
 
 //                Logger.d(StringUtils.randow()+"");
                 IntentUtils.startAct(mAc, SystemConfigActivity.class);

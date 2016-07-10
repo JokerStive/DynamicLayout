@@ -32,7 +32,7 @@ public interface ApiService {
      */
 
     @POST("Accounts")
-    Observable<Response<Account>> register(@Body Account user);
+    Observable<Account> register(@Body Account user);
 
     /**
      * 用户登录
@@ -157,8 +157,8 @@ public interface ApiService {
     /**
      *给account新增一个organization
      */
-    @POST("Accounts/{id}")
-    Observable<Organization> postAccOrganization(@Path("id") int userId ,@Body OrganizationAccount orga);
+    @POST("Accounts/{id}/organizations")
+    Observable<OrganizationAccount> postAccOrganization(@Path("id") int userId ,@Body OrganizationAccount orga);
 
     /**
      *给account新增一个role
@@ -203,8 +203,16 @@ public interface ApiService {
     /**
      *更新一个组织机构
      */
-    @PUT("Organizations")
-    Observable<Organization> putOrganization(@Body Organization organizationBean);
+    @PUT("Organizations/{id}")
+    Observable<Organization> putOrganization(@Path("id") String orgaId,@Body Organization organizationBean);
+
+    /**
+     *更新OrgaService
+     */
+    @PUT("OrganizationServices/{id}")
+    Observable<OrganizationService> putOrgaService(@Path("id") String serviceId,@Body OrganizationService orgaService);
+
+
 
 
 

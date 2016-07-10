@@ -70,7 +70,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     private String orgaDesc;
     int dex = 0;
     private Organization newDepartment;
-    private String parentOrgId;
+    private String currentOrgaId;
 
     @Override
     public View setView() {
@@ -111,8 +111,8 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         orgaName = orgaName==null? organi.getName():orgaName;
         orgaDesc = orgaDesc==null? organi.getDescription():orgaDesc;
 //        orgaDesc = organi.getDescription();
-        parentOrgId = organi.getId();
-        getOrganiDepartment(parentOrgId);
+        currentOrgaId = organi.getId();
+        getOrganiDepartment(currentOrgaId);
 
     }
 
@@ -134,9 +134,9 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         if (alreadyAddDepartments != null && alreadyAddDepartments.size()!=0) {
             for (Organization depart :alreadyAddDepartments){
                 if (depart.isNew()){
-                    Logger.d("  当前部门所属组织id = "+parentOrgId);
-                    depart.setId(parentOrgId  + Constants.special_orgi_department+"/"+depart.getName());
-                    depart.setParentId(parentOrgId+Constants.special_orgi_department);
+                    Logger.d("  当前部门所属组织id = "+currentOrgaId);
+                    depart.setId(currentOrgaId  + Constants.special_orgi_department+"/"+depart.getName());
+                    depart.setParentId(currentOrgaId+Constants.special_orgi_department);
                     rootActivity.addSubscription(ApiFactory.postOrganization(depart), new PgSubscriber<Organization>(rootActivity) {
                         @Override
                         public void on_Next(Organization organizationBean) {
@@ -148,11 +148,14 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
                     });
                 }
             }
+        }else{
+            //如果本来就没有部门，并且没有新增
+            rootActivity.backStack();
         }
     }
     private void then() {
         if (dex==alreadyAddDepartments.size()-1){
-            rootActivity.backStack();
+
             ToastHelper.get(mCx).showShort(mCx.getString(R.string.put_department_success));
             return;
         }
@@ -165,27 +168,29 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     */
     private void checkOrganitionIsSame() {
         //如果组织名称和描述都没有变化，return
-        if (orgaName.equals(orgna.getName()) && orgaDesc.equals(orgna.getDescription())){
+        String inputName = inputOrgiName.getInput();
+        String inputDesc= inputOrgiDesc.getInput();
+        if (inputName.equals(orgna.getName()) && inputDesc.equals(orgna.getDescription())){
             checkIsAddDepartment();
             return;
         }
         Organization organizationBean = new Organization();
 
         //名称有变化
-        if (!orgaName.equals(orgna.getName())){
-            organizationBean.setName(orgaName);
-            organizationBean.setId(orgiId+Constants.special_orgi_department+orgaName);
-            parentOrgId = orgiId+Constants.special_orgi_department+orgaName;
+        if (!inputName.equals(orgna.getName())){
+            organizationBean.setName(inputName);
+//            organizationBean.setId(orgiId+Constants.special_orgi_department+orgaName);
+//            parentOrgId = orgiId+Constants.special_orgi_department+orgaName;
 
         }
 
         //描述与变化
-        if (!orgaDesc.equals(orgna.getDescription())){
-            organizationBean.setDescription(orgaDesc);
+        if (!inputDesc.equals(orgna.getDescription())){
+            organizationBean.setDescription(inputDesc);
         }
 
         //更新
-        rootActivity.addSubscription(ApiFactory.putOrganization(organizationBean), new PgSubscriber<Organization>(rootActivity) {
+        rootActivity.addSubscription(ApiFactory.putOrganization(currentOrgaId,organizationBean), new PgSubscriber<Organization>(rootActivity) {
             @Override
             public void on_Next(Organization organizationBean) {
                 ToastHelper.get(mCx).showShort(mCx.getString(R.string.put_orgi_success));

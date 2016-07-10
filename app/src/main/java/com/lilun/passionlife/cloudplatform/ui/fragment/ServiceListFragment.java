@@ -51,7 +51,7 @@ public class ServiceListFragment extends BaseFunctionFragment implements BaseMod
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Logger.d("onCreate");
+//        Logger.d("onCreate");
 
     }
 
@@ -59,7 +59,7 @@ public class ServiceListFragment extends BaseFunctionFragment implements BaseMod
     @Override
     public void onStart() {
         super.onStart();
-       Logger.d("onStart");
+//       Logger.d("onStart");
         //从缓存中读取service
         bundle = new Bundle();
         visibleOrgiService = (List<OrganizationService>) ACache.get(App.app).getAsObject(Constants.cacheKey_service);

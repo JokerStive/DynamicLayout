@@ -18,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.Bind;
 
@@ -79,9 +80,9 @@ public class StaffListFragment extends BaseFunctionFragment implements BaseModul
     public void onDeleteClick(int position) {
         if (orgaAccs!=null && orgaAccs.size()!=0){
             int ocId = orgaAccs.get(position).getId();
-            rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<List<OrganizationAccount>>(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<Object>(rootActivity) {
                 @Override
-                public void on_Next(List<OrganizationAccount> organizationAccounts) {
+                public void on_Next(Object object) {
                     orgaAccs.remove(position);
                     adapter.notifyDataSetChanged();
                     ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_staff_success));

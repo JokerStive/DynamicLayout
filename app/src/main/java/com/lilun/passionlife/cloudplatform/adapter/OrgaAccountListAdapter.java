@@ -69,7 +69,7 @@ public class OrgaAccountListAdapter extends BaseModuleListAdapter {
             viewHolder.module_title.setText(add);
         } else {
             //TODO 从网络url加载图片
-            String staffNane = data.get(position - 1).getAccount().getUsername();
+            String staffNane = data.get(position - 1).getAccount().getName();
             viewHolder.module_icon.setBackgroundResource(R.drawable.add);
             viewHolder.module_title.setText(staffNane);
 

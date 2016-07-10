@@ -16,6 +16,7 @@ import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityListAdapter.OnItemClickListen {
+public class AddRoleFragment extends BaseFunctionFragment{
 
 
     @Bind(R.id.head)
@@ -48,6 +49,7 @@ public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityL
     private String crumb_title;
     private List<Role> roles;
     private int index;
+    private AuthrovityListAdapter adapter;
 
     @Override
     public View setView() {
@@ -78,6 +80,7 @@ public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityL
     public void getAuthrovityList() {
         //TODO 可能有什么限制
         rootActivity.addSubscription(ApiFactory.getRoleList(), new PgSubscriber<List<Role>>(rootActivity) {
+
             @Override
             public void on_Next(List<Role> role) {
                 roles = role;
@@ -90,28 +93,18 @@ public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityL
                         role.remove(i);
                     }
                 }
-                lvAuthList.setAdapter(new AuthrovityListAdapter(role, false, AddRoleFragment.this));
+                adapter = new AuthrovityListAdapter(role, false, (authrovityListAdapter, position) -> {
+
+                });
+                lvAuthList.setAdapter(adapter);
             }
 
         });
     }
 
 
-    /**
-     * 某一天权限被删除的时候
-     */
-    @Override
-    public void onItemDelete(AuthrovityListAdapter authrovityListAdapter, int position) {
 
-    }
 
-    /**
-     * 某一条权限被选中的时候
-     */
-    @Override
-    public void onItemChoise(int position) {
-        choiseAuthrisIndex.add(position);
-    }
 
 
     /**
@@ -131,16 +124,17 @@ public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityL
      */
     private void postPrincipa(int roleId) {
         if (roles!=null && roles.size()!=0){
-            if (choiseAuthrisIndex!=null && choiseAuthrisIndex.size()!=0){
-                List<Integer> integers = StringUtils.removeRepet(choiseAuthrisIndex);
-                for(Integer index:integers){
+            List<Integer> choiseAuthrovity = getChoiseAuthrovity(choiseAuthrisIndex);
+            if (choiseAuthrovity!=null && choiseAuthrovity.size()!=0){
+                Logger.d("---"+choiseAuthrovity);
+                for(Integer index:choiseAuthrovity){
                     Principal pc = new Principal();
                     pc.setPrincipalType("ROLE");
                     pc.setPrincipalId(roles.get(index).getName());
                     rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, pc), new PgSubscriber<Principal>(rootActivity) {
                         @Override
                         public void on_Next(Principal principal) {
-                            then(integers);
+                            then(choiseAuthrovity);
                         }
 
                     });
@@ -149,6 +143,15 @@ public class AddRoleFragment extends BaseFunctionFragment implements AuthrovityL
             }
 
         }
+    }
+
+    private List<Integer> getChoiseAuthrovity(List<Integer> choiseAuthrisIndex) {
+        for(int i=0;i<adapter.mCBFlag.size();i++){
+            if (adapter.mCBFlag.get(i)){
+                choiseAuthrisIndex.add(i);
+            }
+        }
+        return choiseAuthrisIndex;
     }
 
     private void then(List<Integer> integers) {

@@ -23,7 +23,7 @@ import java.util.Map;
 public class AuthrovityListAdapter extends BaseAdapter {
 
 
-    private  HashMap<Integer, Boolean> mCBFlag;
+    public   HashMap<Integer, Boolean> mCBFlag;
     private  List<Role> data;
     private  OnItemClickListen listen;
     private final boolean isShowDelete;
@@ -99,10 +99,9 @@ public class AuthrovityListAdapter extends BaseAdapter {
                 }else{
                     mCBFlag.put(position, false);
                 }
-//                Logger.d("set enable = "+mCBFlag.get(position));
 
 
-                listen.onItemChoise(position);
+
 
 
 
@@ -126,7 +125,8 @@ public class AuthrovityListAdapter extends BaseAdapter {
 
     public interface  OnItemClickListen{
         void  onItemDelete(AuthrovityListAdapter authrovityListAdapter, int position);
-        void  onItemChoise(int position);
+
+
     }
 
 

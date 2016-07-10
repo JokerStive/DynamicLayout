@@ -163,7 +163,7 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
                 public void on_Next(OrganizationService  services) {
                     if (Boolean.parseBoolean(setting.getVisible())){
                         Logger.d("post a service success");
-                        EventBus.getDefault().post(new Event.addNewService(services));
+                        EventBus.getDefault().post(new Event.postService(services));
                     }
                     rootActivity.backStack();
                 }

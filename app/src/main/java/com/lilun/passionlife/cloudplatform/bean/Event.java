@@ -152,10 +152,27 @@ public class Event {
      * create by youke
      * desc : 新增了一个服务事件
      */
-    public static class addNewService {
+    public static class postService {
         private OrganizationService service;
 
-        public addNewService(OrganizationService service) {
+        public postService(OrganizationService service) {
+            this.service = service;
+        }
+
+        public OrganizationService getService() {
+            return service;
+        }
+    }
+
+
+    /**
+     * create by youke
+     * desc : put服务事件
+     */
+    public static class putService {
+        private OrganizationService service;
+
+        public putService(OrganizationService service) {
             this.service = service;
         }
 

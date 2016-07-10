@@ -176,7 +176,7 @@ public class ApiFactory {
     /**
      *给account新增一个organization
      */
-    public static Observable<Organization> postAccOrganization(int userId,OrganizationAccount orga) {
+    public static Observable<OrganizationAccount> postAccOrganization(int userId,OrganizationAccount orga) {
         return getRes(service.postAccOrganization(userId,orga));
     }
 
@@ -231,8 +231,17 @@ public class ApiFactory {
     /**
      *更新一个组织机构
      */
-    public static Observable<Organization> putOrganization(Organization organizationBean){
-        return getRes(service.putOrganization(organizationBean));
+    public static Observable<Organization> putOrganization(String orgaId,Organization organizationBean){
+        return getRes(service.putOrganization(orgaId,organizationBean));
+    }
+
+
+
+    /**
+     *更新OrgaService
+     */
+    public static Observable<OrganizationService> putOrgaService(String serviceId,OrganizationService orgaService){
+        return getRes(service.putOrgaService(serviceId,orgaService));
     }
 
 
