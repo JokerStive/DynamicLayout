@@ -1,18 +1,17 @@
 package com.lilun.passionlife.cloudplatform.net.retrofit;
 
 import com.lilun.passionlife.cloudplatform.bean.Account;
-import com.lilun.passionlife.cloudplatform.bean.Organization;
-import com.lilun.passionlife.cloudplatform.bean.Principal;
-import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.bean.LoginRes;
+import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationRole;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.bean.Principal;
+import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.bean.Service;
 
 import java.util.List;
 
-import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
@@ -111,14 +110,16 @@ public interface ApiService {
      *获取role列表
      */
     @GET("Roles")
+    Observable<List<Role>> getRoleListFilter(@Query("filter") String filter);
+
+    /**
+     *获取所有的权限
+     */
+    @GET("Roles")
     Observable<List<Role>> getRoleList();
 
 
-    /**
-     *获取role列表临时的
-     */
-    @GET("Roles")
-    Observable<List<Role>> getRoleListTemp(@Query("filter") String filter);
+
 
 
     /**
@@ -191,6 +192,13 @@ public interface ApiService {
     @DELETE("Roles/{id}")
     Observable<Object> deleteRole(@Path("id") int roleId);
 
+    /**
+     *删除Role下面的principal
+     */
+    @DELETE("Roles/{id}/principals/{fk}")
+    Observable<Object> deletePrincipal(@Path("id") int roleId,@Path("fk") int ptId);
+
+
 
     /**
      *删除OrgaAccount
@@ -212,6 +220,12 @@ public interface ApiService {
     @PUT("OrganizationServices/{id}")
     Observable<OrganizationService> putOrgaService(@Path("id") String serviceId,@Body OrganizationService orgaService);
 
+
+    /**
+     *更新Role
+     */
+    @PUT("Role/{id}")
+    Observable<OrganizationService> putRole(@Path("id") String roleId,@Body Role role);
 
 
 

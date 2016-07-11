@@ -1,9 +1,12 @@
 package com.lilun.passionlife.cloudplatform.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by 权限项 on 2016/7/8.
  */
-public class Principal {
+public class Principal implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * id : 0

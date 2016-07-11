@@ -91,6 +91,10 @@ public class AuthrovityListAdapter extends BaseAdapter {
             holder= (ViewHolder) convertView.getTag();
         }
         holder.item_authro_title.setText(data.get(position).getTitle());
+        if(data.get(position).isHave()){
+            Logger.d("enable");
+            mCBFlag.put(position, true);
+        }
         holder.item_authro_delete.setOnClickListener(v -> {
             if (holder.item_authro_choise.getVisibility()==View.VISIBLE){
                 holder.item_authro_choise.setEnabled(!holder.item_authro_choise.isEnabled());

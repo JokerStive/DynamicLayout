@@ -65,14 +65,13 @@ dependencies {
     //iso格式转换
     compile 'joda-time:joda-time:2.9.4'
 
-    //缓存仓库
-    compile('com.github.lowlevel-studios:storo:1.0.3') {
-        transitive = true
-    }
+
 
     //保存状态的fragment
     compile 'com.inthecheesefactory.thecheeselibrary:stated-fragment-support-v4:0.10.0'
 
+    //下拉刷新
+    compile 'in.srain.cube:ultra-ptr:1.0.11'
 
 
 

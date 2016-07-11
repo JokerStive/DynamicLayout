@@ -50,7 +50,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
 //            setArguments(new Bundle());
 //    }
 
-    @Bind(R.id.input_orgi_name)
+    @Bind(R.id.input_role_name)
     RegItemView inputOrgiName;
 
     @Bind(R.id.exv_add_orgi)
@@ -106,7 +106,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
      * 设置初始化显示数据
      */
     private void setInitData(Organization organi) {
-//        inputOrgiName.setInput(TextUtils.isEmpty(organi.getName()) ? "" : organi.getName());
+//        inputRoleName.setInput(TextUtils.isEmpty(organi.getName()) ? "" : organi.getName());
 //        inputOrgiDesc.setInput(TextUtils.isEmpty(organi.getDescription()) ? "" : organi.getDescription());
         orgaName = orgaName==null? organi.getName():orgaName;
         orgaDesc = orgaDesc==null? organi.getDescription():orgaDesc;
@@ -147,10 +147,11 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
 
                     });
                 }
-            }rootActivity.backStack();
+            }
+//            rootActivity.backStack();
         }else{
             //如果本来就没有部门，并且没有新增
-            rootActivity.backStack();
+//            rootActivity.backStack();
         }
     }
     private void then() {
@@ -172,6 +173,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         String inputDesc= inputOrgiDesc.getInput();
         if (inputName.equals(orgna.getName()) && inputDesc.equals(orgna.getDescription())){
             checkIsAddDepartment();
+            rootActivity.backStack();
             return;
         }
         Organization organizationBean = new Organization();
@@ -194,8 +196,8 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
             @Override
             public void on_Next(Organization organizationBean) {
                 ToastHelper.get(mCx).showShort(mCx.getString(R.string.put_orgi_success));
-//                rootActivity.backStack();
                 checkIsAddDepartment();
+                rootActivity.backStack();
             }
 
 

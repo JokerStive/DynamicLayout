@@ -46,7 +46,7 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
 
 
-    @Bind(R.id.input_orgi_name)
+    @Bind(R.id.input_role_name)
     RegItemView inputOrgiName;
 
     @Bind(R.id.exv_add_orgi)

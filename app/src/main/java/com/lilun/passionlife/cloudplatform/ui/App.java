@@ -6,8 +6,6 @@ import android.content.Context;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.orhanobut.logger.Logger;
 
-import st.lowlevel.storo.StoroBuilder;
-
 /**
  * Created by Administrator on 2016/6/14.
  */
@@ -21,9 +19,6 @@ public class App extends Application {
 
         initLogger();
 
-        StoroBuilder.configure(10240)  // maximum size to allocate in bytes
-                .setDefaultCacheDirectory(this)
-                .initialize();
     }
 
     private void initLogger() {

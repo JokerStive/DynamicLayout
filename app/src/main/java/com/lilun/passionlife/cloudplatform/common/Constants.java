@@ -66,5 +66,21 @@ public class Constants {
 
 
     //特殊的组织——Role
-    public static String special_orgi_role="/#Role";
+    public static String special_orgi_role="/#role";
+
+    //标示--Role
+    public static String role="role";
+
+    //标示--orgaService
+    public static String orgaService="orgaService";
+
+    //标示--organization
+    public static String organization="organization";
+
+    //标示--orgaAccount
+    public static String orgaAccount="orgaAccount";
+
+    //标示--orgaService
+//    public static String orgaService="orgaService";
+
 }

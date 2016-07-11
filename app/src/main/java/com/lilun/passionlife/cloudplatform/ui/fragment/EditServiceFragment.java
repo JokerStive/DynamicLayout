@@ -13,6 +13,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Service;
+import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
@@ -20,7 +21,6 @@ import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -83,7 +83,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     public View setView() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            service = (OrganizationService) bundle.get("service");
+            service = (OrganizationService) bundle.get(Constants.orgaService);
 
         }
         crumb_title = mCx.getString(R.string.service_edit);
@@ -118,7 +118,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         inputServiceName.setInput(service.getTitle());
         inputServiceDetail.setInput(service.getDescription());
         inputService.setShow_data(service.getServiceName());
-        tv_hint.setEnabled(!Boolean.parseBoolean(service.getSettings().getVisible()));
+        tv_hint.setEnabled(service.getSettings().getVisible() != null && !Boolean.parseBoolean(service.getSettings().getVisible()));
 
         serviceId = service.getServiceId();
         orgaServiceId = service.getId();

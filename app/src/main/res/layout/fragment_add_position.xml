@@ -35,7 +35,7 @@
     </RelativeLayout>
 
     <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
-        android:id="@+id/input_orgi_name"
+        android:id="@+id/input_role_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"

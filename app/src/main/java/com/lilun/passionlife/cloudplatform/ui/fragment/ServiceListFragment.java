@@ -79,7 +79,7 @@ public class ServiceListFragment extends BaseFunctionFragment implements BaseMod
             if (position==0){
                 EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddServiceFragment(),mCx.getString(R.string.service_add)));
             }else{
-                bundle.putSerializable("service",visibleOrgiService.get(position-1));
+                bundle.putSerializable(Constants.orgaService,visibleOrgiService.get(position-1));
                 Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditServiceFragment(), mCx.getString(R.string.service_edit));
                 event.setBundle(bundle);
                 EventBus.getDefault().post(event);

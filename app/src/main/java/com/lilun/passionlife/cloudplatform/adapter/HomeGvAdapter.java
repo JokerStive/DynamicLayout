@@ -57,7 +57,7 @@ public class HomeGvAdapter extends BaseAdapter {
         //TODO :数据
         viewHolder.module_icon.setBackgroundResource(R.drawable.property);
         viewHolder.module_title.setText(servicess.get(position).getTitle());
-        viewHolder.module_desc.setText("这是描述信息");
+        viewHolder.module_desc.setText(servicess.get(position).getDescription());
 
 
         return convertView;

@@ -7,6 +7,7 @@ import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
@@ -188,6 +189,35 @@ public class BaseNetActivity extends FragmentActivity {
     }
 
 
+
+    /**
+     * 获取权限列表
+     */
+    public void getAuthrovityList(String orgiId,callBack_getAuthrovity callBack) {
+        //TODO 可能有什么限制
+        addSubscription(ApiFactory.getRoleList(), new PgSubscriber<List<Role>>(this) {
+
+            @Override
+            public void on_Next(List<Role> role) {
+                if (role.size() == 0) {
+                    ToastHelper.get(App.app).showShort(App.app.getString(R.string.empty_authrovity_list));
+                    return;
+                }
+                //去除admin和自定义的role  /物业：设计师
+                for (int i = 0; i < role.size(); i++) {
+                    if (role.get(i).getOrganizationId()!=null) {
+                        role.remove(i);
+                    }
+                }
+                callBack.onGetAuthrovity(role);
+            }
+
+        });
+    }
+
+
+
+
     public interface callBack_visible_service{
         void onGetVisibleService(List<OrganizationService> visibleOrgiService);
     }
@@ -198,5 +228,9 @@ public class BaseNetActivity extends FragmentActivity {
 
     public interface callBack_getOrgaDepartment{
         void onGetOrgaDepartment(List<Organization> depts);
+    }
+
+    public interface callBack_getAuthrovity{
+        void onGetAuthrovity(List<Role> authrovites);
     }
 }

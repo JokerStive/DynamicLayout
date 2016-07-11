@@ -117,17 +117,19 @@ public class ApiFactory {
     /**
      * 获取组织下面的Role
      */
-    public static  Observable<List<Role>> getRoleList() {
+    public static  Observable<List<Role>> getRoleListFilter(String filter) {
+        return getRes(service.getRoleListFilter(filter));
+    }
+
+    /**
+     * 获取所有的权限
+     */
+    public static  Observable<List<Role>> getRoleList(){
         return getRes(service.getRoleList());
     }
 
 
-    /**
-     * 获取组织下面的Role临时的
-     */
-    public static  Observable<List<Role>> getRoleListTemp(String filter) {
-        return getRes(service.getRoleListTemp(filter));
-    }
+
 
 
     /**
@@ -213,6 +215,14 @@ public class ApiFactory {
 
 
     /**
+     *删除Role下面的principal
+     */
+    public static Observable<Object> deletePrincipal(int  roleId,int ptId) {
+        return getRes(service.deletePrincipal(roleId,ptId));
+    }
+
+
+    /**
      * 删除OrganizationRole
      */
     public static Observable<Object> deleteOrganiRole(String orgaRoleId) {
@@ -242,6 +252,14 @@ public class ApiFactory {
      */
     public static Observable<OrganizationService> putOrgaService(String serviceId,OrganizationService orgaService){
         return getRes(service.putOrgaService(serviceId,orgaService));
+    }
+
+
+    /**
+     *更新OrgaService
+     */
+    public static Observable<OrganizationService> putRole(String roleId,Role role){
+        return getRes(service.putRole(roleId,role));
     }
 
 

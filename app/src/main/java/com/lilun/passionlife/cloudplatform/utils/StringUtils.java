@@ -61,7 +61,7 @@ public class StringUtils {
 
     public static int randow(){
         String s = System.currentTimeMillis() + "";
-        String s1 = s.substring(s.length() - 3);
+        String s1 = s.substring(s.length() - 4);
         return Integer.parseInt(s1);
     }
 }

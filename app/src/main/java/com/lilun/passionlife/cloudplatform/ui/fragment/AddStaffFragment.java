@@ -21,6 +21,7 @@ import com.lilun.passionlife.cloudplatform.custom_view.XListView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
+import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
@@ -125,8 +126,8 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
             lvRole.setAdapter(adapter_role);
             return;
         }
-        String filter = "{\"where\": {\"name\":{\"like\": \"" + orgiId + "%\"}}}";
-        rootActivity.addSubscription(ApiFactory.getRoleListTemp(filter), new PgSubscriber<List<Role>>(rootActivity) {
+        String filter = FilterUtils.roleFilter(orgiId);
+        rootActivity.addSubscription(ApiFactory.getRoleListFilter(filter), new PgSubscriber<List<Role>>(rootActivity) {
             @Override
             public void on_Next(List<Role> roless) {
                 roles = roless;

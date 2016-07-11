@@ -31,6 +31,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import in.srain.cube.views.ptr.PtrDefaultHandler;
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.header.MaterialHeader;
 
 public class HomeActivity extends BaseActivity {
 
@@ -39,6 +42,8 @@ public class HomeActivity extends BaseActivity {
     GridView gvModule;
     @Bind(R.id.tv_deforgi)
     TextView tvDeforgi;
+    @Bind(R.id.home_ptr)
+    PtrFrameLayout homePtr;
 
     private int userId;
     private String defOrgaId = "";
@@ -61,7 +66,19 @@ public class HomeActivity extends BaseActivity {
             getorgiList();
         }
 
-
+        MaterialHeader header = new MaterialHeader(mCx);
+        header.setPtrFrameLayout(homePtr);
+        header.onUIRefreshBegin(homePtr);
+        homePtr.setHeaderView(header);
+        homePtr.setPtrHandler(new PtrDefaultHandler() {
+            @Override
+            public void onRefreshBegin(PtrFrameLayout frame) {
+                getSerListFromNet(visibleOrgiService1 -> {
+                    homePtr.refreshComplete();
+                    showServices(visibleOrgiService1);
+                });
+            }
+        });
     }
 
     /**
@@ -208,7 +225,7 @@ public class HomeActivity extends BaseActivity {
                 }
             }
             visibleOrgiService.add(service);
-            Logger.d("service size = "+visibleOrgiService.size());
+            Logger.d("service size = " + visibleOrgiService.size());
             aCache.put(Constants.cacheKey_service, (Serializable) visibleOrgiService);
             showServices(visibleOrgiService);
         } else {
@@ -243,7 +260,7 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void deleteOrganiService(Event.deleteOrganiService event) {
         getSerListFromNet(visibleOrgiService1 -> {
-            visibleOrgiService=visibleOrgiService1;
+            visibleOrgiService = visibleOrgiService1;
             showServices(visibleOrgiService1);
         });
     }
