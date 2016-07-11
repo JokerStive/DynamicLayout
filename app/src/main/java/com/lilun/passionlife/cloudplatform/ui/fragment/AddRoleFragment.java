@@ -143,8 +143,13 @@ public class AddRoleFragment extends BaseFunctionFragment{
             }
 
         }
+        //如果没有选择权限就直接返回
+        rootActivity.backStack();
     }
 
+    /**
+    *勾选了哪些权限
+    */
     private List<Integer> getChoiseAuthrovity(List<Integer> choiseAuthrisIndex) {
         for(int i=0;i<adapter.mCBFlag.size();i++){
             if (adapter.mCBFlag.get(i)){

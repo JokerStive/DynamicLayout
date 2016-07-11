@@ -94,6 +94,7 @@ public class RoleListFragmentCopy extends BaseFunctionFragment implements BaseMo
                 @Override
                 public void on_Next(Object integer) {
                     roles.remove(position);
+                    CacheUtils.putCache(Constants.cacheKey_role,roles);
                     adapter.notifyDataSetChanged();
                     ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_orgRole_success));
                 }

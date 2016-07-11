@@ -3,105 +3,130 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/default_white"
-    >
+    android:background="@color/default_white">
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="17dp"
-        android:paddingRight="17dp">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp">
 
-            <TextView
-                android:id="@+id/head"
-                style="@style/def_textview"
-                android:layout_centerVertical="true"
-                android:text="@string/staff_photo" />
-
-            <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
-                android:id="@+id/iv_head"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_toRightOf="@id/head"
-                android:src="@drawable/head_portrait" />
-        </RelativeLayout>
+                android:layout_marginTop="17dp"
+                android:orientation="horizontal">
 
-        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
-            android:id="@+id/input_staff_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            app:reg_hint="@string/staff_name_eet1"
-            app:reg_title="@string/staff_name" />
+                <TextView
+                    android:id="@+id/head"
+                    style="@style/def_textview"
+                    android:layout_centerVertical="true"
+                    android:text="@string/staff_photo" />
 
-        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
-            android:id="@+id/input_staff_username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            app:reg_hint="@string/staff_name_eet2"
-            app:reg_title="@string/staff_username" />
+                <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
+                    android:id="@+id/iv_head"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:layout_toRightOf="@id/head"
+                    android:src="@drawable/head_portrait" />
+            </RelativeLayout>
 
-        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
-            android:id="@+id/input_staff_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            app:reg_hint="@string/staff_name_eet3"
-            app:reg_title="@string/staff_password" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:id="@+id/tv_dep"
-                style="@style/def_textview"
-                android:text="@string/belong_dept" />
-
-            <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
-                android:id="@+id/belong_dept"
-                android:layout_width="wrap_content"
+            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+                android:id="@+id/input_staff_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="120dp"
-                android:layout_toRightOf="@id/tv_dep" />
-
-            <TextView
-                android:id="@+id/tv_role"
-                style="@style/def_textview"
-                android:layout_below="@id/tv_dep"
                 android:layout_marginTop="25dp"
-                android:text="@string/belong_role" />
+                app:reg_hint="@string/staff_name_eet1"
+                app:reg_title="@string/staff_name" />
 
-            <ListView
-                android:id="@+id/lv_role"
-                android:layout_width="wrap_content"
+            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+                android:id="@+id/input_staff_username"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/belong_dept"
-                android:layout_alignTop="@id/tv_role"
-                android:layout_below="@id/belong_dept"
-                android:divider="@null"
-                android:listSelector="@android:color/transparent"
-                android:scrollbars="none">
+                android:layout_marginTop="25dp"
+                app:reg_hint="@string/staff_name_eet2"
+                app:reg_title="@string/staff_username" />
 
-            </ListView>
+            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+                android:id="@+id/input_staff_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                app:reg_hint="@string/staff_name_eet3"
+                app:reg_title="@string/staff_password" />
 
-        </RelativeLayout>
 
-    </LinearLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_vertical">
 
+                <TextView
+                    android:id="@+id/tv_dep"
+                    style="@style/def_textview"
+                    android:text="@string/belong_dept" />
+
+                <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
+                    android:id="@+id/belong_dept"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="120dp"
+                    android:layout_toRightOf="@id/tv_dep" />
+
+                <ScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/belong_dept"
+                    android:layout_marginTop="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_role"
+                            style="@style/def_textview"
+                            android:layout_below="@id/tv_dep"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/belong_role" />
+
+                        <com.lilun.passionlife.cloudplatform.custom_view.XListView
+                            android:layout_marginLeft="18dp"
+                            android:layout_marginTop="7dp"
+                            android:id="@+id/lv_role"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:orientation="vertical"></com.lilun.passionlife.cloudplatform.custom_view.XListView>
+                    </LinearLayout>
+
+                </ScrollView>
+                <!-- <ListView
+                     android:id="@+id/lv_role"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_alignLeft="@id/belong_dept"
+                     android:layout_alignTop="@id/tv_role"
+                     android:layout_below="@id/belong_dept"
+                     android:divider="@null"
+                     android:listSelector="@android:color/transparent"
+                     android:scrollbars="none">-->
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
 
     <Button
@@ -110,4 +135,6 @@
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:text="@string/save" />
+
+
 </RelativeLayout>

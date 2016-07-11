@@ -147,7 +147,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
 
                     });
                 }
-            }
+            }rootActivity.backStack();
         }else{
             //如果本来就没有部门，并且没有新增
             rootActivity.backStack();
@@ -155,7 +155,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     }
     private void then() {
         if (dex==alreadyAddDepartments.size()-1){
-
+            rootActivity.backStack();
             ToastHelper.get(mCx).showShort(mCx.getString(R.string.put_department_success));
             return;
         }

@@ -85,6 +85,7 @@ public class OrganizatonListFragment extends BaseFunctionFragment implements Bas
 
     @Subscribe
     public void onEditClick(Event.EditClickEvent event){
+        //TODO 检查当前用户有咩有删除组织机构的权限
         setEdText(adapter);
     }
 

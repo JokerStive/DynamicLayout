@@ -3,7 +3,6 @@ package com.lilun.passionlife.cloudplatform.ui.fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -18,6 +17,7 @@ import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.XListView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
@@ -51,7 +51,7 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     PullChoiseView belongDept;
 
     @Bind(R.id.lv_role)
-    ListView lvRole;
+    XListView lvRole;
 
     @Bind(R.id.input_staff_username)
     RegItemView inputStaffUsername;
@@ -84,6 +84,7 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     @Override
     public void onStart() {
         super.onStart();
+
         getRoleList();
         getDepartmentList();
     }
@@ -133,6 +134,7 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
                 Logger.d(roless.size() + "");
                 adapter_role = new AuthrovityListAdapter(roles, false, AddStaffFragment.this);
                 lvRole.setAdapter(adapter_role);
+//                UIUtils.setListViewHeightBasedOnChildren(lvRole);
             }
         });
     }
@@ -207,6 +209,9 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
         dex_dept++;
     }
 
+    /**
+    *
+    */
     private boolean checkData() {
         if (TextUtils.isEmpty(inputStaffName.getInput()) || TextUtils.isEmpty(inputStaffPassword.getInput()) || TextUtils.isEmpty(inputStaffUsername.getInput())) {
             ToastHelper.get(mCx).showShort("输入不能为空");
