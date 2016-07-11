@@ -48,7 +48,6 @@ public class EditRoleFragment extends BaseFunctionFragment{
 * */
 
     private List<Integer> choiseAuthrisIndex = new ArrayList<>();
-    private List<Integer> choiseAuthris = new ArrayList<>();
     private String crumb_title;
     private List<Role> roles;
     private int index;
@@ -151,6 +150,15 @@ public class EditRoleFragment extends BaseFunctionFragment{
             checkAuthChanges();
         }else{
             //更新role
+            Role role = new Role();
+            role.setName(inputRoleName.getInput());
+            rootActivity.addSubscription(ApiFactory.putRole(roleId, role), new PgSubscriber<Role>(rootActivity) {
+                @Override
+                public void on_Next(Role role) {
+                    checkAuthChanges();
+                }
+
+            });
         }
     }
 
@@ -158,47 +166,77 @@ public class EditRoleFragment extends BaseFunctionFragment{
     *检查权限是否发生了变化
     */
     private void checkAuthChanges() {
-        choiseAuthris.clear();
+        choiseAuthrisIndex.clear();
         for(int i=0;i<adapter.mCBFlag.size();i++){
             if (adapter.mCBFlag.get(i)){
-                choiseAuthris.add(i);
+                choiseAuthrisIndex.add(i);
             }
         }
 
-        Logger.d(" 1"+choiseAuthris);
-        for(int i=0;0<choiseAuthris.size();i++){
-            for(int j=0;j<isHaveIndex.size();j++){
-                Logger.d("i = "+i);
-                Logger.d("j = "+j);
-                Integer ch = choiseAuthris.get(i);
+        //1.本身没有权限，也没有新增权限
+        if (choiseAuthrisIndex.size()==0 && isHaveIndex.size()==0){
+            rootActivity.backStack();
+            return;
+        }
 
-                Integer is = isHaveIndex.get(j);
-                if (ch==is){
+//        //2.本身有权限，最后为0，就删除本身拥有的权限
+//        if (choiseAuthrisIndex.size()==0 && isHaveIndex.size()>0){
+//            Logger.d("删除本身拥有的权限");
+//            return;
+//        }
+//
+//        //3.本身没有权限，最后有，就post新增的这些权限
+//        if (choiseAuthrisIndex.size()>0 && isHaveIndex.size()==0){
+//            Logger.d("post新增的这些权限");
+//            return;
+//        }
+
+
+        Logger.d(" ---"+choiseAuthrisIndex);
+        Logger.d(" ---"+isHaveIndex);
+        for(int i=0;i<choiseAuthrisIndex.size();i++){
+            for(int j=0;j<isHaveIndex.size();j++){
+                if (choiseAuthrisIndex.get(i)==isHaveIndex.get(j)){
                     isHaveIndex.remove(j);
+                    choiseAuthrisIndex.remove(i);
                 }
             }
         }
-
-        choiseAuthris.removeAll(isHaveIndex);
-        Logger.d(" 2"+choiseAuthris);
+        Logger.d(" ---1"+choiseAuthrisIndex);
         Logger.d(" 3"+isHaveIndex);
-//
-//        Logger.d(" 1"+choiseAuthrisIndex);
-//        if (choiseAuthrisIndex.containsAll(isHaveIndex)){
-//            choiseAuthrisIndex.removeAll(isHaveIndex);
-//        }else{
-//            //如果不包含，说明用户想删除所有的
-//            Logger.d("删除原有的权限"+isHaveIndex);
-//            for(Integer index:isHaveIndex){
-//
-//            }
-//        }
-//        Logger.d(" 2"+choiseAuthrisIndex);
+
+        for(Integer index:choiseAuthrisIndex){
+            //TODO post对应的权限
+            String principalId = allAuthrovity.get(index).getName();
+            Logger.d(" prinpical id="+principalId);
+            Principal principal = new Principal();
+            principal.setId(StringUtils.randow());
+            principal.setPrincipalType("Role");
+            principal.setPrincipalId(principalId);
+            rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, principal), new PgSubscriber<Principal>(rootActivity) {
+                @Override
+                public void on_Next(Principal principal) {
+                    then();
+                }
 
 
+            });
 
+        }
 
+        for(Integer index:isHaveIndex){
+            //TODO DELETE 对应的权限
+            int principalId = principals.get(index).getId();
+            rootActivity.addSubscription(ApiFactory.deletePrincipal(roleId, principalId), new PgSubscriber<Object>(rootActivity) {
+                @Override
+                public void on_Next(Object o) {
+                    then();
+                }
+            });
+        }
+    }
 
+    private void then() {
 
     }
 

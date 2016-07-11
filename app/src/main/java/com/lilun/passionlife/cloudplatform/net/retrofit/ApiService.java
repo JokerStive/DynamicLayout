@@ -225,7 +225,7 @@ public interface ApiService {
      *更新Role
      */
     @PUT("Role/{id}")
-    Observable<OrganizationService> putRole(@Path("id") String roleId,@Body Role role);
+    Observable<OrganizationService> putRole(@Path("id") int roleId,@Body Role role);
 
 
 

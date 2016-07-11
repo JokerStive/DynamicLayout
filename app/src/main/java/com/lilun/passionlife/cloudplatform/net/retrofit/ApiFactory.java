@@ -258,7 +258,7 @@ public class ApiFactory {
     /**
      *更新OrgaService
      */
-    public static Observable<OrganizationService> putRole(String roleId,Role role){
+    public static Observable<OrganizationService> putRole(int roleId,Role role){
         return getRes(service.putRole(roleId,role));
     }
 

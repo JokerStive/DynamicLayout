@@ -107,6 +107,7 @@ public class AddRoleFragment extends BaseFunctionFragment{
             if (choiseAuthrovity!=null && choiseAuthrovity.size()!=0){
                 for(Integer index:choiseAuthrovity){
                     Principal pc = new Principal();
+                    pc.setId(StringUtils.randow());
                     pc.setPrincipalType("ROLE");
                     pc.setPrincipalId(roles.get(index).getName());
                     rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, pc), new PgSubscriber<Principal>(rootActivity) {
