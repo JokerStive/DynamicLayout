@@ -74,7 +74,7 @@ public class RoleListFragmentCopy extends BaseFunctionFragment implements BaseMo
             public void on_Next(List<Role> roless) {
                 roles = roless;
                 CacheUtils.putCache(Constants.cacheKey_role,roles);
-                Logger.d(roless.size()+"");
+//                Logger.d(roless.size()+"");
                 adapter = new RoleListAdapter(roles,RoleListFragmentCopy.this);
                 gvModuleList.setAdapter(adapter);
             }

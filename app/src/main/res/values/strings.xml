@@ -114,7 +114,7 @@
     <string name="staff_department_list">部门列表</string>
     <string name="belong_role">所属职位</string>
     <string name="belong_dept">所属部门</string>
-    <string name="staff_add_department">新增部门</string>
+    <string name="staff_add_department">所属部门</string>
     <string name="empty_orgi_list">组织列表为空</string>
 
 

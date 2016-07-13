@@ -43,9 +43,9 @@ public interface ApiService {
     /**
      * 获取用户所属组织列表
      */
-    @Headers("Cache-Control: public, max-age=360000,  max-stale=480000")
+//    @Headers("Cache-Control: public, max-age=360000,  max-stale=480000")
     @GET("Accounts/{id}/organizations")
-    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") int userid);
+    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") int userid,@Query("filter") String filter);
 
 
 
@@ -117,8 +117,6 @@ public interface ApiService {
      */
     @GET("Roles")
     Observable<List<Role>> getRoleList();
-
-
 
 
 

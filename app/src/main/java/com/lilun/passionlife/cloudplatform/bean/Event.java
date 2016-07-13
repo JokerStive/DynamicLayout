@@ -204,4 +204,21 @@ public class Event {
     */
     public static class deleteOrganiService{}
 
+
+
+    /**
+    *选择了所属部门的事件
+    */
+    public static  class choiseDepts{
+        private List<Organization> depts;
+
+        public List<Organization> getDepts() {
+            return depts;
+        }
+
+        public choiseDepts(List<Organization> depts) {
+            this.depts = depts;
+        }
+    }
+
 }

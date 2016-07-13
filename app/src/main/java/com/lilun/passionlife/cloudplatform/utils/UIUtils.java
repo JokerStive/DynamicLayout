@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.utils;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -26,5 +27,20 @@ public class UIUtils {
         ViewGroup.LayoutParams params = listView.getLayoutParams();
         params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
         listView.setLayoutParams(params);
+    }
+
+
+    public static int px2dip(Context context, float pxValue) {
+        return (int) (pxValue / context.getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+
+    public static int dip2px(Context context,float dipValue) {
+        return (int) (dipValue * context.getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+
+    public static int px2sp(Context context,float pxValue) {
+        return (int) (pxValue / context.getResources().getDisplayMetrics().scaledDensity + 0.5f);
     }
 }

@@ -1,7 +1,6 @@
 package com.lilun.passionlife.cloudplatform.adapter;
 
 import android.annotation.TargetApi;
-import android.graphics.Color;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.bean.Organization;
+import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,14 +22,14 @@ import java.util.Map;
 /**
  * Created by youke on 2016/6/8.
  */
-public class addStaff_deptListAdapter extends BaseAdapter {
+public class addStaff_roleListAdapter extends BaseAdapter {
 
 
     public HashMap<Integer, Boolean> mCBFlag;
-    private List<Organization> data;
+    private List<Role> data;
 
 
-    public addStaff_deptListAdapter(List<Organization> data) {
+    public addStaff_roleListAdapter(List<Role> data) {
         this.data = data;
         mCBFlag = new HashMap<Integer, Boolean>();
         Logger.d("data size = " + data.size());
@@ -50,7 +48,7 @@ public class addStaff_deptListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Organization getItem(int position) {
+    public Role getItem(int position) {
         return data.get(position);
     }
 
@@ -75,13 +73,12 @@ public class addStaff_deptListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.item_name.setText(data.get(position).getName());
+        holder.item_name.setText(data.get(position).getTitle());
         holder.item_ll.setOnClickListener(v -> {
 
            mCBFlag.put(position,!holder.item_name.isEnabled());
 
             holder.item_name.setEnabled(mCBFlag.get(position));
-            holder.item_name.setTextColor(mCBFlag.get(position) ? Color.BLACK:Color.GRAY);
 
         });
 
@@ -98,16 +95,7 @@ public class addStaff_deptListAdapter extends BaseAdapter {
     }
 
 
-    public List<Organization>  getChoiseDepts(){
-        List<Organization> choiss = new ArrayList<>();
-        for (int i=0;i<mCBFlag.size();i++){
-            if (mCBFlag.get(i)){
-                choiss.add(data.get(i));
-            }
-        }
 
-        return choiss;
-    }
 
 
     public Map<Integer, Boolean> getmCBFlag() {

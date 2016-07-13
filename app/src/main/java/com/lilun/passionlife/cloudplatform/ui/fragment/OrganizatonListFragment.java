@@ -39,6 +39,7 @@ public class OrganizatonListFragment extends BaseFunctionFragment implements Bas
     @Override
     public View setView() {
         //设置编辑框显示
+        rootActivity.setTitle(mCx.getString(R.string.organization));
         rootActivity.setIsEditShow(true);
         return inflater.inflate(R.layout.fragment_module_list, null);
     }

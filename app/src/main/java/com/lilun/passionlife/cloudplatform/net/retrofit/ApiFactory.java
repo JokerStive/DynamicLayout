@@ -50,8 +50,8 @@ public class ApiFactory {
     *//**
      * 获取所有的组织列表
      */
-    public static Observable<List<OrganizationAccount>> getOrganizationList(int userid) {
-        return getRes(service.getOrganizationList(userid));
+    public static Observable<List<OrganizationAccount>> getOrganizationList(int userid,String filter) {
+        return getRes(service.getOrganizationList(userid,filter));
     }
 
 

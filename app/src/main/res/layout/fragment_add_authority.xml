@@ -4,27 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/default_white"
-    android:orientation="vertical">
 
-    <LinearLayout
+    >
+
+
+
+    <com.lilun.passionlife.cloudplatform.custom_view.FlowLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:id="@+id/fl_dept"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="30dp"
-        android:paddingLeft="17dp"
-        android:paddingRight="17dp">
-
-        <TextView
-            style="@style/def_textview"
-            android:text="@string/authority_add" />
-
-        <ListView style="@style/list_green"
-            android:id="@+id/lv_add_auth_list"
-            android:layout_marginLeft="@dimen/hint_left_title"
-            />
+        >
 
 
-    </LinearLayout>
+
+
+    </com.lilun.passionlife.cloudplatform.custom_view.FlowLayout>
 
     <Button
         android:id="@+id/save"

@@ -80,6 +80,7 @@ public class AddRoleFragment extends BaseFunctionFragment{
             adapter = new AuthrovityListAdapter(authrovites, false, (authrovityListAdapter, position) -> {
 
             });
+            roles = authrovites;
             lvAuthList.setAdapter(adapter);
         });
     }
@@ -119,6 +120,8 @@ public class AddRoleFragment extends BaseFunctionFragment{
                     });
                 }
 
+            }else{
+                rootActivity.backStack();
             }
 
         }else{

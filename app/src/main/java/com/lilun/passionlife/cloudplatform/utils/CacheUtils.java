@@ -17,4 +17,9 @@ public class CacheUtils {
         return  ACache.get(App.app).getAsObject(key);
     }
 
+
+    public static void putCacheExpri(String key,Object value,int time){
+        ACache.get(App.app).put(key, (Serializable) value,time);
+    }
+
 }

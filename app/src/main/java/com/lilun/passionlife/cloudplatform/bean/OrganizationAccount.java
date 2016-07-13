@@ -12,7 +12,18 @@ public class OrganizationAccount implements Serializable {
     private int id;
     private String organizationId;
     private int accountId;
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public OrganizationAccount setOrganization(Organization organization) {
+        this.organization = organization;
+        return this;
+    }
+
     private Account account;
+    private Organization organization;
 
 
     public boolean isIsDefault() {

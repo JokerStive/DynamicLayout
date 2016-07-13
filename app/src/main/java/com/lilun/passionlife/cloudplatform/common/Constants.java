@@ -16,6 +16,8 @@ public class Constants {
     public static final int LONG_CACHE_TIME = 600;
 
 
+
+
     //接口base_url
     public static final String BASE_URL = "http://222.182.202.94:3000/api/";
 
@@ -79,6 +81,7 @@ public class Constants {
 
     //标示--orgaAccount
     public static String orgaAccount="orgaAccount";
+
 
     //标示--orgaService
 //    public static String orgaService="orgaService";

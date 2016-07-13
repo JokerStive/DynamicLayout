@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:id="@+id/item_ll"
+    android:layout_height="wrap_content">
+
+    <TextView
+
+        android:id="@+id/item_name"
+        style="@style/def_textview"
+        android:background="@drawable/selector_tv_choise"
+        android:text="研发部"
+        android:textColor="@color/default_tv_gray"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+         />
+
+
+</LinearLayout>

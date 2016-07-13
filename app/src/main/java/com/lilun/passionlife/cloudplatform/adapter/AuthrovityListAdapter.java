@@ -91,33 +91,45 @@ public class AuthrovityListAdapter extends BaseAdapter {
             holder= (ViewHolder) convertView.getTag();
         }
         holder.item_authro_title.setText(data.get(position).getTitle());
+
+
+        //初始化选中的勾选
         if(data.get(position).isHave()){
-            Logger.d("enable");
             mCBFlag.put(position, true);
         }
         holder.item_authro_delete.setOnClickListener(v -> {
             if (holder.item_authro_choise.getVisibility()==View.VISIBLE){
-                holder.item_authro_choise.setEnabled(!holder.item_authro_choise.isEnabled());
-                if (holder.item_authro_choise.isEnabled()){
-                    mCBFlag.put(position, true);
-                }else{
-                    mCBFlag.put(position, false);
-                }
 
 
+                    mCBFlag.put(position, !holder.item_authro_choise.isEnabled());
 
 
+                //取消选中的监听
+//                if(data.get(position).isHave()){
+//                    Logger.d("删除权限");
+//                    listen.onChoiseItemCancle(AuthrovityListAdapter.this,position);
+//                }
+//
+//                if (holder.item_authro_choise.isEnabled()){
+//                    mCBFlag.put(position, false);
+//                }else{
+//                    mCBFlag.put(position, true);
+//                }
+                holder.item_authro_choise.setEnabled(mCBFlag.get(position));
 
-
-            }else{
-                listen.onItemDelete(AuthrovityListAdapter.this,position);
             }
+//            else{
+//                listen.onChoiseItemCancle(AuthrovityListAdapter.this,position);
+//            }
         });
 
         holder.item_authro_choise.setEnabled(mCBFlag.get(position));
         return convertView;
     }
 
+public void setEnable(int position,boolean enable){
+
+}
 
    public static class ViewHolder{
       public   TextView  item_authro_title;
@@ -127,8 +139,9 @@ public class AuthrovityListAdapter extends BaseAdapter {
     }
 
 
+
     public interface  OnItemClickListen{
-        void  onItemDelete(AuthrovityListAdapter authrovityListAdapter, int position);
+        void onChoiseItemCancle(AuthrovityListAdapter authrovityListAdapter, int position);
 
 
     }

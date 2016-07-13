@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
+import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
@@ -14,6 +15,8 @@ import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ACache;
+import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
+import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
@@ -79,6 +82,43 @@ public class BaseNetActivity extends FragmentActivity {
     public boolean isAdmin() {
         return SpUtils.getBoolean(Constants.ADMIN);
     }
+
+
+    /**
+    *获取用户所属组织列表
+    */
+    protected void getBelongOrga(callBack_getBelongOrga listen) {
+        int userId = SpUtils.getInt(TokenManager.USERID);
+        String filter = FilterUtils.belongOgaFilter();
+        addSubscription(ApiFactory.getOrganizationList(userId,filter), new PgSubscriber<List<OrganizationAccount>>(this) {
+            @Override
+            public void on_Next(List<OrganizationAccount> organizations) {
+                String organizationId="";
+                String name="";
+                if (organizations.size() == 0) {
+                    ToastHelper.get(App.app).showShort(getString(R.string.empty_orgi_list));
+                } else {
+                    //获取到组织后，把默认组织的id存进本地，post事件方便系统配置界面使用
+                    for (OrganizationAccount organization : organizations) {
+                        if (organization.isIsDefault()) {
+                            organizationId = organization.getOrganizationId();
+                             name = organization.getOrganization().getName();
+                            SpUtils.setString(Constants.key_defOrginaId, organizationId);
+                            SpUtils.setString(Constants.key_defOrgina, name);
+                        }
+                    }
+
+                    listen.onGetBelongOrga(organizations,organizationId,name);
+                }
+            }
+        });
+
+    }
+
+
+
+
+
 
 
     /**
@@ -180,8 +220,9 @@ public class BaseNetActivity extends FragmentActivity {
         String url = organiId+ Constants.special_orgi_department;
         addSubscription(ApiFactory.getOrgiDepartment(url), new PgSubscriber<List<Organization>>(this) {
             @Override
-            public void on_Next(List<Organization> organizations) {
-                listen.onGetOrgaDepartment(organizations);
+            public void on_Next(List<Organization> depts) {
+                CacheUtils.putCacheExpri(Constants.cacheKey_department,depts,Constants.LONG_CACHE_TIME);
+                listen.onGetOrgaDepartment(depts);
             }
 
 
@@ -205,7 +246,7 @@ public class BaseNetActivity extends FragmentActivity {
                 }
                 //去除admin和自定义的role  /物业：设计师
                 for (int i = 0; i < role.size(); i++) {
-                    if (role.get(i).getOrganizationId()!=null) {
+                    if (role.get(i).getOrganizationId()!=null || role.get(i).getName().equals("admin")) {
                         role.remove(i);
                     }
                 }
@@ -232,5 +273,10 @@ public class BaseNetActivity extends FragmentActivity {
 
     public interface callBack_getAuthrovity{
         void onGetAuthrovity(List<Role> authrovites);
+    }
+
+
+    public interface callBack_getBelongOrga{
+        void onGetBelongOrga(List<OrganizationAccount> orgas,String defOrgaId,String defOrgaName);
     }
 }

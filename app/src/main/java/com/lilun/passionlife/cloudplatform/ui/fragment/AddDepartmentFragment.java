@@ -40,6 +40,7 @@ public class AddDepartmentFragment extends BaseFunctionFragment {
 
     @Override
     public View setView() {
+        rootActivity.setTitle(mCx.getString(R.string.add_department));
         return inflater.inflate(R.layout.fragment_add_department, null);
     }
 

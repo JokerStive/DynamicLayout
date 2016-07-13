@@ -4,6 +4,13 @@ package com.lilun.passionlife.cloudplatform.utils;
  * Created by Administrator on 2016/7/8.
  */
 public class FilterUtils {
+
+
+    public static String belongOgaFilter(){
+        return "{\"include\":\"organization\"}";
+    }
+
+
     /**
     *直接获取组织下的staff信息的filter
     */
@@ -17,7 +24,7 @@ public class FilterUtils {
     */
     public static String roleFilter(String orgaId){
 //        return "{\"where\": {\"name\":{\"like\": \""+orgaId+"%\"}}}";
-        return "{\"where\":{\"name\":{\"like\":\"/物业:%\"}},\"include\":\"principals\"}";
+        return "{\"where\":{\"name\":{\"like\":\""+orgaId+":%\"}},\"include\":\"principals\"}";
     }
 
 
@@ -29,6 +36,9 @@ public class FilterUtils {
     public static String role(String orgaId){
         return "{\"include\":\"principals\"}";
     }
+
+
+
 
 
 }
