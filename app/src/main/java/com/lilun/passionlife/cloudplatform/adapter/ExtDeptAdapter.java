@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by youke on 2016/6/8.
  */
-public class ParentOrgisAdapter extends BaseAdapter {
+public class ExtDeptAdapter extends BaseAdapter {
 
 
     private  List<Organization> data;
@@ -26,7 +26,7 @@ public class ParentOrgisAdapter extends BaseAdapter {
     private final boolean isEnable;
 
 
-    public ParentOrgisAdapter(List<Organization> data, boolean isEnable, OnItemDeleteListen listen) {
+    public ExtDeptAdapter(List<Organization> data, boolean isEnable, OnItemDeleteListen listen) {
         this.data=data;
         this.listen =listen;
         this.isEnable = isEnable;
@@ -71,7 +71,7 @@ public class ParentOrgisAdapter extends BaseAdapter {
             delete.setVisibility(isEnable ? View.VISIBLE:View.GONE);
 
             fr_check.setOnClickListener(v -> {
-                listen.onItemDelete(ParentOrgisAdapter.this,position);
+                listen.onItemDelete(ExtDeptAdapter.this,position);
 //                data.remove(position);
 //                notifyDataSetChanged();
             });
@@ -95,7 +95,7 @@ public class ParentOrgisAdapter extends BaseAdapter {
 
 
     public interface  OnItemDeleteListen{
-        void  onItemDelete(ParentOrgisAdapter parentOrgisAdapter, int position);
+        void  onItemDelete(ExtDeptAdapter parentOrgisAdapter, int position);
     }
 
 }

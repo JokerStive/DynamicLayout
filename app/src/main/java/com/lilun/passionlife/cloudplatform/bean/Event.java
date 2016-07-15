@@ -200,6 +200,23 @@ public class Event {
 
 
     /**
+     * create by youke
+     * desc :新增了一个role
+     */
+    public static class addNewRole {
+        public addNewRole(Role role) {
+            this.role = role;
+        }
+
+        public Role getRole() {
+            return role;
+        }
+
+        private Role role;
+    }
+
+
+    /**
     *删除了一个组织服务的事件
     */
     public static class deleteOrganiService{}

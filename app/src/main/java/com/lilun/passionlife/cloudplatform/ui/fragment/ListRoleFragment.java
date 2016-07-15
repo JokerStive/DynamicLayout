@@ -26,7 +26,7 @@ import butterknife.Bind;
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class RoleListFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListRoleFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
 
     @Bind(R.id.module_list)
     GridView gvModuleList;
@@ -66,7 +66,7 @@ public class RoleListFragment extends BaseFunctionFragment implements BaseModule
             public void on_Next(List<OrganizationRole> roless) {
                 roles = roless;
                 Logger.d("roless size = " +roless.size());
-                adapter = new OrgaRoleListAdapter(roless, RoleListFragment.this);
+                adapter = new OrgaRoleListAdapter(roless, ListRoleFragment.this);
                 gvModuleList.setAdapter(adapter);
             }
 

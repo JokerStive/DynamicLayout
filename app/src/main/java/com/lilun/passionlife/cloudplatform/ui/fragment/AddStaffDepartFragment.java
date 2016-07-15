@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -13,11 +14,11 @@ import com.lilun.passionlife.cloudplatform.custom_view.FlowLayout;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
 import com.lilun.passionlife.cloudplatform.utils.UIUtils;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Iterator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -34,29 +35,35 @@ public class AddStaffDepartFragment extends BaseFunctionFragment {
     @Bind(R.id.save)
     Button save;
     private addStaff_deptListAdapter adapter_dept;
+    private List<String> alreadHaveDept;
 
 
     @Override
     public View setView() {
         View view = inflater.inflate(R.layout.fragment_add_authority, null);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            alreadHaveDept = (List<String>) bundle.get("alreadHaveDept");
+
+        }
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        belongDept.setHorizontalSpacing(UIUtils.dip2px(App.app,10));
-        belongDept.setVerticalSpacing(UIUtils.dip2px(App.app,10));
+        belongDept.setHorizontalSpacing(UIUtils.dip2px(App.app, 10));
+        belongDept.setVerticalSpacing(UIUtils.dip2px(App.app, 10));
         getDeptList();
 
     }
 
     /**
-    *获取组织下的部门列表
-    */
+     * 获取组织下的部门列表
+     */
     public void getDeptList() {
         List<Organization> depts = (List<Organization>) CacheUtils.getCache(Constants.cacheKey_department);
-        if (depts!=null){
+        if (depts != null) {
             EventBus.getDefault().post(new getDepts_ok(depts));
             return;
         }
@@ -68,25 +75,36 @@ public class AddStaffDepartFragment extends BaseFunctionFragment {
     }
 
     @Subscribe
-    public void getDept_oK(getDepts_ok event){
+    public void getDept_oK(getDepts_ok event) {
         List<Organization> depts = event.getDepts();
+        if (alreadHaveDept != null) {
+            for (Iterator<Organization> itA = depts.iterator(); itA.hasNext(); ) {
+                Organization orga = itA.next();
+                for (int i = 0; i < alreadHaveDept.size(); i++) {
+                    if (orga.getName().equals(alreadHaveDept.get(i))) {
+                        itA.remove();
+                    }
+                }
+            }
+        }
+
+
         adapter_dept = new addStaff_deptListAdapter(depts);
         belongDept.setAdapter(adapter_dept);
     }
 
     @OnClick(R.id.save)
-    void save(){
+    void save() {
         List<Organization> choiseDepts = adapter_dept.getChoiseDepts();
-        Logger.d("chois dept size=="+choiseDepts.size());
-        if (adapter_dept.getChoiseDepts().size()!=0){
+//        Logger.d("chois dept size=="+choiseDepts.size());
+        if (adapter_dept.getChoiseDepts().size() != 0) {
             EventBus.getDefault().post(new Event.choiseDepts(choiseDepts));
             rootActivity.backStack();
         }
     }
 
 
-
-    class getDepts_ok{
+    class getDepts_ok {
         private List<Organization> depts;
 
         public getDepts_ok(List<Organization> depts) {

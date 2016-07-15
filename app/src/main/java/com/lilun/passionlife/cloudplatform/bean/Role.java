@@ -10,12 +10,22 @@ import java.util.List;
 public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int id;
+    private Object id;
     private String name;
     private String description;
     private String created;
     private String modified;
     private String title;
+    private boolean isNew;
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public Role setNew(boolean aNew) {
+        isNew = aNew;
+        return this;
+    }
 
     public boolean isHave() {
         return isHave;
@@ -32,9 +42,19 @@ public class Role implements Serializable {
         return organizationId;
     }
 
+    public Object getId() {
+        return id;
+    }
+
+    public Role setId(Object id) {
+        this.id = id;
+        return this;
+    }
+
     public Role setOrganizationId(String organizationId) {
         this.organizationId = organizationId;
         return this;
+
     }
 
     private String organizationId;
@@ -50,13 +70,7 @@ public class Role implements Serializable {
 
     private List<Principal> principals;
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

@@ -1,10 +1,10 @@
 package com.lilun.passionlife.cloudplatform.net.retrofit;
 
 import com.lilun.passionlife.cloudplatform.bean.Account;
+import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.LoginRes;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
-import com.lilun.passionlife.cloudplatform.bean.OrganizationRole;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
@@ -45,7 +45,7 @@ public interface ApiService {
      */
 //    @Headers("Cache-Control: public, max-age=360000,  max-stale=480000")
     @GET("Accounts/{id}/organizations")
-    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") int userid,@Query("filter") String filter);
+    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") Double userid,@Query("filter") String filter);
 
 
 
@@ -68,7 +68,7 @@ public interface ApiService {
      */
 //    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
     @GET("Accounts/{id}/hasPermission")
-    Observable<Boolean> hasPermission(@Path("id") int userid, @Query("role") String permission);
+    Observable<Boolean> hasPermission(@Path("id") Double userid, @Query("role") String permission);
 
 
 
@@ -103,7 +103,7 @@ public interface ApiService {
      *获取组织机构下面的OrganizationRole
      */
     @GET("Organizations/{id}/children")
-    Observable<List<OrganizationRole>> getOrgiRole(@Path("id") String OrgiId);
+    Observable<List<Role>> getOrgiRole(@Path("id") String OrgiId);
 
 
     /**
@@ -117,6 +117,14 @@ public interface ApiService {
      */
     @GET("Roles")
     Observable<List<Role>> getRoleList();
+
+
+    /**
+     *获取当前id是否isInherited
+     */
+    @GET("Organizations/{id}/isInherited")
+    Observable<Boolean> getIsInherited(@Path("id") String id);
+
 
 
 
@@ -144,7 +152,7 @@ public interface ApiService {
      *新增principal
      */
     @POST("Roles/{id}/principals")
-    Observable<Principal> postPrincipal(@Path("id")  int roleId,@Body Principal principal);
+    Observable<Principal> postPrincipal(@Path("id")  Double roleId,@Body Principal principal);
 
 
     /**
@@ -157,13 +165,13 @@ public interface ApiService {
      *给account新增一个organization
      */
     @POST("Accounts/{id}/organizations")
-    Observable<OrganizationAccount> postAccOrganization(@Path("id") int userId ,@Body OrganizationAccount orga);
+    Observable<OrganizationAccount> postAccOrganization(@Path("id") Double userId ,@Body OrganizationAccount orga);
 
     /**
      *给account新增一个role
      */
     @POST("Accounts/{id}/roles/{role}")
-    Observable<Object> postAccRole(@Path("id") int userId ,@Path("role") String role);
+    Observable<Object> postAccRole(@Path("id") Double userId ,@Path("role") String role);
 
     /**
     *删除组织
@@ -188,13 +196,13 @@ public interface ApiService {
      *删除Role
      */
     @DELETE("Roles/{id}")
-    Observable<Object> deleteRole(@Path("id") int roleId);
+    Observable<Object> deleteRole(@Path("id") Double roleId);
 
     /**
      *删除Role下面的principal
      */
     @DELETE("Roles/{id}/principals/{fk}")
-    Observable<Object> deletePrincipal(@Path("id") int roleId,@Path("fk") int ptId);
+    Observable<Object> deletePrincipal(@Path("id") Double roleId,@Path("fk") Double ptId);
 
 
 
@@ -202,7 +210,7 @@ public interface ApiService {
      *删除OrgaAccount
      */
     @DELETE("OrganizationAccounts/{id}")
-    Observable<Object> deleteOrgaAccount(@Path("id") int ocId);
+    Observable<Object> deleteOrgaAccount(@Path("id") Double ocId);
 
 
 
@@ -223,9 +231,14 @@ public interface ApiService {
      *更新Role
      */
     @PUT("Role/{id}")
-    Observable<OrganizationService> putRole(@Path("id") int roleId,@Body Role role);
+    Observable<OrganizationService> putRole(@Path("id") Double roleId,@Body Role role);
 
 
+    /**
+     *设置isInherited
+     */
+    @PUT("Organizations/{id}/isInherited")
+    Observable<Object> putIsInheroted(@Path("id") String id,@Body IsInherited isInherited);
 
 
 

@@ -42,16 +42,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            app:reg_title="@string/depar_name"
-            app:reg_hint="@string/depar_et1"
+            app:reg_title="@string/role_namee"
+            app:reg_hint="@string/role_et1"
             />
         <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
             android:id="@+id/input_department_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
-            app:reg_title="@string/depar_desc"
-            app:reg_hint="@string/depar_et2"
+            app:reg_title="@string/role_desc"
+            app:reg_hint="@string/role_et2"
             />
    <!-- <com.lilun.passionlife.cloudplatform.custom_view.ExtendItem
         android:id="@+id/exv_add_depart"

@@ -29,7 +29,7 @@ import butterknife.Bind;
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class ServiceListFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListOrgaServiceFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
 
     @Bind(R.id.module_list)
     GridView gvModuleList;

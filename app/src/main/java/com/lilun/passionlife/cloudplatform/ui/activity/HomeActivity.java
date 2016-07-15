@@ -69,12 +69,15 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
                 getBelongOrga((orgas, defOrgaId1, defOrgaName1) -> {
-                    homePtr.refreshComplete();
+//                    Logger.d();
+//                    homePtr.refreshComplete();
                     tvDeforgi.setText(defOrgaName1);
-                });
-                getSerListFromNet(visibleOrgiService1 -> {
-                    homePtr.refreshComplete();
-                    showServices(visibleOrgiService1);
+
+                    getSerListFromNet(visibleOrgiService1 -> {
+                        homePtr.refreshComplete();
+                        showServices(visibleOrgiService1);
+                    });
+
                 });
             }
         });
@@ -200,8 +203,9 @@ public class HomeActivity extends BaseActivity {
         gvModule.setNumColumns(data.size() == 1 ? 1 : 2);
         gvModule.setAdapter(new HomeGvAdapter(mCx, data));
         gvModule.setOnItemClickListener((parent, view, position, id) -> {
-            if (data.get(position).getServiceId() != null && data.get(position).getServiceId().equals("SysConfig")) {
-
+            if (data.get(position).getServiceId() != null) {
+                String serviceId = data.get(position).getServiceId();
+                if (serviceId.equals(""))
 //                Logger.d(StringUtils.randow()+"");
                 IntentUtils.startAct(mAc, SystemConfigActivity.class);
             }

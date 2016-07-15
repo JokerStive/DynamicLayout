@@ -18,14 +18,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.Bind;
 
 /**
  * Created by youke on 2016/6/22.
  */
-public class StaffListFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer{
+public class ListStaffFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer{
 
     @Bind(R.id.module_list)
     GridView gvModuleList;
@@ -61,7 +60,7 @@ public class StaffListFragment extends BaseFunctionFragment implements BaseModul
             @Override
             public void on_Next(List<OrganizationAccount> organizationAccounts) {
                 orgaAccs = organizationAccounts;
-                adapter = new OrgaAccountListAdapter(orgaAccs,StaffListFragment.this);
+                adapter = new OrgaAccountListAdapter(orgaAccs,ListStaffFragment.this);
                 gvModuleList.setAdapter(adapter);
             }
 
@@ -79,7 +78,7 @@ public class StaffListFragment extends BaseFunctionFragment implements BaseModul
     @Override
     public void onDeleteClick(int position) {
         if (orgaAccs!=null && orgaAccs.size()!=0){
-            int ocId = orgaAccs.get(position).getId();
+            double ocId = (double) orgaAccs.get(position).getId();
             rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<Object>(rootActivity) {
                 @Override
                 public void on_Next(Object object) {

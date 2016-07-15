@@ -27,6 +27,11 @@ public class SpUtils {
 
     }
 
+    public static Double getDouble(String key){
+        SharedPreferences sp = App.app.getSharedPreferences(Constants.SP_NAME, App.app.MODE_PRIVATE);
+        return Double.valueOf(sp.getInt(key,-1));
+    }
+
 
 
     public static void setString( String key, String value) {

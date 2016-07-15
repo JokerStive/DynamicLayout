@@ -125,6 +125,11 @@ public class ExtendItem extends RelativeLayout {
         itemBtn.setEnabled(btnCheck);
     }
 
+
+    public boolean isInherited(){
+        return itemBtn.isEnabled();
+    }
+
     /**
     *设置勾选框能够被点击
     */

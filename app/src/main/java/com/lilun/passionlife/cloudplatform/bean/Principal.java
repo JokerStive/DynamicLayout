@@ -17,14 +17,15 @@ public class Principal implements Serializable {
 
     private String principalType;
     private String principalId;
-    private int id;
+    private Object id;
 
-    public int getId() {
+    public Object getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public Principal setId(Object id) {
         this.id = id;
+        return this;
     }
 
     public String getPrincipalType() {

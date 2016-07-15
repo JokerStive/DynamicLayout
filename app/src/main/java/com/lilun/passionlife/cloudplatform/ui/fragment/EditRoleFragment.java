@@ -16,7 +16,6 @@ import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
-import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -54,7 +53,7 @@ public class EditRoleFragment extends BaseFunctionFragment{
     private List<Principal> principals;
     private List<Role> allAuthrovity;
     private List<Integer> isHaveIndex=new ArrayList<>();
-    private int roleId;
+    private Double roleId;
 
     @Override
     public View setView() {
@@ -81,7 +80,7 @@ public class EditRoleFragment extends BaseFunctionFragment{
             roleName = roleName==null? role.getTitle():roleName;
 //            roleDesc = roleDesc==null? role.getDescription():roleDesc;
             principals = role.getPrincipals();
-            roleId = role.getId();
+            roleId = (Double) role.getId();
 //            Log
         }
     }
@@ -198,7 +197,7 @@ public class EditRoleFragment extends BaseFunctionFragment{
 
 
         for (int i=0;i<principals.size();i++){
-           int  principalId = principals.get(i).getId();
+           Double  principalId = (Double) principals.get(i).getId();
             rootActivity.addSubscription(ApiFactory.deletePrincipal(roleId, principalId), new PgSubscriber<Object>(rootActivity) {
                 @Override
                 public void on_Next(Object o) {
@@ -218,7 +217,7 @@ public class EditRoleFragment extends BaseFunctionFragment{
             String principalId = allAuthrovity.get(choiseAuthrisIndex.get(i)).getName();
             Logger.d(" prinpical id="+principalId);
             Principal principal = new Principal();
-            principal.setId(StringUtils.randow());
+//            principal.setId(StringUtils.randow());
             principal.setPrincipalType("Role");
             principal.setPrincipalId(principalId);
             rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, principal), new PgSubscriber<Principal>(rootActivity) {

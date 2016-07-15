@@ -28,7 +28,7 @@ import butterknife.Bind;
 /**
  * Created by youke on 2016/6/22.
  */
-public class OrganizatonListFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListOrgaFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
 
     @Bind(R.id.module_list)
     GridView gvModuleList;
@@ -71,7 +71,7 @@ public class OrganizatonListFragment extends BaseFunctionFragment implements Bas
                     public void on_Next(List<Organization> organizations) {
                         orgiChildren=organizations;
 //                        Logger.d("size  ="+orgiChildren.size());
-                        adapter = new OrgaListAdapter(organizations,OrganizatonListFragment.this);
+                        adapter = new OrgaListAdapter(organizations,ListOrgaFragment.this);
                         gvModuleList.setAdapter(adapter);
                     }
                 });

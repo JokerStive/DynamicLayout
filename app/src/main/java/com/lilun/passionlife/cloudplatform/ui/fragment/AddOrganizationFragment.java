@@ -8,9 +8,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.adapter.ParentOrgisAdapter;
+import com.lilun.passionlife.cloudplatform.adapter.ExtDeptAdapter;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
+import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
@@ -43,7 +44,6 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
     @Bind(R.id.iv_head)
     CircleImageView ivHead;
-
 
 
     @Bind(R.id.input_role_name)
@@ -87,19 +87,17 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
 
     /**
-     *更新组织，需要设置初始化数据
+     * 更新组织，需要设置初始化数据
      */
     private void setInitData() {
-        inputOrgiName.setInput(TextUtils.isEmpty(orgna.getName())?"":orgna.getName());
-        inputOrgiDesc.setInput(TextUtils.isEmpty(orgna.getDescription())?"":orgna.getDescription());
+        inputOrgiName.setInput(TextUtils.isEmpty(orgna.getName()) ? "" : orgna.getName());
+        inputOrgiDesc.setInput(TextUtils.isEmpty(orgna.getDescription()) ? "" : orgna.getDescription());
     }
 
 
-
-
     /**
-    *保存
-    */
+     * 保存
+     */
     @OnClick(R.id.save)
     void save() {
         orgaName = inputOrgiName.getInput();
@@ -113,19 +111,19 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     }
 
 
-
     /**
      * 如果新增了自己的部门，就轮询提交服务器
+     *
      * @param id
      */
     private void saveDepartment(String id) {
         size = departments.size();
-        for(int i=0;i<departments.size();i++){
+        for (int i = 0; i < departments.size(); i++) {
             Organization depart = departments.get(i);
-            depart.setId(id  + Constants.special_orgi_department+"/"+depart.getName());
-            depart.setParentId(id+Constants.special_orgi_department);
-            Logger.d("department id  = "+id  + Constants.special_orgi_department+"/"+depart.getName());
-            Logger.d("department parentid  = "+id  + "/"+depart.getName() +Constants.special_orgi_department);
+            depart.setId(id + Constants.special_orgi_department + "/" + depart.getName());
+            depart.setParentId(id + Constants.special_orgi_department);
+            Logger.d("department id  = " + id + Constants.special_orgi_department + "/" + depart.getName());
+            Logger.d("department parentid  = " + id + "/" + depart.getName() + Constants.special_orgi_department);
             rootActivity.addSubscription(ApiFactory.postOrganization(departments.get(i)), new PgSubscriber<Organization>(rootActivity) {
                 @Override
                 public void on_Next(Organization organizationBean) {
@@ -139,7 +137,7 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     }
 
     private void then() {
-        if (dex==size-1){
+        if (dex == size - 1) {
             rootActivity.backStack();
             return;
         }
@@ -152,21 +150,25 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
      */
     private void saveOrgi() {
         orgna = new Organization();
+        orgna.setInherited(exvAddOrgi.isInherited());
         orgna.setId(orgiId + "/" + orgaName);
         orgna.setName(orgaName);
         orgna.setParentId(orgiId);
-        Logger.d("orgi name = "+orgaName);
-        Logger.d("orgi desc = "+orgaDesc);
+        Logger.d("orgi name = " + orgaName);
+        Logger.d("orgi desc = " + orgaDesc);
         orgna.setDescription(orgaDesc);
         //TODO 设置icon
         rootActivity.addSubscription(ApiFactory.postOrganization(orgna), new PgSubscriber<Organization>(rootActivity) {
             @Override
-            public void on_Next(Organization organizationBean) {
+            public void on_Next(Organization orga) {
 
-                if (departments != null && departments.size()!=0) {
-                    saveDepartment(orgna.getId());
-                }else{
-                rootActivity.backStack();
+                if (departments != null && departments.size() != 0) {
+                    String id = orga.getId() + Constants.special_orgi_department;
+                    rootActivity.setIsInherited(id, new IsInherited(orga.isInherited()));
+                    Logger.d(" set isInherited id = "+id+"---"+"isInherited = "+orga.isInherited());
+                    saveDepartment(orga.getId());
+                } else {
+                    rootActivity.backStack();
                 }
             }
 
@@ -176,16 +178,16 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
 
     /**
-     *显示继承自父的东西
+     * 显示继承自父的东西
      */
     @Override
     public void onBtnChoise(boolean enabled) {
         if (enabled) {
             getExtendsDepartment(orgiId);
-        } else if (departments!=null){
+        } else if (departments != null) {
             //
             Logger.d("展示自己的部门");
-            exvAddOrgi.setListviewData(new ParentOrgisAdapter(departments, true, (parentOrgisAdapter, position) -> {
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(departments, true, (parentOrgisAdapter, position) -> {
                 deleteItem(parentOrgisAdapter, position);
             }));
         }
@@ -193,26 +195,26 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     }
 
     /**
-    *从内存中删除一个dep  并刷新视图
-    */
-    private void deleteItem(ParentOrgisAdapter parentOrgisAdapter, int position) {
+     * 从内存中删除一个dep  并刷新视图
+     */
+    private void deleteItem(ExtDeptAdapter parentOrgisAdapter, int position) {
         departments.remove(position);
         parentOrgisAdapter.notifyDataSetChanged();
     }
 
 
     /**
-     *获取继承自父组织的部门
+     * 获取继承自父组织的部门
      */
     private void getExtendsDepartment(String organiId) {
-       rootActivity.getOrgaDepartment(organiId, organizations -> {
-           if (organizations.size() == 0) {
-               ToastHelper.get(mCx).showShort(mCx.getString(R.string.empty_depart_list));
-           }
-           exvAddOrgi.setListviewData(new ParentOrgisAdapter(organizations, false, (parentOrgisAdapter, position) -> {
+        rootActivity.getOrgaDepartment(organiId, organizations -> {
+            if (organizations.size() == 0) {
+                ToastHelper.get(mCx).showShort(mCx.getString(R.string.empty_depart_list));
+            }
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(organizations, false, (parentOrgisAdapter, position) -> {
 
-           }));
-       });
+            }));
+        });
     }
 
     @Override
@@ -229,19 +231,16 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
 
     /**
-    *新增了一个部门
-    */
+     * 新增了一个部门
+     */
     @Subscribe
-    public void addDepartment(Event.addNewDepartment event){
+    public void addDepartment(Event.addNewDepartment event) {
         Logger.d("   get  a new depart");
         newDepartment = event.getDepartment();
 //        departments.add(department);
 //        Logger.d(" lis size = " +departments.size());
-//        exvAddOrgi.setListviewData(new ParentOrgisAdapter(departments, mCx));
+//        exvAddOrgi.setListviewData(new ExtDeptAdapter(departments, mCx));
     }
-
-
-
 
 
 //  保存fragmen状态  =====================================================================================================================
@@ -262,17 +261,17 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
             orgaDesc = savedInstanceState.getString("organiDesc");
             departments = (List<Organization>) savedInstanceState.get("listData");
-            if (newDepartment!=null){
+            if (newDepartment != null) {
                 departments.add(newDepartment);
-                newDepartment=null;
+                newDepartment = null;
             }
         }
 
-        Logger.d("organiName = "+orgaName +"organiDesc = "+orgaDesc +"  list size =  "+departments.size());
+        Logger.d("organiName = " + orgaName + "organiDesc = " + orgaDesc + "  list size =  " + departments.size());
 
-            exvAddOrgi.setListviewData(new ParentOrgisAdapter(departments, true, (parentOrgisAdapter, position) -> {
-                deleteItem(parentOrgisAdapter,position);
-            }));
+        exvAddOrgi.setListviewData(new ExtDeptAdapter(departments, true, (parentOrgisAdapter, position) -> {
+            deleteItem(parentOrgisAdapter, position);
+        }));
 
 //        }
     }
@@ -280,8 +279,8 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     @Override
     public void onResume() {
         super.onResume();
-        inputOrgiName.setInput(TextUtils.isEmpty(orgaName)?"":orgaName);
-        inputOrgiDesc.setInput(TextUtils.isEmpty(orgaDesc)?"":orgaDesc);
+        inputOrgiName.setInput(TextUtils.isEmpty(orgaName) ? "" : orgaName);
+        inputOrgiDesc.setInput(TextUtils.isEmpty(orgaDesc) ? "" : orgaDesc);
     }
 
 

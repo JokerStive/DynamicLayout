@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.ui.App;
-import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +33,7 @@ public class addStaff_deptListAdapter extends BaseAdapter {
     public addStaff_deptListAdapter(List<Organization> data) {
         this.data = data;
         mCBFlag = new HashMap<Integer, Boolean>();
-        Logger.d("data size = " + data.size());
+//        Logger.d("data size = " + data.size());
         initData();
     }
 

@@ -13,7 +13,7 @@ public class Constants {
     public static final int SHORT_CACHE_TIME = 60;
 
     //长缓存时间
-    public static final int LONG_CACHE_TIME = 600;
+    public static final int LONG_CACHE_TIME = 300;
 
 
 
@@ -72,6 +72,9 @@ public class Constants {
 
     //标示--Role
     public static String role="role";
+
+    //标示--dept
+    public static String orgaDept ="orgaDept";
 
     //标示--orgaService
     public static String orgaService="orgaService";

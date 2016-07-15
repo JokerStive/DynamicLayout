@@ -2,11 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lilun.passionlife">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name="com.lilun.passionlife.cloudplatform.ui.App"
+        android:name=".cloudplatform.ui.App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -62,14 +62,21 @@
             android:name=".cloudplatform.ui.activity.StaffManagerActivity"
             android:screenOrientation="portrait" />
 
+        <!-- 员工管理 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.DeptManagerActivity"
+            android:screenOrientation="portrait" />
+
         <!-- 模块管理 -->
         <activity
             android:name=".cloudplatform.ui.activity.ModuleManagerActivity"
             android:screenOrientation="portrait" />
 
-        <!--引导页-->
-        <activity android:name=".cloudplatform.ui.activity.GuideActivity"
-            android:screenOrientation="portrait"/>
+        <!-- 引导页 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.GuideActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".cloudplatform.ui.activity.PersonalCenterActivity"></activity>
     </application>
 
 </manifest>

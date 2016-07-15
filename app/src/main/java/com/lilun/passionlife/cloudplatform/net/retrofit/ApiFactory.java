@@ -1,13 +1,13 @@
 package com.lilun.passionlife.cloudplatform.net.retrofit;
 
 import com.lilun.passionlife.cloudplatform.bean.Account;
+import com.lilun.passionlife.cloudplatform.bean.IsInherited;
+import com.lilun.passionlife.cloudplatform.bean.LoginRes;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
+import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
-import com.lilun.passionlife.cloudplatform.bean.LoginRes;
-import com.lilun.passionlife.cloudplatform.bean.OrganizationRole;
-import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Service;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public class ApiFactory {
     *//**
      * 获取所有的组织列表
      */
-    public static Observable<List<OrganizationAccount>> getOrganizationList(int userid,String filter) {
+    public static Observable<List<OrganizationAccount>> getOrganizationList(Double userid,String filter) {
         return getRes(service.getOrganizationList(userid,filter));
     }
 
@@ -76,7 +76,7 @@ public class ApiFactory {
     /**
      *查询是否有权限
      */
-    public static   Observable<Boolean>  hasPermission(int userid,String permission){;
+    public static   Observable<Boolean>  hasPermission(Double userid,String permission){;
         return getRes(service.hasPermission(userid,permission));
     }
 
@@ -109,7 +109,7 @@ public class ApiFactory {
     /**
      * 获取组织下面的OrganizationRole
      */
-    public static Observable<List<OrganizationRole>> getOrgiRole(String orgiId) {
+    public static Observable<List<Role>> getOrgiRole(String orgiId) {
         return getRes(service.getOrgiRole(orgiId));
     }
 
@@ -140,6 +140,14 @@ public class ApiFactory {
     }
 
 
+    /**
+     * 获取当前id是否isInherited
+     */
+    public static  Observable<Boolean> getIsInherited(String id) {
+        return getRes(service.getIsInherited(id));
+    }
+
+
 
 
     /**
@@ -161,7 +169,7 @@ public class ApiFactory {
     /**
      *新增principal
      */
-    public static Observable<Principal> postPrincipal(int roleId,Principal principal) {
+    public static Observable<Principal> postPrincipal(Double roleId,Principal principal) {
         return getRes(service.postPrincipal(roleId,principal));
     }
 
@@ -178,14 +186,14 @@ public class ApiFactory {
     /**
      *给account新增一个organization
      */
-    public static Observable<OrganizationAccount> postAccOrganization(int userId,OrganizationAccount orga) {
+    public static Observable<OrganizationAccount> postAccOrganization(Double userId,OrganizationAccount orga) {
         return getRes(service.postAccOrganization(userId,orga));
     }
 
     /**
      *给account新增一个role
      */
-    public static Observable<Object> postAccRole(int userId,String role) {
+    public static Observable<Object> postAccRole(Double userId,String role) {
         return getRes(service.postAccRole(userId,role));
     }
 
@@ -209,7 +217,7 @@ public class ApiFactory {
     /**
      * 删除Role
      */
-    public static Observable<Object> deleteRole(int  roleId) {
+    public static Observable<Object> deleteRole(Double  roleId) {
         return getRes(service.deleteRole(roleId));
     }
 
@@ -217,7 +225,7 @@ public class ApiFactory {
     /**
      *删除Role下面的principal
      */
-    public static Observable<Object> deletePrincipal(int  roleId,int ptId) {
+    public static Observable<Object> deletePrincipal(Double  roleId,Double ptId) {
         return getRes(service.deletePrincipal(roleId,ptId));
     }
 
@@ -233,7 +241,7 @@ public class ApiFactory {
     /**
      * 删除OrgaAccount
      */
-    public static  Observable<Object> deleteOrgaAccount(int  ocId) {
+    public static  Observable<Object> deleteOrgaAccount(Double  ocId) {
         return getRes(service.deleteOrgaAccount(ocId));
     }
 
@@ -258,8 +266,16 @@ public class ApiFactory {
     /**
      *更新OrgaService
      */
-    public static Observable<OrganizationService> putRole(int roleId,Role role){
+    public static Observable<OrganizationService> putRole(Double roleId,Role role){
         return getRes(service.putRole(roleId,role));
+    }
+
+
+    /**
+     *设置isInherited
+     */
+    public static Observable<Object> putIsInheroted(String id,IsInherited isInherited){
+        return getRes(service.putIsInheroted(id,isInherited));
     }
 
 

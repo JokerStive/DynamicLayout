@@ -9,9 +9,18 @@ public class OrganizationAccount implements Serializable {
 
 
     private boolean isDefault;
-    private int id;
+    private Object id;
     private String organizationId;
     private int accountId;
+
+    public Object getId() {
+        return id;
+    }
+
+    public OrganizationAccount setId(Object id) {
+        this.id = id;
+        return this;
+    }
 
     public Organization getOrganization() {
         return organization;
@@ -34,13 +43,7 @@ public class OrganizationAccount implements Serializable {
         this.isDefault = isDefault;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getOrganizationId() {
         return organizationId;

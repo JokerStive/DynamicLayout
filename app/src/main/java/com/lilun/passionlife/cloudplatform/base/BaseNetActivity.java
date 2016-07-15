@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.Event;
+import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
@@ -88,7 +89,7 @@ public class BaseNetActivity extends FragmentActivity {
     *获取用户所属组织列表
     */
     protected void getBelongOrga(callBack_getBelongOrga listen) {
-        int userId = SpUtils.getInt(TokenManager.USERID);
+        Double userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
         String filter = FilterUtils.belongOgaFilter();
         addSubscription(ApiFactory.getOrganizationList(userId,filter), new PgSubscriber<List<OrganizationAccount>>(this) {
             @Override
@@ -185,7 +186,7 @@ public class BaseNetActivity extends FragmentActivity {
             callBack.onGetVisibleService(visibleOrgiService);
             ACache.get(App.app).put(Constants.cacheKey_service,(Serializable)visibleOrgiService);
         }
-        addSubscription(ApiFactory.hasPermission(SpUtils.getInt(TokenManager.USERID), services.getServiceId() + ".view"), new PgSubscriber<Boolean>(this) {
+        addSubscription(ApiFactory.hasPermission(Double.valueOf(SpUtils.getInt(TokenManager.USERID)), services.getServiceId() + ".view"), new PgSubscriber<Boolean>(this) {
             @Override
             public void on_Next(Boolean hasPermisson) {
                 if (hasPermisson){
@@ -257,6 +258,52 @@ public class BaseNetActivity extends FragmentActivity {
     }
 
 
+    /**
+    *获取组织下的role
+    */
+    public void getOrgRoleList(String orgId, callBack_getRole listen){
+        String s = orgId + Constants.special_orgi_role;
+        addSubscription(ApiFactory.getOrgiRole(s), new PgSubscriber<List<Role>>(this) {
+            @Override
+            public void on_Next(List<Role> roles) {
+                listen.onGetRoleList(roles);
+            }
+
+
+        });
+    }
+
+
+    /**
+    *设置 id 是否isInherited
+    */
+    public void setIsInherited(String id ,IsInherited isInherited){
+        addSubscription(ApiFactory.putIsInheroted(id, isInherited), new PgSubscriber(this) {
+            @Override
+            public void on_Next(Object o) {
+
+            }
+        });
+    }
+
+
+
+    /**
+     *设置 id 是否isInherited
+     */
+    public void getIsInherited(String id,callBack_getIsInherited listen){
+        addSubscription(ApiFactory.getIsInherited(id), new PgSubscriber<Boolean>(this) {
+            @Override
+            public void on_Next(Boolean isInherited) {
+                listen.onGetIsInherited(isInherited);
+            }
+        });
+    }
+
+
+
+
+
 
 
     public interface callBack_visible_service{
@@ -278,5 +325,14 @@ public class BaseNetActivity extends FragmentActivity {
 
     public interface callBack_getBelongOrga{
         void onGetBelongOrga(List<OrganizationAccount> orgas,String defOrgaId,String defOrgaName);
+    }
+
+    public interface callBack_getRole{
+        void onGetRoleList(List<Role> roles);
+    }
+
+
+    public interface callBack_getIsInherited{
+        void onGetIsInherited(Boolean isInherited);
     }
 }

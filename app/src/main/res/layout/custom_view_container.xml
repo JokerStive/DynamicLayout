@@ -17,9 +17,10 @@
    <TextView
        android:id="@+id/container_title"
        android:layout_width="match_parent"
-       android:text="研发部"
+
        style="@style/def_textview" />
       <TextView
+          android:id="@+id/container_delete"
           style="@style/def_textview"
           android:layout_marginLeft="10dp"
           android:background="@drawable/delete"/>

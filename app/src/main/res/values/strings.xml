@@ -30,6 +30,10 @@
     <string name="reg_et4">需组合数字,字母,符号</string>
 
 
+    <!--个人中心-->
+    <string name="person_center_title">个人中心</string>
+
+
     <!--系统配置-->
     <string name="system_config">系统配置</string>
     <string name="organization">组织机构</string>
@@ -55,6 +59,9 @@
     <string name="not_orginame_empty">输入不能为空</string>
     <!--新增部门-->
     <string name="add_department">新增部门</string>
+    <string name="dept_role_list">职位列表</string>
+    <string name="empty_parent_dept">父组织部门为空</string>
+    <string name="empty_child_dept">子组织部门为空</string>
     <string name="put_department_success">更新部门成功</string>
     <string name="put_department_false">更新部门失败</string>
     <string name="depar_name">部门名称</string>
@@ -68,6 +75,27 @@
     <string name="position_name_et1">请输入职位名称</string>
     <string name="position_duty">职位职务</string>
 
+
+    <!--部门管理-->
+    <string name="dept_add">新增部门</string>
+    <string name="dept_edit">部门编辑</string>
+    <string name="delete_dept_success">删除部门成功</string>
+    <!--部门新增-->
+    <string name="empty_parent_role">父组织职务为空</string>
+    <string name="empty_child_role">当前部门职务为空</string>
+    <string name="edit_dept">编辑部门</string>
+    <string name="dept_name">部门名称</string>
+    <string name="dept_add_role">新增职位</string>
+    <string name="dept_et1">请输入你的部门名</string>
+    <string name="dept_detail">部门描述</string>
+    <string name="dept_et2">请输入此部门的描述</string>
+    <!--新增部门角色-->
+    <string name="role_et1">请输入职位的名称</string>
+    <string name="role_namee">职位名称</string>
+    <string name="role_desc">职位描述</string>
+    <string name="role_et2">请输入职位的描述</string>
+    <!--部门编辑-->
+    <string name="delete_dept_role_false">删除部门职务失败</string>
 
     <!--模块管理-->
     <string name="service_add">新增功能</string>
@@ -121,6 +149,8 @@
     <!--权限-->
     <string name="no_view_permissoion">对不起,你不具备查看权限</string>
     <string name="empty_depart_list">部门列表为空</string>
+    <string name="empty_role_list">角色列表为空</string>
     <string name="Write_Open">暂未开放</string>
     <string name="delete_dept_false">删除部门失败</string>
+    <string name="dept_manager">部门管理</string>
 </resources>

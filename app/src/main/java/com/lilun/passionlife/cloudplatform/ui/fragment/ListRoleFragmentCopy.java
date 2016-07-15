@@ -29,7 +29,7 @@ import butterknife.Bind;
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class RoleListFragmentCopy extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListRoleFragmentCopy extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
 
     @Bind(R.id.module_list)
     GridView gvModuleList;
@@ -75,7 +75,7 @@ public class RoleListFragmentCopy extends BaseFunctionFragment implements BaseMo
                 roles = roless;
                 CacheUtils.putCache(Constants.cacheKey_role,roles);
 //                Logger.d(roless.size()+"");
-                adapter = new RoleListAdapter(roles,RoleListFragmentCopy.this);
+                adapter = new RoleListAdapter(roles,ListRoleFragmentCopy.this);
                 gvModuleList.setAdapter(adapter);
             }
         });
@@ -95,7 +95,7 @@ public class RoleListFragmentCopy extends BaseFunctionFragment implements BaseMo
     @Override
     public void onDeleteClick(int position) {
         if (roles!=null && roles.size()!=0){
-            int roleId = roles.get(position).getId();
+            double roleId = (double) roles.get(position).getId();
             Logger.d("roles = "+roleId);
             rootActivity.addSubscription(ApiFactory.deleteRole(roleId), new PgSubscriber<Object>(rootActivity) {
                 @Override

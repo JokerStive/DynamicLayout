@@ -16,6 +16,16 @@ public class Organization implements Serializable {
     private String icon;
     private boolean isNew;
     private String idService;
+    private boolean isInherited;
+
+    public boolean isInherited() {
+        return isInherited;
+    }
+
+    public Organization setInherited(boolean inherited) {
+        isInherited = inherited;
+        return this;
+    }
 
     public String getIdService() {
         return idService;

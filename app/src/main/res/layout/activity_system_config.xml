@@ -2,74 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/default_bg_gray"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:cube_ptr="http://schemas.android.com/tools"
+    android:background="@color/default_bg_gray">
 
-
-
-    <LinearLayout
-        android:id="@+id/first"
-        android:layout_width="match_parent"
+    <in.srain.cube.views.ptr.PtrFrameLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/title_bar"
-        android:layout_margin="10dp"
+        android:id="@+id/home_ptr"
+
+        cube_ptr:ptr_resistance="1.7"
+        cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
+        cube_ptr:ptr_duration_to_close="300"
+        cube_ptr:ptr_duration_to_close_header="2000"
+        cube_ptr:ptr_keep_header_when_refresh="true"
+        cube_ptr:ptr_pull_to_fresh="false"
+
+
         >
-        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
-            android:id="@+id/orgi_manager"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            app:module_icon="@drawable/orgin_manager"
-            app:module_title="@string/organization"
-            />
-        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
-            android:id="@+id/role_manager"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            app:module_icon="@drawable/staff_manager"
-            app:module_title="@string/role_manager"
-            />
+        <GridView
+            android:id="@+id/gv_service"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:verticalSpacing="20dp"
+            android:horizontalSpacing="20dp"
+            android:numColumns="1">
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@id/first"
-        android:layout_margin="10dp"
-        >
-        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
-            android:id="@+id/staff_manager"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            app:module_icon="@drawable/role_manager"
-            app:module_title="@string/staff_manager"
-            />
-        <com.lilun.passionlife.cloudplatform.custom_view.SystemConfigViw
-            android:id="@+id/module_manager"
-            android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="20dp"
-            app:module_icon="@drawable/module_manager"
-            app:module_title="@string/module_manager"
-            />
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#6000"
-        android:visibility="gone"
-        >
-
-    </FrameLayout>
+        </GridView>
+    </in.srain.cube.views.ptr.PtrFrameLayout>
 
 </RelativeLayout>

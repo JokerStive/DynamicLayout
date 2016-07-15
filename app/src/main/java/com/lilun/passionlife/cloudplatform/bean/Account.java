@@ -6,6 +6,7 @@ package com.lilun.passionlife.cloudplatform.bean;
 public class Account {
 
     private String mobile;
+    private Object id;
     private boolean mobileVerified;
     private String username;
     private String email;
@@ -23,7 +24,7 @@ public class Account {
         return this;
     }
 
-    private int id;
+
 
     public String getPassword() {
         return password;
@@ -61,6 +62,15 @@ public class Account {
         this.username = username;
     }
 
+    public Object getId() {
+        return id;
+    }
+
+    public Account setId(Object id) {
+        this.id = id;
+        return this;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -93,13 +103,7 @@ public class Account {
         this.status = status;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getPicture() {
         return Picture;

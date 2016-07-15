@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -16,23 +17,22 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.Role;
-import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.custom_view.ViewContainer;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
-import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
-import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
-import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -73,15 +73,21 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     private addStaff_roleListAdapter adapter_role;
     private List<Organization> departments;
 
-    private List<Integer> roleIndex = new ArrayList<>();
-    private List<Integer> deptIndex = new ArrayList<>();
+    private List<String> allHaveDept = new ArrayList<>();
 
 
     private int userId;
     private addStaff_deptListAdapter adapter_dept;
     private int dex_dept;
 
-    private String choiseDeptId;
+    private List<Organization> depts;
+    private List<Role> allChoiseRole;
+    private List<Map<String,List<Role>>> deptAndRoleList = new ArrayList<>();
+    private String staffName;
+    private String staffUsername;
+    private String staffPassword;
+    private int choiseDeprCount;
+
 
     @Override
     public View setView() {
@@ -98,16 +104,24 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
 
     @OnClick(R.id.belong_dept)
     void add_belong_dept(){
-        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffDepartFragment(),mCx.getString(R.string.staff_add_department)));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new AddStaffDepartFragment(), mCx.getString(R.string.staff_add_department));
+        if (allHaveDept.size()!=0){
+            bundle = new Bundle();
+            bundle.putSerializable("alreadHaveDept", (Serializable) allHaveDept);
+            event.setBundle(bundle);
+        }
+        EventBus.getDefault().post(event);
     }
 
 
     @Subscribe
     public void choiseBelongDept(Event.choiseDepts event){
-        List<Organization> depts = event.getDepts();
-        for(int i=0;i<depts.size();i++){
+        depts = event.getDepts();
+        choiseDeprCount = depts.size();
+        for(int i = 0; i< depts.size(); i++){
             String deptId = depts.get(i).getId();
             String deptName = depts.get(i).getName();
+            allHaveDept.add(deptName);
             getRoleList(i,deptName,deptId);
         }
     }
@@ -115,31 +129,39 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
 
     /**
      * 获取角色列表
-     * @param position
      */
-    private void getRoleList(int position,String deptName,String deptId) {
-
-        String filter = FilterUtils.roleFilter(orgiId);
-        rootActivity.addSubscription(ApiFactory.getRoleListFilter(filter), new PgSubscriber<List<Role>>(rootActivity) {
-            @Override
-            public void on_Next(List<Role> roless) {
-                roles = roless;
-                CacheUtils.putCache(Constants.cacheKey_role, roles);
-//                Logger.d(roless.size() + "");
-//                adapter_role = new AuthrovityListAdapter(roles, false, AddStaffFragment.this);
-                adapter_role = new addStaff_roleListAdapter(roles);
-
-
-                belongRole.addView(new ViewContainer(mCx,"研发部",adapter_role),position);
-//                belongRole.addView(new ViewContainer(mCx,"研发部",adapter_role),position);
-//
+    private void getRoleList(int index,String deptName,String deptId) {
+        rootActivity.getOrgRoleList(deptId, roles1 -> {
+            Map<String,List<Role>> deptAndRole = new HashMap<>();
+            deptAndRole.put(deptName,roles1);
+            deptAndRoleList.add(deptAndRole);
+            Logger.d(" list size = "+deptAndRoleList.size());
+            if (index==choiseDeprCount-1){
+                setDeptAndRole(deptAndRoleList);
             }
         });
+
+
     }
 
+    /**
+    *显示部门和职位
+    */
+    private void setDeptAndRole(List<Map<String,List<Role>>> list) {
+        belongRole.removeAllViews();
+        for(int i=0;i<list.size();i++){
+            Map<String, List<Role>> map = list.get(i);
+            for (String title:map.keySet()){
+                List<Role> value = map.get(title);
+                addStaff_roleListAdapter  adapter_role = new addStaff_roleListAdapter(value);
+                belongRole.addView(new ViewContainer(title, adapter_role, () -> {
+                    list.remove(map);
+                    allHaveDept.remove(title);
+                    Logger.d("all dept = "+allHaveDept.size());
+                }));
+            }
+        }
 
-    private void removeRole(int position){
-        belongRole.removeViewAt(position);
     }
 
 
@@ -154,8 +176,10 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     @OnClick(R.id.save)
     void save() {
         if (checkData()) {
+            Logger.d("部门seize="+depts.size());
+            Logger.d("职位size = "+allChoiseRole.size());
             Account account = new Account();
-            account.setId(StringUtils.randow());
+
             account.setName(inputStaffName.getInput());
             account.setUsername(inputStaffUsername.getInput());
             account.setPassword(inputStaffPassword.getInput());
@@ -163,10 +187,10 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
                 @Override
                 public void on_Next(Account account) {
                     //新增account成功之后
-                    userId = account.getId();
-                    postDepartment(account.getId());
-                    postRole();
-
+                    userId = (int) account.getId();
+                    postDepartment(userId);
+                    postRole(userId);
+                    rootActivity.backStack();
                 }
 
             });
@@ -177,8 +201,17 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
     /**
      * 给account post 一个role
      */
-    private void postRole() {
+    private void postRole(double userId) {
+        for (Role role : allChoiseRole) {
+            String roleName = role.getName();
+            Logger.d(" 添加的 roleName = "+roleName);
+            rootActivity.addSubscription(ApiFactory.postAccRole(userId, roleName), new PgSubscriber<Object>(rootActivity) {
+                @Override
+                public void on_Next(Object o) {
 
+                }
+            });
+        }
     }
 
     /**
@@ -186,12 +219,10 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
      *
      * @param id
      */
-    private void postDepartment(int id) {
-        for (Integer index : deptIndex) {
+    private void postDepartment(double id) {
+        for (Organization dept : depts) {
             OrganizationAccount oa = new OrganizationAccount();
-            oa.setId(StringUtils.randow());
-            oa.setOrganizationId(departments.get(index).getId() + "/#staff");
-            Logger.d(" orig =" + departments.get(index).getId());
+            oa.setOrganizationId(dept.getId() + "/#staff");
             rootActivity.addSubscription(ApiFactory.postAccOrganization(id, oa), new PgSubscriber<OrganizationAccount>(rootActivity) {
                 @Override
                 public void on_Next(OrganizationAccount organizationAccount) {
@@ -223,39 +254,64 @@ public class AddStaffFragment extends BaseFunctionFragment implements Authrovity
 
 
         //检查是否至少选择了一个部门
-        if (adapter_dept != null && adapter_dept.mCBFlag.size() != 0) {
-            deptIndex.clear();
-            for (int i = 0; i < adapter_dept.mCBFlag.size(); i++) {
-                if (adapter_dept.mCBFlag.get(i)) {
-                    deptIndex.add(i);
-                }
-            }
-            if (deptIndex.size()==0){
+
+            if (depts==null || depts.size()==0){
                 ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
                 return false;
             }
-        }
+
 
         //检查是否至少选择了一个所属职位
+        allChoiseRole = new ArrayList<>();
         int childCount = belongRole.getChildCount();
         for (int i=0;i<childCount;i++){
-
-        }
-
-        if (adapter_role != null && adapter_role.mCBFlag.size() != 0) {
-            roleIndex.clear();
-            for (int i = 0; i < adapter_role.mCBFlag.size(); i++) {
-                if (adapter_role.mCBFlag.get(i)) {
-                    roleIndex.add(i);
-                }
-            }
-            if (roleIndex.size()==0){
-                ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
-                return false;
+            ViewContainer viewContainer = (ViewContainer) belongRole.getChildAt(i);
+            List<Role> choiseRoles = viewContainer.getChoiseRoles();
+            if (choiseRoles!=null && choiseRoles.size()!=0){
+                allChoiseRole.addAll(choiseRoles);
             }
         }
+
+        if (allChoiseRole.size()==0){
+            ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
+            return false;
+        }
+
         return true;
     }
 
 
+
+//    ==================================================================================================================================
+//    保存数据
+
+
+    @Override
+    protected void onSaveState(Bundle outState) {
+        super.onSaveState(outState);
+        outState.putString("staffName", inputStaffName.getInput());
+        outState.putString("staffUsername", inputStaffUsername.getInput());
+        outState.putString("staffPassword", inputStaffPassword.getInput());
+    }
+//
+    @Override
+    protected void onRestoreState(Bundle savedInstanceState) {
+        super.onRestoreState(savedInstanceState);
+        staffName = savedInstanceState.getString("staffName");
+        staffUsername = savedInstanceState.getString("staffUsername");
+        staffPassword = savedInstanceState.getString("staffPassword");
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        inputStaffName.setInput(TextUtils.isEmpty(staffName)?"":staffName);
+        inputStaffUsername.setInput(TextUtils.isEmpty(staffUsername)?"":staffUsername);
+        inputStaffPassword.setInput(TextUtils.isEmpty(staffPassword)?"":staffPassword);
+        if(deptAndRoleList!=null){
+            setDeptAndRole(deptAndRoleList);
+        }
+    }
 }

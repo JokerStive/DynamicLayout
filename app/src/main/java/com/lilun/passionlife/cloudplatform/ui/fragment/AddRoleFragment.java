@@ -9,6 +9,7 @@ import com.lilun.passionlife.cloudplatform.adapter.AuthrovityListAdapter;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
+import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
@@ -102,13 +103,13 @@ public class AddRoleFragment extends BaseFunctionFragment{
      * 临时方案：post一个Principa让权限和Role关联
      * @param roleId
      */
-    private void postPrincipa(int roleId) {
+    private void postPrincipa(Double roleId) {
         if (roles!=null && roles.size()!=0){
             List<Integer> choiseAuthrovity = getChoiseAuthrovity(choiseAuthrisIndex);
             if (choiseAuthrovity!=null && choiseAuthrovity.size()!=0){
                 for(Integer index:choiseAuthrovity){
                     Principal pc = new Principal();
-                    pc.setId(StringUtils.randow());
+//                    pc.setId(StringUtils.randow());
                     pc.setPrincipalType("ROLE");
                     pc.setPrincipalId(roles.get(index).getName());
                     rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, pc), new PgSubscriber<Principal>(rootActivity) {
@@ -159,11 +160,12 @@ public class AddRoleFragment extends BaseFunctionFragment{
         String name = orgiId + ":" + inputOrgiName.getInput();
         role.setName(name);
         role.setTitle(inputOrgiName.getInput());
-        role.setId(StringUtils.randow());
+        role.setOrganizationId(orgiId+ Constants.special_orgi_role);
+//        role.setId(StringUtils.randow());
         rootActivity.addSubscription(ApiFactory.postRole(role), new PgSubscriber<Role>(rootActivity) {
             @Override
             public void on_Next(Role role) {
-                int roleId = role.getId();
+                Double roleId = (Double) role.getId();
                 postPrincipa(roleId);
             }
         });
