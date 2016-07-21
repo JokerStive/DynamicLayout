@@ -1,12 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.lilun.passionlife.cloudplatform.ui.activity.PersonalCenterActivity">
+    android:orientation="vertical"
+    android:background="@color/default_bg_gray"
+    >
 
-</RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_test">
+
+        <ImageView
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/test_head"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_marginTop="20dp"
+       style="@style/line_gray"/>
+
+    <LinearLayout
+        android:background="@color/default_white"
+        android:id="@+id/personal_info"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/personal_info"/>
+        <TextView
+            android:layout_marginLeft="20dp"
+            style="@style/def_textview"
+            android:text="@string/personal_info"
+            />
+    </LinearLayout>
+
+    <View
+
+        style="@style/line_gray"/>
+
+    <LinearLayout
+        android:background="@color/default_white"
+        android:id="@+id/account_safe"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/account_safe"/>
+        <TextView
+            android:layout_marginLeft="20dp"
+            style="@style/def_textview"
+            android:text="@string/account_safe"
+            />
+    </LinearLayout>
+
+    <View
+
+        style="@style/line_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/belong"
+        android:padding="10dp"
+        android:background="@color/default_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_belong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/belong"/>
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/iv_belong"
+            android:layout_marginLeft="20dp"
+            style="@style/def_textview"
+            android:text="@string/account_safe"
+            />
+
+        <RelativeLayout
+            android:id="@+id/rl_belong"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_pull"
+                android:layout_centerVertical="true"
+                style="@style/def_textview"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/selector_pull_choise1"/>
+
+            <TextView
+                android:id="@+id/belong_orga"
+                style="@style/def_textview"
+                android:layout_toLeftOf="@id/iv_pull"
+                android:text="物业"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                />
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+   <View
+       style="@style/line_gray"
+       />
+
+<FrameLayout
+    android:id="@+id/pop_contain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+</FrameLayout>
+
+
+</LinearLayout>

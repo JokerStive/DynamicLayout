@@ -12,6 +12,16 @@ public class OrganizationAccount implements Serializable {
     private Object id;
     private String organizationId;
     private int accountId;
+    private boolean isBelong;
+
+    public boolean isBelong() {
+        return isBelong;
+    }
+
+    public OrganizationAccount setBelong(boolean belong) {
+        isBelong = belong;
+        return this;
+    }
 
     public Object getId() {
         return id;

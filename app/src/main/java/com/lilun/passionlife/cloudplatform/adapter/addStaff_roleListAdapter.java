@@ -16,7 +16,6 @@ import com.lilun.passionlife.cloudplatform.ui.App;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -25,8 +24,10 @@ import java.util.Map;
 public class addStaff_roleListAdapter extends BaseAdapter {
 
 
+    ViewHolder holder;
     public HashMap<Integer, Boolean> mCBFlag;
     private List<Role> data;
+    private onItemCancleLister listen;
 
 
     public addStaff_roleListAdapter(List<Role> data) {
@@ -38,8 +39,12 @@ public class addStaff_roleListAdapter extends BaseAdapter {
 
     private void initData() {
         for (int i = 0; i < data.size(); i++) {
-            mCBFlag.put(i, false);
+            mCBFlag.put(i, data.get(i).isBelong());
         }
+    }
+
+    public void setOnItemCancleListener(onItemCancleLister listener) {
+        this.listen = listener;
     }
 
     @Override
@@ -60,7 +65,7 @@ public class addStaff_roleListAdapter extends BaseAdapter {
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+
         if (convertView == null) {
             convertView = LayoutInflater.from(App.app).inflate(R.layout.item_container, null);
             holder = new ViewHolder();
@@ -76,9 +81,13 @@ public class addStaff_roleListAdapter extends BaseAdapter {
         holder.item_name.setText(data.get(position).getTitle());
         holder.item_ll.setOnClickListener(v -> {
 
-           mCBFlag.put(position,!holder.item_name.isEnabled());
+            if (data.get(position).isBelong() && listen != null) {
+                listen.onItemCancle(position);
+            }else{
+                mCBFlag.put(position, !holder.item_name.isEnabled());
+                holder.item_name.setEnabled(mCBFlag.get(position));
+            }
 
-            holder.item_name.setEnabled(mCBFlag.get(position));
 
         });
 
@@ -94,10 +103,10 @@ public class addStaff_roleListAdapter extends BaseAdapter {
 
     }
 
-    public List<Role>  getChoiseRoles(){
+    public List<Role> getChoiseRoles() {
         List<Role> choiss = new ArrayList<>();
-        for (int i=0;i<mCBFlag.size();i++){
-            if (mCBFlag.get(i)){
+        for (int i = 0; i < mCBFlag.size(); i++) {
+            if (mCBFlag.get(i)) {
                 choiss.add(data.get(i));
             }
         }
@@ -106,15 +115,15 @@ public class addStaff_roleListAdapter extends BaseAdapter {
     }
 
 
-
-
-
-    public Map<Integer, Boolean> getmCBFlag() {
-        return mCBFlag;
+    public interface onItemCancleLister {
+        void onItemCancle(int position);
     }
 
-    public void setmCBFlag(HashMap<Integer, Boolean> mCBFlag) {
-        this.mCBFlag = mCBFlag;
+
+    public void setEnable(int position,boolean enable){
+        mCBFlag.put(position, !holder.item_name.isEnabled());
+        holder.item_name.setEnabled(mCBFlag.get(position));
     }
+
 
 }

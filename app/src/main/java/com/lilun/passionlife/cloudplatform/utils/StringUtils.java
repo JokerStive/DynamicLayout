@@ -59,9 +59,17 @@ public class StringUtils {
     }
 
 
-    public static int randow(){
-        String s = System.currentTimeMillis() + "";
-        String s1 = s.substring(s.length() - 4);
-        return Integer.parseInt(s1);
+
+    public static String belongOgaId(String orgId){
+        return orgId.substring(0,orgId.length()-7);
     }
+
+    public static String belongOgaName(String orgId){
+        String s = belongOgaId(orgId);
+        return s.substring(s.lastIndexOf("/")+1);
+    }
+
+
+
+
 }

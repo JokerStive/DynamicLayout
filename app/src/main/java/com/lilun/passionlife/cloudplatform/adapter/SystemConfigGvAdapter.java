@@ -24,6 +24,13 @@ public class SystemConfigGvAdapter extends BaseAdapter {
         this.context = context;
 
         this.servicess = servicess;
+
+        for (int i=0;i<servicess.size();i++){
+            if (servicess.get(i).getServiceId()!=null && servicess.get(i).getServiceId().equals("SysConfig")){
+                servicess.remove(i);
+            }
+
+        }
     }
 
     @Override

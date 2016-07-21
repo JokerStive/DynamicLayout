@@ -17,7 +17,6 @@ import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ACache;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
-import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
@@ -88,29 +87,12 @@ public class BaseNetActivity extends FragmentActivity {
     /**
     *获取用户所属组织列表
     */
-    protected void getBelongOrga(callBack_getBelongOrga listen) {
-        Double userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
-        String filter = FilterUtils.belongOgaFilter();
-        addSubscription(ApiFactory.getOrganizationList(userId,filter), new PgSubscriber<List<OrganizationAccount>>(this) {
+    protected void getBelongOrga(double userId,callBack_getBelongOrga listen) {
+        addSubscription(ApiFactory.getOrganizationList(userId,null), new PgSubscriber<List<OrganizationAccount>>(this) {
             @Override
             public void on_Next(List<OrganizationAccount> organizations) {
-                String organizationId="";
-                String name="";
-                if (organizations.size() == 0) {
-                    ToastHelper.get(App.app).showShort(getString(R.string.empty_orgi_list));
-                } else {
-                    //获取到组织后，把默认组织的id存进本地，post事件方便系统配置界面使用
-                    for (OrganizationAccount organization : organizations) {
-                        if (organization.isIsDefault()) {
-                            organizationId = organization.getOrganizationId();
-                             name = organization.getOrganization().getName();
-                            SpUtils.setString(Constants.key_defOrginaId, organizationId);
-                            SpUtils.setString(Constants.key_defOrgina, name);
-                        }
-                    }
 
-                    listen.onGetBelongOrga(organizations,organizationId,name);
-                }
+                listen.onGetBelongOrga(organizations);
             }
         });
 
@@ -125,8 +107,8 @@ public class BaseNetActivity extends FragmentActivity {
     /**
      * 从网络获取功能服务列表
      */
-    public void getSerListFromNet(callBack_visible_service callBack) {
-        String defOrgaId = SpUtils.getString(Constants.key_defOrginaId);
+    public void getSerListFromNet(String defOrgaId,callBack_visible_service callBack) {
+//        String defOrgaId = SpUtils.getString(Constants.key_defOrginaId);
         if (!TextUtils.isEmpty(defOrgaId)) {
             String url = defOrgaId + "/#service";
             addSubscription(ApiFactory.getOrgiServices(url), new PgSubscriber<List<OrganizationService>>(this) {
@@ -324,7 +306,7 @@ public class BaseNetActivity extends FragmentActivity {
 
 
     public interface callBack_getBelongOrga{
-        void onGetBelongOrga(List<OrganizationAccount> orgas,String defOrgaId,String defOrgaName);
+        void onGetBelongOrga(List<OrganizationAccount> orgas);
     }
 
     public interface callBack_getRole{

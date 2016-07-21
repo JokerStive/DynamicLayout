@@ -82,7 +82,7 @@
                     android:id="@+id/belong_dept"
                     android:layout_marginLeft="20dp"
                     style="@style/btn_green"
-                    android:text="新增所属部门"
+                    android:text="@string/choise_belong_dept"
                     />
 
             </LinearLayout>

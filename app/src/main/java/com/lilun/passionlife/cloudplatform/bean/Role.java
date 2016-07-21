@@ -17,6 +17,16 @@ public class Role implements Serializable {
     private String modified;
     private String title;
     private boolean isNew;
+    private boolean isBelong;
+
+    public boolean isBelong() {
+        return isBelong;
+    }
+
+    public Role setBelong(boolean belong) {
+        isBelong = belong;
+        return this;
+    }
 
     public boolean isNew() {
         return isNew;

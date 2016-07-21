@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 
@@ -9,6 +10,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
+import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
@@ -34,18 +36,24 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
 
     @Override
     public View setView() {
+        rootActivity.setTitle(mCx.getString(R.string.staff_manager));
+        rootActivity.setIsEditShow(true);
         return inflater.inflate(R.layout.fragment_module_list, null);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        rootActivity.setIsEditShow(true);
+        bundle=new Bundle();
         getStaffList();
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position==0){
                 EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
-
+            }else{
+                bundle.putSerializable(Constants.orgaAccount,orgaAccs.get(position-1));
+                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditStaffFragment(), mCx.getString(R.string.staff_edit));
+                event.setBundle(bundle);
+                EventBus.getDefault().post(event);
             }
         });
 

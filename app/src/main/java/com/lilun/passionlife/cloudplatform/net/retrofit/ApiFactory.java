@@ -50,8 +50,9 @@ public class ApiFactory {
     *//**
      * 获取所有的组织列表
      */
-    public static Observable<List<OrganizationAccount>> getOrganizationList(Double userid,String filter) {
-        return getRes(service.getOrganizationList(userid,filter));
+    public static Observable<List<OrganizationAccount>> getOrganizationList(double userid,String filter) {
+
+        return getRes(service.getOrganizationList((int) userid,filter));
     }
 
 
@@ -76,8 +77,8 @@ public class ApiFactory {
     /**
      *查询是否有权限
      */
-    public static   Observable<Boolean>  hasPermission(Double userid,String permission){;
-        return getRes(service.hasPermission(userid,permission));
+    public static   Observable<Boolean>  hasPermission(double userid,String permission){;
+        return getRes(service.hasPermission((int)userid,permission));
     }
 
     /**
@@ -129,6 +130,13 @@ public class ApiFactory {
     }
 
 
+    /**
+     * *获取account所属的role
+     */
+    public static    Observable<List<Role>> getAccountRole(double userId){
+        return getRes(service.getAccountRole((int) userId));
+    }
+
 
 
 
@@ -169,8 +177,8 @@ public class ApiFactory {
     /**
      *新增principal
      */
-    public static Observable<Principal> postPrincipal(Double roleId,Principal principal) {
-        return getRes(service.postPrincipal(roleId,principal));
+    public static Observable<Principal> postPrincipal(double roleId,Principal principal) {
+        return getRes(service.postPrincipal((int) roleId,principal));
     }
 
 
@@ -186,15 +194,15 @@ public class ApiFactory {
     /**
      *给account新增一个organization
      */
-    public static Observable<OrganizationAccount> postAccOrganization(Double userId,OrganizationAccount orga) {
-        return getRes(service.postAccOrganization(userId,orga));
+    public static Observable<OrganizationAccount> postAccOrganization(double userId,OrganizationAccount orga) {
+        return getRes(service.postAccOrganization((int) userId,orga));
     }
 
     /**
      *给account新增一个role
      */
-    public static Observable<Object> postAccRole(Double userId,String role) {
-        return getRes(service.postAccRole(userId,role));
+    public static Observable<Object> postAccRole(double userId,String role) {
+        return getRes(service.postAccRole((int) userId,role));
     }
 
 
@@ -217,16 +225,16 @@ public class ApiFactory {
     /**
      * 删除Role
      */
-    public static Observable<Object> deleteRole(Double  roleId) {
-        return getRes(service.deleteRole(roleId));
+    public static Observable<Object> deleteRole(double  roleId) {
+        return getRes(service.deleteRole((int) roleId));
     }
 
 
     /**
      *删除Role下面的principal
      */
-    public static Observable<Object> deletePrincipal(Double  roleId,Double ptId) {
-        return getRes(service.deletePrincipal(roleId,ptId));
+    public static Observable<Object> deletePrincipal(double  roleId,double ptId) {
+        return getRes(service.deletePrincipal((int) roleId,(int) ptId));
     }
 
 
@@ -239,10 +247,26 @@ public class ApiFactory {
 
 
     /**
+     * 删除Account指定的dept
+     */
+    public static   Observable<Object> deleteAccOrga(double  ocId,double orgaAccId) {
+        return getRes(service.deleteAccOrga((int) ocId, (int) orgaAccId));
+    }
+
+
+    /**
+     * 删除Account指定的role
+     */
+    public static   Observable<Object> deleteAccRole(double  ocId,double roleId) {
+        return getRes(service.deleteAccRole((int) ocId, (int) roleId));
+    }
+
+
+    /**
      * 删除OrgaAccount
      */
-    public static  Observable<Object> deleteOrgaAccount(Double  ocId) {
-        return getRes(service.deleteOrgaAccount(ocId));
+    public static  Observable<Object> deleteOrgaAccount(double  ocId) {
+        return getRes(service.deleteOrgaAccount((int) ocId));
     }
 
 
@@ -266,8 +290,8 @@ public class ApiFactory {
     /**
      *更新OrgaService
      */
-    public static Observable<OrganizationService> putRole(Double roleId,Role role){
-        return getRes(service.putRole(roleId,role));
+    public static Observable<OrganizationService> putRole(double roleId,Role role){
+        return getRes(service.putRole((int)roleId,role));
     }
 
 

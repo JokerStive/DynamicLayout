@@ -76,7 +76,12 @@
         <activity
             android:name=".cloudplatform.ui.activity.GuideActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".cloudplatform.ui.activity.PersonalCenterActivity"></activity>
+
+        <!--个人中心-->
+        <activity android:name=".cloudplatform.ui.activity.PersonalCenterActivity"
+            android:screenOrientation="portrait"
+            />
+
     </application>
 
 </manifest>

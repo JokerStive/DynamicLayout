@@ -28,7 +28,7 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
 
     public LayoutInflater  inflater;
     public Context mCx;
-    public Activity mAx;
+    public Activity mAc;
     public TextView def_org;
 
 
@@ -38,7 +38,7 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
         setContentView(R.layout.activity_base);
 
         mCx= App.app;
-        mAx=this;
+        mAc =this;
         inflater=LayoutInflater.from(mCx);
 
         title = (TextView) findViewById(R.id.title);
@@ -77,7 +77,7 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
      *接受token过期事件，跳转登录界面
      */
     public void login(Event.AuthoriseEvent event){
-        TokenManager.translateLogin(mAx);
+        TokenManager.translateLogin(mAc);
     }
 
     @Override

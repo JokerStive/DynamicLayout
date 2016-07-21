@@ -17,5 +17,8 @@
     <!--默认的绿色-->
     <color name="default_bg_green">#0dcd9d</color>
 
+    <!--默认的红色-->
+    <color name="default_red">#ff343b</color>
+
 
 </resources>

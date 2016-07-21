@@ -32,6 +32,9 @@
 
     <!--个人中心-->
     <string name="person_center_title">个人中心</string>
+    <string name="personal_info">个人资料</string>
+    <string name="account_safe">账户与安全</string>
+    <string name="belong">当前所在组织</string>
 
 
     <!--系统配置-->
@@ -130,6 +133,7 @@
 
     <!--员工管理-->
     <string name="staff_add">新增员工</string>
+    <string name="staff_edit">员工编辑</string>
     <string name="delete_staff_success">刪除员工成功</string>
     <!--新增员工-->
     <string name="staff_name">姓名</string>
@@ -142,8 +146,10 @@
     <string name="staff_department_list">部门列表</string>
     <string name="belong_role">所属职位</string>
     <string name="belong_dept">所属部门</string>
+    <string name="choise_belong_dept">选择所属部门</string>
     <string name="staff_add_department">所属部门</string>
-    <string name="empty_orgi_list">组织列表为空</string>
+    <string name="empty_orgi_list">没有任何所属组织</string>
+    <string name="delete_belong_dept">警告：该员工的所属部门\n以及所属职位都将被删除</string>
 
 
     <!--权限-->
@@ -153,4 +159,8 @@
     <string name="Write_Open">暂未开放</string>
     <string name="delete_dept_false">删除部门失败</string>
     <string name="dept_manager">部门管理</string>
+
+    <!--自定义dialog-->
+    <string name="config">确定</string>
+    <string name="cancle">取消</string>
 </resources>

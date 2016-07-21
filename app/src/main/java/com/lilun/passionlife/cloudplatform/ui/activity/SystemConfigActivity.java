@@ -10,9 +10,11 @@ import com.lilun.passionlife.cloudplatform.base.BaseNetActivity;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
 import com.lilun.passionlife.cloudplatform.custom_view.ShowOrgiPopupwindow;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ACache;
+import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.orhanobut.logger.Logger;
 
@@ -40,7 +42,7 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
 //     *组织机构管理
 //     */
 //    public void orgi_manager() {
-//        IntentUtils.startAct(mAx, OrganizationActivity.class);
+//        IntentUtils.startAct(mAc, OrganizationActivity.class);
 //    }
 //
 //    @OnClick(R.id.role_manager)
@@ -48,7 +50,7 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
 //     *角色管理
 //     */
 //    void role_manager() {
-//        IntentUtils.startAct(mAx, RoleManagerActivity.class);
+//        IntentUtils.startAct(mAc, RoleManagerActivity.class);
 //    }
 //
 //    @OnClick(R.id.staff_manager)
@@ -57,20 +59,20 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
 //     */
 //    void staff_manager() {
 ////        ToastHelper.get(App.app).showShort(App.app.getString(R.string.Write_Open));
-//        IntentUtils.startAct(mAx, StaffManagerActivity.class);
+//        IntentUtils.startAct(mAc, StaffManagerActivity.class);
 //    }
 //
 //
 //
 //    @OnClick(R.id.dept_manager)
-//    void dept_manager(){IntentUtils.startAct(mAx, DeptManagerActivity.class);}
+//    void dept_manager(){IntentUtils.startAct(mAc, DeptManagerActivity.class);}
 //
 //    @OnClick(R.id.module_manager)
 //    /**
 //     *模块管理
 //     */
 //    void module_manager() {
-//        IntentUtils.startAct(mAx, ModuleManagerActivity.class);
+//        IntentUtils.startAct(mAc, ModuleManagerActivity.class);
 //    }
 
 
@@ -102,7 +104,40 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
         gvService.setNumColumns(data.size() == 1 ? 1 : 2);
         gvService.setAdapter(new SystemConfigGvAdapter(mCx, data));
         gvService.setOnItemClickListener((parent, view, position, id) -> {
+            String serviceId = data.get(position).getServiceId();
 
+
+            //模块管理
+            if (serviceId.equals(KnownServices.Module_Service)){
+                IntentUtils.startAct(mAc, ModuleManagerActivity.class);
+            }
+
+            //员工管理
+            else if(serviceId.equals(KnownServices.Account_Service)){
+                IntentUtils.startAct(mAc, StaffManagerActivity.class);
+            }
+
+            //角色管理
+            else  if(serviceId.equals(KnownServices.Role_Service)){
+                IntentUtils.startAct(mAc, RoleManagerActivity.class);
+            }
+
+            //组织机构管理
+            else if(serviceId.equals(KnownServices.Organization_Service)){
+                IntentUtils.startAct(mAc, OrganizationActivity.class);
+            }
+
+            //系统配置
+            else if(serviceId.equals(KnownServices.SysConfig_Service)){
+                IntentUtils.startAct(mAc, SystemConfigActivity.class);
+            }
+
+
+
+            //部门管理
+            else if(serviceId.equals(KnownServices.Department_Service)){
+                IntentUtils.startAct(mAc, DeptManagerActivity.class);
+            }
         });
     }
 

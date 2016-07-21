@@ -1,6 +1,7 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -64,11 +65,12 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     int dex = 0;
     private int size;
     private Organization newDepartment;
+    private View view;
 
     @Override
     public View setView() {
 
-        View view = inflater.inflate(R.layout.fragment_add_organization, null);
+        view = inflater.inflate(R.layout.fragment_add_organization, null);
         return view;
     }
 
@@ -108,6 +110,21 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
         }
         saveOrgi();
 
+    }
+
+
+    @OnClick(R.id.iv_head)
+    void choiseHead(){
+        Logger.d("选择头像");
+        rootActivity.choiseHeadPic(view);
+    }
+
+    @Subscribe
+    public void choisHead(Event.choiseHeadPic event){
+        Bitmap bitmap = event.getBitmap();
+        if (bitmap!=null){
+            ivHead.setImageBitmap(bitmap);
+        }
     }
 
 

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,42 +13,42 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 
-
 import com.lilun.passionlife.R;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
+
+import java.io.File;
 
 
 /**
  * Created by youke on 2016/5/31.
  */
 public class SelectPicPopupWindow  extends PopupWindow implements OnClickListener{
-    private Button btn_take_photo, btn_pick_photo, btn_cancel;
+    private FrameLayout btn_take_photo, btn_pick_photo;
     private View mMenuView;
     private Activity context;
-    public static  final int   PICK_FROM_FILE=0;
-    public static  final int   PICK_FROM_CAMERA=1;
 
-    public SelectPicPopupWindow(Activity context, OnClickListener itemsOnClick) {
+    public Uri tempUri;
+
+    public SelectPicPopupWindow(Activity context) {
         super(context);
         this.context=context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMenuView = inflater.inflate(R.layout.popup_carmera, null);
-        btn_take_photo = (Button) mMenuView.findViewById(R.id.btn_take_photo);
-        btn_pick_photo = (Button) mMenuView.findViewById(R.id.btn_pick_photo);
-        btn_cancel = (Button) mMenuView.findViewById(R.id.btn_cancel);
+        btn_take_photo = (FrameLayout) mMenuView.findViewById(R.id.btn_take_photo);
+        btn_pick_photo = (FrameLayout) mMenuView.findViewById(R.id.btn_pick_photo);
         //取消按钮
-        btn_cancel.setOnClickListener(this);
         btn_take_photo.setOnClickListener(this);
         btn_pick_photo.setOnClickListener(this);
 
         //设置SelectPicPopupWindow的View
         this.setContentView(mMenuView);
         //设置SelectPicPopupWindow弹出窗体的宽
-        this.setWidth(LayoutParams.FILL_PARENT);
+        this.setWidth(LayoutParams.MATCH_PARENT);
         //设置SelectPicPopupWindow弹出窗体的高
-        this.setHeight(LayoutParams.WRAP_CONTENT);
+        this.setHeight(LayoutParams.MATCH_PARENT);
         //设置SelectPicPopupWindow弹出窗体可点击
         this.setFocusable(true);
         //设置SelectPicPopupWindow弹出窗体动画效果
@@ -55,6 +57,7 @@ public class SelectPicPopupWindow  extends PopupWindow implements OnClickListene
         ColorDrawable dw = new ColorDrawable(0xb0000000);
         //设置SelectPicPopupWindow弹出窗体的背景
         this.setBackgroundDrawable(dw);
+
         //mMenuView添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框
         mMenuView.setOnTouchListener(new OnTouchListener() {
 
@@ -80,20 +83,21 @@ public class SelectPicPopupWindow  extends PopupWindow implements OnClickListene
         switch (v.getId()){
             case R.id.btn_take_photo:
                 //相机
-                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                Uri imgUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "avatar_"+ String.valueOf(System.currentTimeMillis())+ ".png"));
-//                intent.putExtra(MediaStore.EXTRA_OUTPUT, imgUri);
-                context.startActivityForResult(intent, PICK_FROM_CAMERA);
+                Intent openCameraIntent = new Intent(
+                        MediaStore.ACTION_IMAGE_CAPTURE);
+                tempUri = Uri.fromFile(new File(Environment
+                        .getExternalStorageDirectory(), "image.jpg"));
+                // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempUri);
+                context.startActivityForResult(openCameraIntent, PicloadManager.TAKE_PICTURE);
                 dismiss();
                 break;
             case R.id.btn_pick_photo:
                 //相册
-                intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setType("image");
-                context.startActivityForResult(intent, PICK_FROM_FILE);
-                dismiss();
-                break;
-            case R.id.btn_cancel:
+                Intent openAlbumIntent = new Intent(
+                        Intent.ACTION_GET_CONTENT);
+                openAlbumIntent.setType("image/*");
+                context.startActivityForResult(openAlbumIntent, PicloadManager.CHOOSE_PICTURE);
                 dismiss();
                 break;
 

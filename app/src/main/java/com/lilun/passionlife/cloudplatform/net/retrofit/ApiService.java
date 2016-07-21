@@ -45,7 +45,7 @@ public interface ApiService {
      */
 //    @Headers("Cache-Control: public, max-age=360000,  max-stale=480000")
     @GET("Accounts/{id}/organizations")
-    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") Double userid,@Query("filter") String filter);
+    Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") int userid,@Query("filter") String filter);
 
 
 
@@ -68,7 +68,7 @@ public interface ApiService {
      */
 //    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
     @GET("Accounts/{id}/hasPermission")
-    Observable<Boolean> hasPermission(@Path("id") Double userid, @Query("role") String permission);
+    Observable<Boolean> hasPermission(@Path("id") int userid, @Query("role") String permission);
 
 
 
@@ -120,6 +120,14 @@ public interface ApiService {
 
 
     /**
+     *获取account所属的role
+     */
+    @GET("Accounts/{id}/roles")
+    Observable<List<Role>> getAccountRole(@Path("id") int userId);
+
+
+
+    /**
      *获取当前id是否isInherited
      */
     @GET("Organizations/{id}/isInherited")
@@ -152,7 +160,7 @@ public interface ApiService {
      *新增principal
      */
     @POST("Roles/{id}/principals")
-    Observable<Principal> postPrincipal(@Path("id")  Double roleId,@Body Principal principal);
+    Observable<Principal> postPrincipal(@Path("id")  int roleId,@Body Principal principal);
 
 
     /**
@@ -165,13 +173,13 @@ public interface ApiService {
      *给account新增一个organization
      */
     @POST("Accounts/{id}/organizations")
-    Observable<OrganizationAccount> postAccOrganization(@Path("id") Double userId ,@Body OrganizationAccount orga);
+    Observable<OrganizationAccount> postAccOrganization(@Path("id") int userId ,@Body OrganizationAccount orga);
 
     /**
      *给account新增一个role
      */
-    @POST("Accounts/{id}/roles/{role}")
-    Observable<Object> postAccRole(@Path("id") Double userId ,@Path("role") String role);
+    @PUT("Accounts/{id}/roles/{role}")
+    Observable<Object> postAccRole(@Path("id") int userId ,@Path("role") String role);
 
     /**
     *删除组织
@@ -196,13 +204,13 @@ public interface ApiService {
      *删除Role
      */
     @DELETE("Roles/{id}")
-    Observable<Object> deleteRole(@Path("id") Double roleId);
+    Observable<Object> deleteRole(@Path("id") int roleId);
 
     /**
      *删除Role下面的principal
      */
     @DELETE("Roles/{id}/principals/{fk}")
-    Observable<Object> deletePrincipal(@Path("id") Double roleId,@Path("fk") Double ptId);
+    Observable<Object> deletePrincipal(@Path("id") int roleId,@Path("fk") int ptId);
 
 
 
@@ -210,7 +218,23 @@ public interface ApiService {
      *删除OrgaAccount
      */
     @DELETE("OrganizationAccounts/{id}")
-    Observable<Object> deleteOrgaAccount(@Path("id") Double ocId);
+    Observable<Object> deleteOrgaAccount(@Path("id") int ocId);
+
+
+    /**
+     *删除Account指定的dept
+     */
+    @DELETE("Accounts/{id}/organizations/{orgaId}")
+    Observable<Object> deleteAccOrga(@Path("id") int ocId,@Path(("orgaId")) int orgaId);
+
+
+    /**
+     *删除Account指定的role
+     */
+    @DELETE("Accounts/{id}/roles/{id}")
+    Observable<Object> deleteAccRole(@Path("id") int ocId,@Path(("id")) int roleId);
+
+
 
 
 
@@ -219,6 +243,10 @@ public interface ApiService {
      */
     @PUT("Organizations/{id}")
     Observable<Organization> putOrganization(@Path("id") String orgaId,@Body Organization organizationBean);
+
+
+
+
 
     /**
      *更新OrgaService
@@ -231,7 +259,7 @@ public interface ApiService {
      *更新Role
      */
     @PUT("Role/{id}")
-    Observable<OrganizationService> putRole(@Path("id") Double roleId,@Body Role role);
+    Observable<OrganizationService> putRole(@Path("id") int roleId,@Body Role role);
 
 
     /**

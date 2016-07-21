@@ -17,7 +17,7 @@ public class DealErrorUtils {
         }
         if (e instanceof HttpException){
             HttpException e1 = (HttpException) e;
-//            Logger.d(e.getMessage());
+            Logger.d(e1.getMessage());
             ToastHelper.get(App.app).showShort(e1.getMessage());
         }else{
             Logger.d(e.getMessage());

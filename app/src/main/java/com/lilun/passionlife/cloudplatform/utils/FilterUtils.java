@@ -31,12 +31,20 @@ public class FilterUtils {
 
 
     /**
-     *直接获取组织下role关联的filter
+     *直接获取组织下role关联principals
      */
-    public static String role(String orgaId){
+    public static String role(){
         return "{\"include\":\"principals\"}";
     }
 
+
+
+    /**
+     *直接获取组织下staff关联的account
+     */
+    public static String staff(){
+        return "{\"include\":\"account\"}";
+    }
 
 
 

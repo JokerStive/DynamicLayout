@@ -1,6 +1,7 @@
 package com.lilun.passionlife.cloudplatform.bean;
 
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
@@ -235,6 +236,23 @@ public class Event {
 
         public choiseDepts(List<Organization> depts) {
             this.depts = depts;
+        }
+    }
+
+
+
+    /**
+     *选择头像事件
+     */
+    public static  class choiseHeadPic{
+       private Bitmap bitmap;
+
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
+
+        public choiseHeadPic(Bitmap bitmap) {
+            this.bitmap = bitmap;
         }
     }
 

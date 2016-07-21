@@ -106,7 +106,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         wigthList = new ArrayList<>();
         wigthList.add("1");
         wigthList.add("2");
-        inputServiceWigth.setShow_data(service.getSettings().getWigth());
+        inputServiceWigth.setShow_data(service.getSettings()==null?"1":service.getSettings().getWigth());
         inputServiceHeight.setShow_data("1");
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, wigthList);
         inputServiceWigth.init(position -> {
@@ -115,10 +115,17 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     }
 
     private void setInitData() {
-        inputServiceName.setInput(service.getTitle());
-        inputServiceDetail.setInput(service.getDescription());
-        inputService.setShow_data(service.getServiceName());
-        tv_hint.setEnabled(service.getSettings().getVisible() != null && !Boolean.parseBoolean(service.getSettings().getVisible()));
+        inputServiceName.setInput(service.getTitle()==null?"":service.getTitle());
+        inputServiceDetail.setInput(service.getDescription()==null?"":service.getDescription());
+        inputService.setShow_data(service.getServiceName()==null?"":service.getServiceName());
+        if (service.getSettings()==null){
+            tv_hint.setEnabled(false);
+        }else if (service.getSettings().getVisible()==null){
+            tv_hint.setEnabled(false);
+        }else {
+            tv_hint.setEnabled(Boolean.parseBoolean(service.getSettings().getVisible()));
+        }
+//        tv_hint.setEnabled(service.getSettings()== null && service.getSettings().getVisible() != null && !Boolean.parseBoolean(service.getSettings().getVisible()));
 
         serviceId = service.getServiceId();
         orgaServiceId = service.getId();

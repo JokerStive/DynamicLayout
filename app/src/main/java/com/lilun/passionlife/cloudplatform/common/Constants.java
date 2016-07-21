@@ -17,6 +17,8 @@ public class Constants {
 
 
 
+    //所属组织
+    public static final String BELONG_ORGA="belong_orga";
 
     //接口base_url
     public static final String BASE_URL = "http://222.182.202.94:3000/api/";
@@ -70,6 +72,9 @@ public class Constants {
     //特殊的组织——Role
     public static String special_orgi_role="/#role";
 
+    //特殊的组织——Rstaff
+    public static String special_orgi_staff="/#staff";
+
     //标示--Role
     public static String role="role";
 
@@ -84,6 +89,7 @@ public class Constants {
 
     //标示--orgaAccount
     public static String orgaAccount="orgaAccount";
+
 
 
     //标示--orgaService
