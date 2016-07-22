@@ -35,7 +35,12 @@
     <string name="personal_info">个人资料</string>
     <string name="account_safe">账户与安全</string>
     <string name="belong">当前所在组织</string>
-
+    <string name="change_password">修改登录密码</string>
+    <string name="accounts">帐号</string>
+    <string name="old_password">原密码：</string>
+    <string name="new_password">新密码：</string>
+    <string name="etd_old_password">请输入原密码</string>
+    <string name="etd_new_password">请输入新密码</string>
 
     <!--系统配置-->
     <string name="system_config">系统配置</string>

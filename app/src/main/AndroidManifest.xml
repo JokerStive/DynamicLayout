@@ -81,6 +81,14 @@
         <activity android:name=".cloudplatform.ui.activity.PersonalCenterActivity"
             android:screenOrientation="portrait"
             />
+        <!--修改密码-->
+        <activity android:name=".cloudplatform.ui.activity.ModifyPasswordActivity"
+                  android:screenOrientation="portrait"
+            />
+        <!--账户与安全-->
+        <activity android:name=".cloudplatform.ui.activity.AccountSecurityActivity"
+                  android:screenOrientation="portrait"
+            />
 
     </application>
 

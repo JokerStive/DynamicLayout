@@ -16,6 +16,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
+import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.orhanobut.logger.Logger;
 
@@ -72,6 +73,7 @@ public class PersonalCenterActivity extends BaseFunctionActivity implements Adap
     @OnClick(R.id.account_safe)
     void setAccountSafe() {
 
+        IntentUtils.startAct(mAc,AccountSecurityActivity.class);
     }
 
     /**
