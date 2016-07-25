@@ -89,6 +89,10 @@
         <activity android:name=".cloudplatform.ui.activity.AccountSecurityActivity"
                   android:screenOrientation="portrait"
             />
+        <activity android:name=".cloudplatform.ui.activity.PersonalInfoActivity"
+            android:screenOrientation="portrait"
+            />
+
 
     </application>
 

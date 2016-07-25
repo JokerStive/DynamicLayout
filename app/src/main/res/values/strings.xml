@@ -42,6 +42,11 @@
     <string name="etd_old_password">请输入原密码</string>
     <string name="etd_new_password">请输入新密码</string>
 
+    <!--个人资料-->
+    <string name="person_img">头像</string>
+    <string name="person_name">名称</string>
+
+
     <!--系统配置-->
     <string name="system_config">系统配置</string>
     <string name="organization">组织机构</string>

@@ -90,7 +90,7 @@
             android:layout_toRightOf="@id/iv_belong"
             android:layout_marginLeft="20dp"
             style="@style/def_textview"
-            android:text="@string/account_safe"
+            android:text="@string/belong"
             />
 
         <RelativeLayout
