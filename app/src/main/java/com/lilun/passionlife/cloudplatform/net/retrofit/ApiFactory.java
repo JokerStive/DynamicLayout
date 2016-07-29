@@ -12,6 +12,7 @@ import com.lilun.passionlife.cloudplatform.bean.Service;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -37,6 +38,14 @@ public class ApiFactory {
      */
     public static Observable<Response<Account>> register(Account account) {
         return getRes(service.register(account));
+    }
+
+
+    /**
+     * 401检测
+     */
+    public static Observable<Object> check401() {
+        return getRes(service.check401());
     }
 
 
@@ -116,6 +125,14 @@ public class ApiFactory {
 
 
     /**
+     * 获取组织机构下面的role带filter
+     */
+    public static Observable<List<Role>> getOrgiRoleFilter(String orgiId,String filter) {
+        return getRes(service.getOrgiRoleFilter(orgiId,filter));
+    }
+
+
+    /**
      * 获取组织下面的Role
      */
     public static  Observable<List<Role>> getRoleListFilter(String filter) {
@@ -167,6 +184,14 @@ public class ApiFactory {
 
 
     /**
+     *新增新增OrganizationService图标
+     */
+    public static  Observable<Object> postOrgaServiceIcon(String orgaserviceId, RequestBody file) {
+        return getRes(service.postOrgaServiceIcon(orgaserviceId,file));
+    }
+
+
+    /**
      *新增Role
      */
     public static Observable<Role> postRole(Role role) {
@@ -175,11 +200,22 @@ public class ApiFactory {
 
 
     /**
+     *新增多个role
+     */
+    public static Observable<List<Role>> postRoles(List<Role> roles) {
+        return getRes(service.postRoles(roles));
+    }
+
+
+    /**
      *新增principal
      */
-    public static Observable<Principal> postPrincipal(double roleId,Principal principal) {
-        return getRes(service.postPrincipal((int) roleId,principal));
+    public static Observable<Object> postPrincipal(double roleId,List<Principal> principals) {
+        return getRes(service.postPrincipal((int) roleId,principals));
     }
+
+
+
 
 
 
@@ -192,10 +228,26 @@ public class ApiFactory {
 
 
     /**
+     * 新增多个Organization
+     */
+    public static Observable<List<Organization>> postOrganizations(List<Organization> orgas) {
+        return getRes(service.postOrganizations(orgas));
+    }
+
+
+    /**
+     *新增组织机构图标
+     */
+    public static  Observable<Object> postOrganizationIcon(String orgaId, RequestBody file) {
+        return getRes(service.postOrganizationIcon(orgaId,file));
+    }
+
+
+    /**
      *给account新增一个organization
      */
-    public static Observable<OrganizationAccount> postAccOrganization(double userId,OrganizationAccount orga) {
-        return getRes(service.postAccOrganization((int) userId,orga));
+    public static Observable<List<OrganizationAccount>> postAccOrganization(double userId,List<OrganizationAccount> orgas) {
+        return getRes(service.postAccOrganization((int) userId,orgas));
     }
 
     /**
@@ -257,8 +309,8 @@ public class ApiFactory {
     /**
      * 删除Account指定的role
      */
-    public static   Observable<Object> deleteAccRole(double  ocId,double roleId) {
-        return getRes(service.deleteAccRole((int) ocId, (int) roleId));
+    public static   Observable<Object> deleteAccRole(double  ocId,String roleName) {
+        return getRes(service.deleteAccRole((int) ocId, roleName));
     }
 
 
@@ -267,6 +319,16 @@ public class ApiFactory {
      */
     public static  Observable<Object> deleteOrgaAccount(double  ocId) {
         return getRes(service.deleteOrgaAccount((int) ocId));
+    }
+
+
+
+
+    /**
+     *更新一个account
+     */
+    public static  Observable<Account> putAccount(double accountId,Account account){
+        return getRes(service.putAccount((int) accountId,account));
     }
 
 

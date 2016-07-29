@@ -38,6 +38,7 @@ public class RetrofitManager {
         okhttpClient = new OkHttpClient.Builder()
                 //超时时长
                 .connectTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 //超时重连
                 .retryOnConnectionFailure(true)
                 .addNetworkInterceptor(new HttpInterceptor())

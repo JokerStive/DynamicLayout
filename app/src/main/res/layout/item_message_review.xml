@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    >
+
+
+    <RelativeLayout
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
+            android:id="@+id/reviewer_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/head_portrait" />
+
+        <LinearLayout
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/reviewer_head"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/reviewer_name"
+                style="@style/def_textview"
+                android:textSize="@dimen/def_tv_size_small_1"
+                tools:text="张三w" />
+
+            <TextView
+                android:id="@+id/iv_message_review"
+                style="@style/def_textview_gray"
+                android:layout_marginTop="5dp"
+                android:text="@string/message_add_review"
+                android:textSize="@dimen/def_tv_size_small_2" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_marginLeft="10dp"
+        android:id="@+id/reviewer_content"
+        style="@style/def_textview"
+        android:layout_marginTop="10dp"
+        android:textSize="@dimen/def_tv_size_small"
+        tools:text="很额呵呵呵呵呵呵呵呵" />
+
+    <View
+        android:layout_marginTop="10dp"
+        style="@style/line_gray"
+        />
+
+</LinearLayout>

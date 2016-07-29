@@ -35,8 +35,7 @@ public class ExtendItem extends RelativeLayout {
     ListView extendContent;
     @Bind(R.id.add_what)
     TextView addWhat;
-    @Bind(R.id.ll)
-    LinearLayout ll;
+
     @Bind(R.id.ll1)
     LinearLayout ll1;
 

@@ -12,12 +12,15 @@ import com.lilun.passionlife.cloudplatform.bean.Service;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import rx.Observable;
@@ -40,10 +43,17 @@ public interface ApiService {
     @POST("Accounts/login")
     Observable<LoginRes> login(@Body Account account);
 
+
+    /**
+    *401检查
+    */
+    @GET("Accounts/me")
+    Observable<Object> check401();
+
+
     /**
      * 获取用户所属组织列表
      */
-//    @Headers("Cache-Control: public, max-age=360000,  max-stale=480000")
     @GET("Accounts/{id}/organizations")
     Observable<List<OrganizationAccount>> getOrganizationList(@Path("id") int userid,@Query("filter") String filter);
 
@@ -107,6 +117,13 @@ public interface ApiService {
 
 
     /**
+     *获取组织机构下面的role带filter
+     */
+    @GET("Organizations/{id}/children")
+    Observable<List<Role>> getOrgiRoleFilter(@Path("id") String OrgiId,@Query("filter") String filter);
+
+
+    /**
      *获取role列表
      */
     @GET("Roles")
@@ -151,16 +168,34 @@ public interface ApiService {
 
 
     /**
+     *新增OrganizationService图标
+     */
+    @Multipart
+    @POST("OrganizationServices/{id}/icon")
+    Observable<Object> postOrgaServiceIcon(@Path("id") String orgaServiceId, @Part("file\"; filename=\"orgaService.png") RequestBody file);
+
+
+
+    /**
      *新增Role
      */
     @POST("Roles")
     Observable<Role> postRole(@Body Role role);
 
+
+    /**
+     *新增多个role
+     */
+    @POST("Roles")
+    Observable<List<Role>> postRoles(@Body List<Role> role);
+
     /**
      *新增principal
      */
     @POST("Roles/{id}/principals")
-    Observable<Principal> postPrincipal(@Path("id")  int roleId,@Body Principal principal);
+    Observable<Object> postPrincipal(@Path("id")  int roleId,@Body List<Principal> principals);
+
+
 
 
     /**
@@ -169,11 +204,26 @@ public interface ApiService {
     @POST("Organizations")
     Observable<Organization> postOrganization(@Body Organization organizationBean);
 
+
+    /**
+     *新增组织机构
+     */
+    @POST("Organizations")
+    Observable<List<Organization>> postOrganizations(@Body List<Organization> orgas);
+
+
+    /**
+     *新增组织机构图标
+     */
+    @Multipart
+    @POST("Organizations/{id}/icon")
+    Observable<Object> postOrganizationIcon(@Path("id") String orgaId, @Part("file\"; filename=\"organization.png") RequestBody file);
+
     /**
      *给account新增一个organization
      */
     @POST("Accounts/{id}/organizations")
-    Observable<OrganizationAccount> postAccOrganization(@Path("id") int userId ,@Body OrganizationAccount orga);
+    Observable<List<OrganizationAccount>> postAccOrganization(@Path("id") int userId ,@Body List<OrganizationAccount> orga);
 
     /**
      *给account新增一个role
@@ -231,10 +281,18 @@ public interface ApiService {
     /**
      *删除Account指定的role
      */
-    @DELETE("Accounts/{id}/roles/{id}")
-    Observable<Object> deleteAccRole(@Path("id") int ocId,@Path(("id")) int roleId);
+    @DELETE("Accounts/{id}/roles/{roleName}")
+    Observable<Object> deleteAccRole(@Path("id") int ocId,@Path(("roleName")) String roleName);
 
 
+
+
+
+    /**
+     *更新一个account
+     */
+    @PUT("Accounts/{id}")
+    Observable<Account> putAccount(@Path("id") int accountId,@Body Account account);
 
 
 

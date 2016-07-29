@@ -12,6 +12,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
@@ -28,7 +29,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class EditRoleFragment extends BaseFunctionFragment{
+public class EditRoleFragment extends BaseFunctionFragment {
 
 
     @Bind(R.id.head)
@@ -52,7 +53,7 @@ public class EditRoleFragment extends BaseFunctionFragment{
     private String roleName;
     private List<Principal> principals;
     private List<Role> allAuthrovity;
-    private List<Integer> isHaveIndex=new ArrayList<>();
+    private List<Integer> isHaveIndex = new ArrayList<>();
     private Double roleId;
 
     @Override
@@ -67,7 +68,6 @@ public class EditRoleFragment extends BaseFunctionFragment{
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -75,9 +75,13 @@ public class EditRoleFragment extends BaseFunctionFragment{
         getAuthrovityList();
     }
 
+
+
+
+
     private void setInitData() {
-        if (role!=null){
-            roleName = roleName==null? role.getTitle():roleName;
+        if (role != null) {
+            roleName = roleName == null ? role.getTitle() : roleName;
 //            roleDesc = roleDesc==null? role.getDescription():roleDesc;
             principals = role.getPrincipals();
             roleId = (Double) role.getId();
@@ -89,50 +93,40 @@ public class EditRoleFragment extends BaseFunctionFragment{
      * 获取权限列表
      */
     public void getAuthrovityList() {
-       rootActivity.getAuthrovityList(orgiId, authrovites -> {
-            for(int i=0;i<authrovites.size();i++){
-                for(int j=0;j<principals.size();j++){
-                    if (principals.get(j).getPrincipalId().equals(authrovites.get(i).getName())){
+        rootActivity.getAuthrovityList(orgiId, authrovites -> {
+            for (int i = 0; i < authrovites.size(); i++) {
+                for (int j = 0; j < principals.size(); j++) {
+                    if (principals.get(j).getPrincipalId().equals(authrovites.get(i).getName())) {
                         authrovites.get(i).setHave(true);
 //                        isHaveIndex.add(i);
                     }
                 }
             }
-           allAuthrovity = authrovites;
-           adapter = new AuthrovityListAdapter(authrovites, false, new AuthrovityListAdapter.OnItemClickListen() {
-               @Override
-               public void onChoiseItemCancle(AuthrovityListAdapter authrovityListAdapter, int position) {
-                   //删除对应的权限
-//                   int principalId = 0;
-//                   String principalName = authrovites.get(position).getName();
-//                   for (int i=0;i<principals.size();i++){
-//                       if (principals.get(i).getPrincipalId().equals(principalName)){
-//                           principalId=principals.get(i).getId();
-//                           principals.remove(i);
-//                       }
-//                   }
-//
-//                   Logger.d("prin id = "+principalId);
-//                   rootActivity.addSubscription(ApiFactory.deletePrincipal(roleId, principalId), new PgSubscriber<Object>(rootActivity) {
-//                       @Override
-//                       public void on_Next(Object o) {
-////                           then();
-////                           adapter.mCBFlag.put(position,false);
-////                           adapter.notifyDataSetChanged();
-//                           ToastHelper.get(mCx).showShort("删除权限成功");
-//                       }
-//                   });
-               }
+            allAuthrovity = authrovites;
+            adapter = new AuthrovityListAdapter(authrovites, false);
+            //本来拥有的权限取消
+            adapter.setOnHaveCancleListener((position, item_authro_choise) -> new AlertDiaog(rootActivity, "确定删除？", () -> {
+                double principalId = 0.0;
+                String namne = allAuthrovity.get(position).getName();
+                for (Principal p : principals) {
+                    if (p.getPrincipalId().equals(namne)) {
+                        principalId = (double) p.getId();
+                    }
+                }
+                Logger.d("要删除权限的id=" + principalId);
+                rootActivity.addSubscription(ApiFactory.deletePrincipal(roleId, principalId), new PgSubscriber<Object>(rootActivity) {
+                    @Override
+                    public void on_Next(Object o) {
+                        adapter.setmCBFlag(position, false);
+                        item_authro_choise.setEnabled(false);
+                        ToastHelper.get(mCx).showShort("删除权限成功");
+                    }
+                });
+            }));
 
-           });
-
-           lvAuthList.setAdapter(adapter);
-       });
+            lvAuthList.setAdapter(adapter);
+        });
     }
-
-
-
-
 
 
     /**
@@ -144,18 +138,18 @@ public class EditRoleFragment extends BaseFunctionFragment{
     }
 
     /**
-    *检查角色名称是否有变化
-    */
+     * 检查角色名称是否有变化
+     */
     private void checkDataChanges() {
-        if (TextUtils.isEmpty(inputRoleName.getInput())){
+        if (TextUtils.isEmpty(inputRoleName.getInput())) {
             ToastHelper.get(mCx).showShort("角色名不能为空");
             return;
         }
 
-        if (roleName.equals(inputRoleName.getInput())){
+        if (roleName.equals(inputRoleName.getInput())) {
             //检查权限是否改变
             checkAuthChanges();
-        }else{
+        } else {
             //更新role
             Role role = new Role();
             role.setName(inputRoleName.getInput());
@@ -163,7 +157,6 @@ public class EditRoleFragment extends BaseFunctionFragment{
                 @Override
                 public void on_Next(Role role) {
                     checkAuthChanges();
-
                 }
 
             });
@@ -171,80 +164,44 @@ public class EditRoleFragment extends BaseFunctionFragment{
     }
 
     /**
-    *检查权限是否发生了变化
-    */
+     * 检查权限是否发生了变化
+     */
     private void checkAuthChanges() {
         rootActivity.backStack();
         choiseAuthrisIndex.clear();
-        for(int i=0;i<adapter.mCBFlag.size();i++){
-            if (adapter.mCBFlag.get(i)){
+        for (int i = 0; i < adapter.mCBFlag.size(); i++) {
+            if (adapter.mCBFlag.get(i)) {
                 choiseAuthrisIndex.add(i);
             }
         }
 
-        Logger.d("ps size="+principals.size());
-        for (int i=0;i<choiseAuthrisIndex.size();i++){
-            for (int j=0;j<principals.size();j++){
-                String name = allAuthrovity.get(choiseAuthrisIndex.get(i)).getName();
-                String principalId = principals.get(j).getPrincipalId();
-                if (name.equals(principalId)){
-                    choiseAuthrisIndex.remove(i);
-                    principals.remove(j);
-                }
-            }
-        }
 
-
-
-        for (int i=0;i<principals.size();i++){
-           Double  principalId = (Double) principals.get(i).getId();
-            rootActivity.addSubscription(ApiFactory.deletePrincipal(roleId, principalId), new PgSubscriber<Object>(rootActivity) {
-                @Override
-                public void on_Next(Object o) {
-                    ToastHelper.get(mCx).showShort("删除权限成功");
-                }
-            });
-        }
-
-
-
-
-
-        Logger.d("应该post的权限"+choiseAuthrisIndex);
-        Logger.d("应该删除的权限 size = "+principals.size());
-        for(int i=0;i<choiseAuthrisIndex.size();i++){
+        List<Principal>  principalsList = new ArrayList<>();
+        for (int i = 0; i < choiseAuthrisIndex.size(); i++) {
             //TODO post对应的权限
-            String principalId = allAuthrovity.get(choiseAuthrisIndex.get(i)).getName();
-            Logger.d(" prinpical id="+principalId);
-            Principal principal = new Principal();
-//            principal.setId(StringUtils.randow());
-            principal.setPrincipalType("Role");
-            principal.setPrincipalId(principalId);
-            rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, principal), new PgSubscriber<Principal>(rootActivity) {
-                @Override
-                public void on_Next(Principal principal) {
-
-                }
-            });
+             Role role = allAuthrovity.get(choiseAuthrisIndex.get(i));
+            if (!role.isHave()) {
+                Principal principal = new Principal();
+                principal.setPrincipalType("Role");
+                principal.setPrincipalId(role.getName());
+                principalsList.add(principal);
+            }
 
         }
+
+        rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, principalsList), new PgSubscriber<Object>(rootActivity) {
+            @Override
+            public void on_Next(Object o) {
+            }
+        });
 
 
     }
-//
-//    private int index=0;
-//    private void then() {
-//        if (index==choiseAuthrisIndex.size()-1){
-//            rootActivity.backStack();
-//            return;
-//        }
-//        index++;
-//    }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        inputRoleName.setInput(TextUtils.isEmpty(roleName)?"":roleName);
+        inputRoleName.setInput(TextUtils.isEmpty(roleName) ? "" : roleName);
     }
 }

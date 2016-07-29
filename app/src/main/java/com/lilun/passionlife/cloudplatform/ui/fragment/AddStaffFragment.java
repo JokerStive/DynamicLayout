@@ -15,6 +15,7 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.Role;
+import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.custom_view.ViewContainer;
@@ -118,10 +119,17 @@ public class AddStaffFragment extends BaseFunctionFragment {
         depts = event.getDepts();
         choiseDeprCount = depts.size();
         for (int i = 0; i < depts.size(); i++) {
+
             String deptId = depts.get(i).getId();
             String deptName = depts.get(i).getName();
+
+            //每次选中一个部门就构造一个argaAccount
+            OrganizationAccount oa = new OrganizationAccount();
+            oa.setOrganizationId(deptId + Constants.special_orgi_staff);
+
+            orgaAccs.add(oa);
             allHaveDept.add(deptName);
-            getRoleList(i, depts.get(i), deptId);
+            getRoleList(i,oa, deptId);
         }
     }
 
@@ -129,16 +137,10 @@ public class AddStaffFragment extends BaseFunctionFragment {
     /**
      * 获取角色列表
      */
-    private void getRoleList(int index, Organization dept, String deptId) {
+    private void getRoleList(int index, OrganizationAccount oa, String deptId) {
         rootActivity.getOrgRoleList(deptId, roles1 -> {
 
             Map<OrganizationAccount, List<Role>> orgAccAndRole = new HashMap<>();
-
-            //每一个部门对应一个orgaAcc
-            OrganizationAccount oa = new OrganizationAccount();
-            oa.setOrganizationId(dept.getId() + "/#staff");
-            oa.setBelong(true);
-            orgaAccs.add(oa);
 
             //map赋值
             orgAccAndRole.put(oa,roles1);
@@ -167,11 +169,14 @@ public class AddStaffFragment extends BaseFunctionFragment {
                 String id = dept.getOrganizationId();
                 String title = StringUtils.belongOgaName(id);
                 addStaff_roleListAdapter adapter_role = new addStaff_roleListAdapter(value);
+
+                final int finalI = i;
                 belongRole.addView(new ViewContainer(title, adapter_role, () -> {
+                    belongRole.removeViewAt(finalI);
                     list.remove(map);
                     allHaveDept.remove(title);
                     Logger.d("all dept = " + allHaveDept.size());
-                }));
+                }),i);
             }
         }
 
@@ -197,13 +202,22 @@ public class AddStaffFragment extends BaseFunctionFragment {
                     //新增account成功之后
                     userId = (double) account.getId();
                     postDepartment(userId);
-                    postRole(userId);
+                    //挂载职位
+//                    postRole(userId);
                     rootActivity.backStack();
                 }
 
             });
         }
 
+    }
+
+    private List<OrganizationAccount> postDefOrga(List<OrganizationAccount> list) {
+        OrganizationAccount oa = new OrganizationAccount();
+        oa.setIsDefault(true);
+        oa.setOrganizationId(orgiId+Constants.special_orgi_staff);
+        list.add(oa);
+        return list;
     }
 
     /**
@@ -213,9 +227,10 @@ public class AddStaffFragment extends BaseFunctionFragment {
         for (Role role : allChoiseRole) {
             String roleName = role.getName();
             Logger.d(" 添加的 roleName = " + roleName);
-            rootActivity.addSubscription(ApiFactory.postAccRole(userId, roleName), new PgSubscriber<Object>(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.postAccRole(userId, roleName), new PgSubscriber<Role>(rootActivity) {
                 @Override
-                public void on_Next(Object o) {
+                public void on_Next(Role o) {
+                    Logger.d("设置所属职位--"+roleName+"--成功");
                     then_role(allChoiseRole.size());
                 }
             });
@@ -225,44 +240,53 @@ public class AddStaffFragment extends BaseFunctionFragment {
     private void then_role(int size) {
         if (dex_role == size - 1) {
             //把所属部门和旗下的role缓存起来，在员工编辑界面使用
-            CacheUtils.putCache("deptAndRole",cacheDeptAndRole);
+            CacheUtils.putCache(userId+"",cacheDeptAndRole);
             return;
         }
-        dex_dept++;
+        dex_role++;
     }
+
+
+
+
+
+
 
     /**
      * 给account post一个depat
      *
      * @param id
      */
-    private void postDepartment(double id) {
-        for (OrganizationAccount oa1 : orgaAccs) {
-            rootActivity.addSubscription(ApiFactory.postAccOrganization(id, oa1), new PgSubscriber<OrganizationAccount>(rootActivity) {
-                @Override
-                public void on_Next(OrganizationAccount organizationAccount) {
-//                    then_dept(depts.size());
-                    for(Map<OrganizationAccount,List<Role>> map:cacheDeptAndRole){
-                        for(OrganizationAccount oa:map.keySet()){
-                            if (oa.getOrganizationId().equals(organizationAccount.getOrganizationId())){
-                                oa.setId(organizationAccount.getId());
-                            }
-                        }
+    private void
+    postDepartment(double id) {
+        List<OrganizationAccount>  organizationAccountList = new ArrayList<>();
+        organizationAccountList =  postDefOrga(organizationAccountList);
+        for (Map<OrganizationAccount, List<Role>> map : cacheDeptAndRole) {
+            for(OrganizationAccount oa1:map.keySet()){
+                organizationAccountList.add(oa1);
+            }
+
+        }
+
+        rootActivity.addSubscription(ApiFactory.postAccOrganization(id, organizationAccountList), new PgSubscriber<List<OrganizationAccount>>(rootActivity) {
+            @Override
+            public void on_Next(List<OrganizationAccount> oas) {
+                postRole(userId);
+                for (int i=0;i<cacheDeptAndRole.size();i++) {
+                    Map<OrganizationAccount, List<Role>> map = cacheDeptAndRole.get(i);
+                    for(OrganizationAccount oa1:map.keySet()){
+                        oa1.setId(oas.get(i).getId());
+                        oa1.setBelong(true);
                     }
+
                 }
 
-            });
-        }
+            }
+
+        });
     }
 
-    private void then_dept(int size) {
-        if (dex_dept == size - 1) {
-            //把所属部门和旗下的role缓存起来，在员工编辑界面使用
-            CacheUtils.putCache("deptAndRole",cacheDeptAndRole);
-            return;
-        }
-        dex_dept++;
-    }
+
 
     /**
      *

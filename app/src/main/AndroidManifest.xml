@@ -10,6 +10,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -33,7 +34,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".cloudplatform.ui.activity.LoginActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,28 +73,51 @@
             android:name=".cloudplatform.ui.activity.ModuleManagerActivity"
             android:screenOrientation="portrait" />
 
+        <!-- 个人中心 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.PersonalCenterActivity"
+            android:screenOrientation="portrait" />
+        <!-- 修改密码 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.ModifyPasswordActivity"
+            android:screenOrientation="portrait" />
+        <!-- 账户与安全 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.AccountSecurityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cloudplatform.ui.activity.PersonalInfoActivity"
+            android:screenOrientation="portrait" />
+
         <!-- 引导页 -->
         <activity
             android:name=".cloudplatform.ui.activity.GuideActivity"
             android:screenOrientation="portrait" />
 
-        <!--个人中心-->
-        <activity android:name=".cloudplatform.ui.activity.PersonalCenterActivity"
-            android:screenOrientation="portrait"
-            />
-        <!--修改密码-->
-        <activity android:name=".cloudplatform.ui.activity.ModifyPasswordActivity"
-                  android:screenOrientation="portrait"
-            />
-        <!--账户与安全-->
-        <activity android:name=".cloudplatform.ui.activity.AccountSecurityActivity"
-                  android:screenOrientation="portrait"
-            />
-        <activity android:name=".cloudplatform.ui.activity.PersonalInfoActivity"
-            android:screenOrientation="portrait"
-            />
+        <!-- 个人中心 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.PersonalCenterActivity"
+            android:screenOrientation="portrait" />
+        <!-- 修改密码 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.ModifyPasswordActivity"
+            android:screenOrientation="portrait" />
+        <!-- 账户与安全 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.AccountSecurityActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".cloudplatform.ui.activity.PersonalInfoActivity"
+            android:screenOrientation="portrait" />
 
-
+        <!-- 切换组织 -->
+        <activity
+            android:name=".cloudplatform.ui.activity.ChangeOrganizationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FloatActivity" />
+        <activity android:name=".cloudplatform.ui.activity.MessageListActivity" />
+        <activity android:name=".cloudplatform.ui.activity.MessageIssueActivity" />
+        <activity android:name=".cloudplatform.ui.activity.MessageDetailActivity"></activity>
     </application>
 
 </manifest>

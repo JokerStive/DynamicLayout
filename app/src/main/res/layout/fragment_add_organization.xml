@@ -32,6 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_toRightOf="@id/head"
+                app:border_color="@color/default_bg_green"
+                app:border_width="@dimen/border_width"
                 android:src="@drawable/head_portrait" />
         </RelativeLayout>
 

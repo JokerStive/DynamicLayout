@@ -100,7 +100,7 @@
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:background="@drawable/gb"
-                android:padding="10dp"
+
                 android:layout_height="wrap_content">
 
             </LinearLayout>

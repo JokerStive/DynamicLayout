@@ -10,13 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.bean.Event;
-import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.ButterKnife;
 
@@ -72,13 +68,7 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
     public abstract View setContent();
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    /**
-     *接受token过期事件，跳转登录界面
-     */
-    public void login(Event.AuthoriseEvent event){
-        TokenManager.translateLogin(mAc);
-    }
+
 
     @Override
     protected void onDestroy() {

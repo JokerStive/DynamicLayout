@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_bg_gray">
+
+    <View
+        style="@style/line_gray"
+        android:layout_marginTop="10dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_white"
+        android:gravity="center_vertical"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/def_textview"
+            android:text="@string/message_title" />
+
+        <EditText
+            android:id="@+id/tv_title"
+            style="@style/def_edit"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="20dp"
+            android:background="@null"
+            android:hint="@string/message_title_et" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_1"
+        style="@style/line_gray"
+        android:layout_below="@id/ll_title" />
+
+    <LinearLayout
+        android:id="@+id/ll_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_1"
+        android:background="@color/default_white"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            style="@style/def_textview"
+            android:text="@string/message_content" />
+
+        <EditText
+            android:id="@+id/et_content"
+            style="@style/def_edit"
+            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="@null"
+            android:hint="@string/message_content_et" />
+
+        style="@style/line_gray"/>
+
+        <LinearLayout
+            android:id="@+id/ll_list_pic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/im_add_pic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/message_add_pic" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_2"
+        style="@style/line_gray"
+        android:layout_below="@id/ll_content" />
+
+    <View
+        android:id="@+id/line_3"
+        style="@style/line_gray"
+        android:layout_below="@id/ll_content"
+        android:layout_marginTop="20dp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_allow_review"
+        android:layout_below="@id/line_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_white"
+
+        android:padding="10dp">
+        <TextView
+            style="@style/def_textview"
+            android:layout_centerVertical="true"
+            android:text="@string/message_allow_review" />
+
+        <ImageView
+            android:id="@+id/im_allow_review"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:background="@drawable/selector_btn_choise"
+            />
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/line_4"
+        style="@style/line_gray"
+        android:layout_below="@id/rl_allow_review"
+         />
+
+    <Button
+        android:id="@+id/btn_message_publish"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+       style="@style/btn_green"
+        android:textSize="@dimen/def_tv_size"
+        android:text="@string/message_publish"
+        />
+
+</RelativeLayout>

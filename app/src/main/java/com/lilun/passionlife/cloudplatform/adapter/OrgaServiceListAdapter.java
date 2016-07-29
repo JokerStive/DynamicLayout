@@ -8,13 +8,15 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 
 /**
- * Created by Administrator on 2016/6/8.
+ * Created by youke on 2016/6/8.
  */
 public class OrgaServiceListAdapter extends BaseModuleListAdapter {
     private final List<OrganizationService> services;
@@ -77,11 +79,16 @@ public class OrgaServiceListAdapter extends BaseModuleListAdapter {
         }else{
             //TODO 从网络url加载图片
             String title = services.get(position-1).getTitle();
-            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
+            String orgaServiceId = services.get(position-1).getId();
+//            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
             viewHolder.module_title.setText(title==null?"标题":title);
 
             viewHolder.module_delete.setVisibility(isShowDelete ?View.VISIBLE:View.GONE);
             viewHolder.module_delete.setOnClickListener(v -> listener.onDeleteClick(position-1));
+            Picasso.with(App.app).load(PicloadManager.orgaServiceIconUrl(orgaServiceId))
+                    .placeholder(R.drawable.default_pic)
+                    .error(R.drawable.default_pic)
+                    .into(viewHolder.module_icon);
         }
     }
 

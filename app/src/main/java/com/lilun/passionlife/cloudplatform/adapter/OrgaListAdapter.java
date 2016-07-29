@@ -8,7 +8,9 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -73,10 +75,14 @@ public class OrgaListAdapter extends BaseModuleListAdapter {
             //TODO 从网络url加载图片
             String orgaName = orginals.get(position-1).getName();
             String organid= orginals.get(position-1).getId();
-            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
+//            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
             viewHolder.module_title.setText(orgaName);
 
-
+            Picasso.with(App.app).load(PicloadManager.orgaIconUrl(organid))
+                    .placeholder(R.drawable.default_pic)
+                    .error(R.drawable.default_pic)
+                    .into(viewHolder.module_icon);
+//          Logger.d(PicloadManager.orgaIconUrl(organid));
             viewHolder.module_delete.setVisibility(isShowDelete ?View.VISIBLE:View.GONE);
             viewHolder.module_delete.setOnClickListener(v -> {
                 listener.onDeleteClick(position-1);

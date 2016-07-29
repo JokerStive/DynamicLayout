@@ -3,10 +3,12 @@ package com.lilun.passionlife.cloudplatform.bean;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by youke on 2016/6/3.
@@ -18,6 +20,14 @@ public class Event {
      * 验证失效
      */
     public static class AuthoriseEvent {
+
+    }
+
+    /**
+     * 401event
+     */
+    public static class Event401{
+
     }
 
     ;
@@ -38,6 +48,30 @@ public class Event {
         }
 
         public OpenNewFragmentEvent(BaseFunctionFragment newFragment, String cuumb_title) {
+            this.cuumb_title = cuumb_title;
+            this.newFragment = newFragment;
+        }
+
+
+    }
+
+
+
+    public static class OpenNewFragmentEventCopy {
+        public Fragment newFragment;
+        public String cuumb_title;
+        public Bundle bundle;
+
+        public Bundle getBundle() {
+            return bundle;
+        }
+
+        public OpenNewFragmentEventCopy setBundle(Bundle bundle) {
+            this.bundle = bundle;
+            return this;
+        }
+
+        public OpenNewFragmentEventCopy(Fragment newFragment, String cuumb_title) {
             this.cuumb_title = cuumb_title;
             this.newFragment = newFragment;
         }
@@ -205,29 +239,37 @@ public class Event {
      * desc :新增了一个role
      */
     public static class addNewRole {
-        public addNewRole(Role role) {
-            this.role = role;
-        }
 
         public Role getRole() {
             return role;
         }
 
         private Role role;
+
+        public addNewRole(List<Principal> principals, Role role) {
+            this.principals = principals;
+            this.role = role;
+        }
+
+        public List<Principal> getPrincipals() {
+            return principals;
+        }
+
+        private List<Principal> principals;
     }
 
 
     /**
-    *删除了一个组织服务的事件
-    */
-    public static class deleteOrganiService{}
-
+     * 删除了一个组织服务的事件
+     */
+    public static class deleteOrganiService {
+    }
 
 
     /**
-    *选择了所属部门的事件
-    */
-    public static  class choiseDepts{
+     * 选择了所属部门的事件
+     */
+    public static class choiseDepts {
         private List<Organization> depts;
 
         public List<Organization> getDepts() {
@@ -240,12 +282,27 @@ public class Event {
     }
 
 
+    /**
+     * 删除了一个所属部门的事件
+     */
+    public static class deleteBelongDept {
+        private List<Map<OrganizationAccount, List<Role>>> deptAndRoleList;
+
+        public deleteBelongDept(List<Map<OrganizationAccount, List<Role>>> deptAndRoleList) {
+            this.deptAndRoleList = deptAndRoleList;
+        }
+
+        public List<Map<OrganizationAccount, List<Role>>> getDeptAndRoleList() {
+            return deptAndRoleList;
+        }
+    }
+
 
     /**
-     *选择头像事件
+     * 选择头像事件
      */
-    public static  class choiseHeadPic{
-       private Bitmap bitmap;
+    public static class choiseHeadPic {
+        private Bitmap bitmap;
 
         public Bitmap getBitmap() {
             return bitmap;
@@ -253,6 +310,29 @@ public class Event {
 
         public choiseHeadPic(Bitmap bitmap) {
             this.bitmap = bitmap;
+        }
+    }
+
+
+
+    /**
+     * 切换了旗下组织的事件
+     */
+    public static class ChangeChildOrganization {
+        String organizationId;
+        String organizationName;
+
+        public String getOrganizationId() {
+            return organizationId;
+        }
+
+        public String getOrganizationName() {
+            return organizationName;
+        }
+
+        public ChangeChildOrganization(String organizationId, String organizationName) {
+            this.organizationId = organizationId;
+            this.organizationName = organizationName;
         }
     }
 

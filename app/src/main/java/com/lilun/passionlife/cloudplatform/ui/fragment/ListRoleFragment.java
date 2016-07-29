@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.GridView;
 
@@ -8,11 +9,12 @@ import com.lilun.passionlife.cloudplatform.adapter.OrgaRoleListAdapter;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Event;
-import com.lilun.passionlife.cloudplatform.bean.OrganizationRole;
+import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.bean.Service;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -34,7 +36,7 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     private List<Service> services;
     private String crumb_title;
     private OrgaRoleListAdapter adapter;
-    private List<OrganizationRole> roles;
+    private List<Role> roles;
 
     @Override
     public View setView() {
@@ -45,12 +47,17 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     @Override
     public void onStart() {
         super.onStart();
+        bundle = new Bundle();
         getOrgaRoles();
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position==0){
                 //新增角色
                 EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(),mCx.getString(R.string.role_add)));
-
+            }else{
+                bundle.putSerializable(Constants.role,roles.get(position-1));
+                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditRoleFragment(), mCx.getString(R.string.role_edit));
+                event.setBundle(bundle);
+                EventBus.getDefault().post(event);
             }
         });
 
@@ -61,9 +68,11 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     */
     private void getOrgaRoles() {
         String url  = orgiId+ Constants.special_orgi_role;
-        rootActivity.addSubscription(ApiFactory.getOrgiRole(url), new PgSubscriber<List<OrganizationRole>>(rootActivity) {
+        Logger.d(orgiId);
+        String filter = "{\"include\":\"principals\"}";
+        rootActivity.addSubscription(ApiFactory.getOrgiRoleFilter(url, FilterUtils.role()), new PgSubscriber<List<Role>>(rootActivity) {
             @Override
-            public void on_Next(List<OrganizationRole> roless) {
+            public void on_Next(List<Role> roless) {
                 roles = roless;
                 Logger.d("roless size = " +roless.size());
                 adapter = new OrgaRoleListAdapter(roless, ListRoleFragment.this);
@@ -84,9 +93,9 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     @Override
     public void onDeleteClick(int position) {
         if (roles!=null && roles.size()!=0){
-            String rolesId = roles.get(position).getId();
+            double rolesId = (double) roles.get(position).getId();
             Logger.d("roles = "+rolesId);
-            rootActivity.addSubscription(ApiFactory.deleteOrganiRole(rolesId), new PgSubscriber<Object>(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.deleteRole(rolesId), new PgSubscriber<Object>(rootActivity) {
                 @Override
                 public void on_Next(Object integer) {
                     roles.remove(position);

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+
+    >
+
+
+    <LinearLayout
+        android:id="@+id/crub"
+        android:padding="10dp"
+        android:background="@color/default_white"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/def_textview"
+            android:text="当前位置" />
+
+        <TextView
+            android:id="@+id/current_orga"
+            style="@style/def_textview"
+            android:layout_marginLeft="20dp"
+             />
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line"
+        android:layout_below="@id/crub"
+       style="@style/line_gray"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_crumb"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@id/line"
+        android:background="@color/default_white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <com.lilun.passionlife.cloudplatform.custom_view.CrumbView
+        android:id="@+id/crumb_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:is_tv_bg="true"
+        app:tv_color="@color/default_white"
+        app:tv_size="@dimen/crumb_tv_size"
+        />
+    </RelativeLayout>
+
+
+
+    <View
+        android:id="@+id/line1"
+        android:layout_below="@id/rl_crumb"
+        style="@style/line_gray"/>
+
+    <FrameLayout
+        android:background="@color/default_white"
+        android:padding="10dp"
+        android:layout_below="@id/line1"
+        android:id="@+id/frag_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+    </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/save"
+        style="@style/btn_green"
+        android:layout_width="match_parent"
+        android:layout_below="@id/frag_container"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="保存"
+        android:gravity="center"
+        />
+
+
+</RelativeLayout>

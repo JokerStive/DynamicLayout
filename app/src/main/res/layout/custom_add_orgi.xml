@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:gravity="center_vertical"
     android:layout_height="wrap_content">
 
 
@@ -10,14 +11,14 @@
         style="@style/def_textview"
         tools:text="所属部门" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll"
         android:layout_toRightOf="@id/item_title"
         android:layout_marginLeft="17dp"
         android:layout_width="match_parent"
         android:gravity="center_vertical"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        >
 
         <LinearLayout
             android:id="@+id/ll1"
@@ -39,7 +40,7 @@
                 android:id="@+id/item_extend"
                 style="@style/def_textview"
                 android:clickable="false"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="2dp"
                 android:layout_toRightOf="@id/item_btn"
                 tools:text="继承自父组织" />
 
@@ -48,14 +49,16 @@
 
 
         <TextView
+            android:layout_toRightOf="@id/ll1"
             android:id="@+id/add_what"
             style="@style/btn_green"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:layout_marginLeft="7dp"
             tools:text="新增部门" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 
 

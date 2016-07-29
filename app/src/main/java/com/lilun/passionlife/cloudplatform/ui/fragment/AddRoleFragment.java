@@ -2,7 +2,6 @@ package com.lilun.passionlife.cloudplatform.ui.fragment;
 
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.adapter.AuthrovityListAdapter;
@@ -15,7 +14,6 @@ import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
-import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,12 +27,17 @@ import butterknife.OnClick;
 public class AddRoleFragment extends BaseFunctionFragment{
 
 
-    @Bind(R.id.head)
-    TextView head;
+
     @Bind(R.id.iv_head)
     CircleImageView ivHead;
+
     @Bind(R.id.input_role_name)
     RegItemView inputOrgiName;
+
+    @Bind(R.id.input_role_desc)
+    RegItemView inputOrgaDesc;
+
+
     @Bind(R.id.lv_auth_list)
     ListView lvAuthList;
 
@@ -49,22 +52,15 @@ public class AddRoleFragment extends BaseFunctionFragment{
     private List<Role> roles;
     private int index;
     private AuthrovityListAdapter adapter;
+    private View view;
 
     @Override
     public View setView() {
-        View view = inflater.inflate(R.layout.fragment_add_role, null);
+        view = inflater.inflate(R.layout.fragment_add_role, null);
         return view;
     }
 
-    @OnClick(R.id.btn_auth_add)
-    /**
-     *角色--新增权限
-     */
-    void role_auth_add() {
-//        choiseAuthrisIndex = StringUtils.removeRepet(choiseAuthrisIndex);
-//        Logger.d("---"+choiseAuthrisIndex);
-//        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddAuthrovityFragment(), mCx.getString(R.string.authority_add)));
-    }
+
 
 
     @Override
@@ -73,14 +69,16 @@ public class AddRoleFragment extends BaseFunctionFragment{
         getAuthrovityList();
     }
 
+
+
+
+
     /**
      * 获取权限列表
      */
     public void getAuthrovityList() {
         rootActivity.getAuthrovityList(orgiId, authrovites -> {
-            adapter = new AuthrovityListAdapter(authrovites, false, (authrovityListAdapter, position) -> {
-
-            });
+            adapter = new AuthrovityListAdapter(authrovites, false);
             roles = authrovites;
             lvAuthList.setAdapter(adapter);
         });
@@ -93,33 +91,32 @@ public class AddRoleFragment extends BaseFunctionFragment{
      */
     @OnClick(R.id.save)
     void save() {
-        //TODO 这只是一个临时方案，post一个Role...,以后直接关联OrganizationRole
-        if (StringUtils.checkEmpty(inputOrgiName.getInput())) {
+        if (StringUtils.checkEmpty(inputOrgiName.getInput(),inputOrgaDesc.getInput()) ) {
             postRole();
         }
     }
 
-    /**
-     * 临时方案：post一个Principa让权限和Role关联
-     * @param roleId
-     */
+
+
+
     private void postPrincipa(Double roleId) {
         if (roles!=null && roles.size()!=0){
             List<Integer> choiseAuthrovity = getChoiseAuthrovity(choiseAuthrisIndex);
+            List<Principal>  principals = new ArrayList<>();
             if (choiseAuthrovity!=null && choiseAuthrovity.size()!=0){
                 for(Integer index:choiseAuthrovity){
                     Principal pc = new Principal();
-//                    pc.setId(StringUtils.randow());
                     pc.setPrincipalType("ROLE");
                     pc.setPrincipalId(roles.get(index).getName());
-                    rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, pc), new PgSubscriber<Principal>(rootActivity) {
-                        @Override
-                        public void on_Next(Principal principal) {
-                            then(choiseAuthrovity);
-                        }
-
-                    });
+                    principals.add(pc);
                 }
+                rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, principals), new PgSubscriber<Object>(rootActivity) {
+                    @Override
+                    public void on_Next(Object principal) {
+                        rootActivity.backStack();
+                    }
+
+                });
 
             }else{
                 rootActivity.backStack();
@@ -143,14 +140,7 @@ public class AddRoleFragment extends BaseFunctionFragment{
         return choiseAuthrisIndex;
     }
 
-    private void then(List<Integer> integers) {
-        if (index ==integers.size()-1){
-            ToastHelper.get(mCx).showShort(mCx.getString(R.string.add_orgRole_success));
-            rootActivity.backStack();
-            return;
-        }
-        index++;
-    }
+
 
     /**
      * 临时方案：post一个Role
@@ -159,9 +149,9 @@ public class AddRoleFragment extends BaseFunctionFragment{
         Role role = new Role();
         String name = orgiId + ":" + inputOrgiName.getInput();
         role.setName(name);
+        role.setDescription(inputOrgaDesc.getInput());
         role.setTitle(inputOrgiName.getInput());
         role.setOrganizationId(orgiId+ Constants.special_orgi_role);
-//        role.setId(StringUtils.randow());
         rootActivity.addSubscription(ApiFactory.postRole(role), new PgSubscriber<Role>(rootActivity) {
             @Override
             public void on_Next(Role role) {

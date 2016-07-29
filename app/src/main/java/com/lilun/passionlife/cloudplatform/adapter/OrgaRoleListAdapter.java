@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
-import com.lilun.passionlife.cloudplatform.bean.OrganizationRole;
+import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.ui.App;
 
 import java.util.List;
@@ -17,10 +17,10 @@ import java.util.List;
  * Created by Administrator on 2016/6/8.
  */
 public class OrgaRoleListAdapter extends BaseModuleListAdapter {
-    private List<OrganizationRole> data;
+    private List<Role> data;
     private String add;
 
-    public OrgaRoleListAdapter(List<OrganizationRole> data, onDeleteClickListerer listerer) {
+    public OrgaRoleListAdapter(List<Role> data, onDeleteClickListerer listerer) {
         super(listerer);
         this.data = data;
         add = App.app.getString(R.string.add);
@@ -33,7 +33,7 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
     }
 
     @Override
-    public OrganizationRole getItem(int position) {
+    public Role getItem(int position) {
         return data.get(position - 1);
     }
 
@@ -69,7 +69,7 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
             viewHolder.module_title.setText(add);
         } else {
             //TODO 从网络url加载图片
-            String RoleName = data.get(position - 1).getRole();
+            String RoleName = data.get(position - 1).getTitle();
             viewHolder.module_icon.setBackgroundResource(R.drawable.add);
             viewHolder.module_title.setText(RoleName);
 

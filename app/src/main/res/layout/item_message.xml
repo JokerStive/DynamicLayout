@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:orientation="vertical"
+    android:background="@color/default_white">
+
+    <TextView
+        android:id="@+id/message_writer"
+        style="@style/def_textview"
+        tools:text="张三"
+        android:textSize="@dimen/def_tv_size_small"
+        />
+
+    <TextView
+        android:id="@+id/message_time"
+        style="@style/def_textview"
+        tools:text="今天19:21"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/default_tv_gray"
+        android:textSize="@dimen/def_tv_size_small_1"
+        />
+
+    <TextView
+        android:id="@+id/message_title"
+        style="@style/def_textview"
+        tools:text="只能家居的含义"
+        android:layout_marginTop="10dp"
+        android:textSize="@dimen/def_tv_size"
+        />
+
+    <TextView
+        android:id="@+id/message_content"
+        style="@style/def_textview"
+        tools:text="只能家居的含义"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/default_tv_gray"
+        android:textSize="@dimen/def_tv_size_small"
+        />
+
+</LinearLayout>

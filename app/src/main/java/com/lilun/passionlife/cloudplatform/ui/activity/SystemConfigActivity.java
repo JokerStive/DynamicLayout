@@ -93,7 +93,7 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
             Logger.d("showServices  is null");
         }
 //        setInitData();
-//        childOrginaName =  SpUtils.getString(Constants.key_defOrgina);
+//        childOrginaName =  SpUtils.getString(Constants.key_currentOrgaName);
 //        def_org.setVisibility(View.VISIBLE);
 //        def_org.setText(childOrginaName);
 
@@ -150,9 +150,9 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
 //        childOrginaId = SpUtils.getString(Constants.key_child_OrginaId);
 //        childOrginaName = SpUtils.getString(Constants.key_child_OrginaName);
 //        if (TextUtils.isEmpty(childOrginaId) || TextUtils.isEmpty(childOrginaName)) {
-//            childOrginaId = SpUtils.getString(Constants.key_defOrginaId);
+//            childOrginaId = SpUtils.getString(Constants.key_currentOrgaId);
 //            //
-//            childOrginaName = SpUtils.getString(Constants.key_defOrgina);
+//            childOrginaName = SpUtils.getString(Constants.key_currentOrgaName);
 //        }
 //        //设置显示
 //        def_org.setVisibility(View.VISIBLE);

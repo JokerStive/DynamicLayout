@@ -7,7 +7,7 @@ import com.lilun.passionlife.cloudplatform.utils.SpUtils;
  */
 public class Constants {
     //默认超时时间
-    public static final int DEFAULT_TIMEOUT = 5;
+    public static final int DEFAULT_TIMEOUT = 20;
 
     //短缓存时间
     public static final int SHORT_CACHE_TIME = 60;
@@ -21,7 +21,8 @@ public class Constants {
     public static final String BELONG_ORGA="belong_orga";
 
     //接口base_url
-    public static final String BASE_URL = "http://222.182.202.94:3000/api/";
+//    public static final String BASE_URL = "http://222.182.202.94:3000/api/";
+    public static final String BASE_URL = "http://192.168.3.105:3000/api/";
 
     //日志打印ltag
     public static final String LOGGER_TAG = "yk";
@@ -36,11 +37,19 @@ public class Constants {
     //超级用户的sp_key
     public static final String ADMIN = "admin";
 
-    //默认组织名的sp_key
-    public static String key_defOrgina="defOrgina";
+    //当前组织name的sp_key
+    public static String key_currentOrgaName ="currentOrgaName";
 
-    //默认组织id的sp_key
-    public static String key_defOrginaId= SpUtils.getInt(TokenManager.USERID)+"defOrginaId";
+    //当前组织id的sp_key
+    public static String key_currentOrgaId = SpUtils.getInt(TokenManager.USERID)+"currentOrgaId";
+
+
+
+    //当前所属默认组织name的sp_key
+    public static String key_currentBelongOrgaName ="currentBelongOrgaName";
+
+    //当前所属默认组织id的sp_key
+    public static String key_currentBelongOrgaId = SpUtils.getInt(TokenManager.USERID)+"currentBelongOrgaId";
 
     //默认组织儿子的sp_key
     public static String key_child_OrginaId="childOrginaId";

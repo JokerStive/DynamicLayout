@@ -8,6 +8,7 @@
     <TextView
 
         android:id="@+id/item_name"
+
         style="@style/def_textview"
         android:background="@drawable/selector_tv_choise"
         android:text="研发部"

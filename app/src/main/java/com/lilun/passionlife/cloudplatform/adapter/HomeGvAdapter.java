@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
+import com.lilun.passionlife.cloudplatform.ui.App;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -55,10 +58,14 @@ public class HomeGvAdapter extends BaseAdapter {
             viewHolder= (ViewHolder) convertView.getTag();
         }
         //TODO :数据
-        viewHolder.module_icon.setBackgroundResource(R.drawable.property);
+//        viewHolder.module_icon.setBackgroundResource(R.drawable.property);
         viewHolder.module_title.setText(servicess.get(position).getTitle());
-        viewHolder.module_desc.setText(servicess.get(position).getDescription());
+        String desc = servicess.get(position).getDescription();
+        viewHolder.module_desc.setText(desc==null?"没有描述":desc);
 
+        Picasso.with(App.app).load(PicloadManager.orgaServiceIconUrl(servicess.get(position).getId()))
+                .error(R.drawable.default_pic)
+                .into(viewHolder.module_icon);
 
         return convertView;
     }

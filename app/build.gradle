@@ -67,6 +67,11 @@ dependencies {
     //下拉刷新
     compile 'in.srain.cube:ultra-ptr:1.0.11'
 
+    //图片加载库
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.zhy:flowlayout-lib:1.0.3'
+    //通用adapter
+    compile 'com.github.thepacific:adapter:1.0.5'
+
+
 }

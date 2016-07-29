@@ -2,10 +2,14 @@ package com.lilun.passionlife.cloudplatform.net.retrofit;
 
 import android.text.TextUtils;
 
+import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.NetUtil;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
+import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -20,21 +24,25 @@ import okhttp3.Response;
  * okhttp3配置，不同的请求方式，不同的header
  */
 public class HttpInterceptor implements Interceptor {
+
+    private HttpUrl url1;
+
     @Override
     public Response intercept(Chain chain) throws IOException {
+
         Request originalRequest = chain.request();
 
         String token = SpUtils.getString(TokenManager.TOKEN);
-        if(!TextUtils.isEmpty(token)){
+        if (!TextUtils.isEmpty(token)) {
             String ul = originalRequest.url().toString();
-            String url="";
-            if (ul.contains("?")){
-               url = originalRequest.url() + "&access_token="+token ;
-            }else{
-                url = originalRequest.url() + "?access_token="+token ;
+            String url = "";
+            if (ul.contains("?")) {
+                url = originalRequest.url() + "&access_token=" + token;
+            } else {
+                url = originalRequest.url() + "?access_token=" + token;
             }
 //            String url = originalRequest.url() + "?access_token="+token ;
-            HttpUrl url1 = HttpUrl.parse(url);
+            url1 = HttpUrl.parse(url);
             originalRequest = originalRequest.newBuilder()
 //                    .header("access_token",token)
                     .url(url1)
@@ -42,12 +50,22 @@ public class HttpInterceptor implements Interceptor {
         }
 
 
-
-
         CacheControl cacheControl = originalRequest.cacheControl();
 
         Response response = chain.proceed(originalRequest);
-        if (!TextUtils.isEmpty(cacheControl.toString()) && response.code()==200){
+        int code = response.code();
+        if (code == 401) {
+            if (!url1.toString().contains("Accounts/me")) {
+                EventBus.getDefault().post(new Event.Event401());
+            } else {
+                Logger.d("post event");
+                EventBus.getDefault().post(new Event.AuthoriseEvent());
+
+            }
+        }
+
+
+        if (!TextUtils.isEmpty(cacheControl.toString()) && response.code() == 200) {
 
 
             if (NetUtil.checkNet(App.app)) {
@@ -65,15 +83,6 @@ public class HttpInterceptor implements Interceptor {
 
         }
 
-
-
-
-
-
-        //日志打印
-//        HttpLogUtils.logRequest(originalRequest);
-//        HttpLogUtils.logResponse(response);
-
-            return response;
+        return response;
     }
 }

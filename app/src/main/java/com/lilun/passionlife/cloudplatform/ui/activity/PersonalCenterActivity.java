@@ -6,19 +6,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.adapter.ListPopAdapter;
-import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
+import com.lilun.passionlife.cloudplatform.adapter.BelongOrgasAdapter;
+import com.lilun.passionlife.cloudplatform.base.BaseActivity;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
 import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
-import com.orhanobut.logger.Logger;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +30,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.OnClick;
 
-public class PersonalCenterActivity extends BaseFunctionActivity implements AdapterView.OnItemClickListener {
+public class PersonalCenterActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
 
     @Bind(R.id.belong_orga)
@@ -37,39 +40,48 @@ public class PersonalCenterActivity extends BaseFunctionActivity implements Adap
     RelativeLayout rlBelong;
 
 
-
     @Bind(R.id.pop_contain)
     FrameLayout popContain;
+
+    @Bind(R.id.iv_head)
+    ImageView ivHead;
+
+    @Bind(R.id.title)
+    TextView title;
+
+    @OnClick(R.id.back)
+    void back(){finish();};
+
+    @Bind(R.id.message)
+    ImageView message;
 
     private PopupWindow pop;
     private ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
     private List<OrganizationAccount> belongOrgs;
-    private ListPopAdapter popAdapter;
+    private BelongOrgasAdapter popAdapter;
     public ListView listView;
+
+
     @Override
-    public View setContent() {
-        title.setText(getString(R.string.person_center_title));
-        View view = inflater.inflate(R.layout.activity_personal_center, null);
-        return view;
+    public int setContentView() {
+        return R.layout.activity_personal_center;
     }
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        String defOrgaName = SpUtils.getString(Constants.key_defOrgina);
+        title.setText(App.app.getString(R.string.person_center_title));
+        String defOrgaName = SpUtils.getString(Constants.key_currentBelongOrgaName);
         belongOrga.setText(defOrgaName == null ? "" : defOrgaName);
     }
 
     /**
      * 个人资料
      */
-    /**
-     * 个人资料
-     */
     @OnClick(R.id.personal_info)
     void setPersonalInfo() {
-        IntentUtils.startAct(mAc, PersonalInfoActivity.class);
+//        IntentUtils.startAct(mAc, PersonalInfoActivity.class);
     }
 
 
@@ -79,7 +91,15 @@ public class PersonalCenterActivity extends BaseFunctionActivity implements Adap
     @OnClick(R.id.account_safe)
     void setAccountSafe() {
 
-        IntentUtils.startAct(mAc,AccountSecurityActivity.class);
+        IntentUtils.startAct(mAc, AccountSecurityActivity.class);
+    }
+
+
+    /**
+     * 消息中心
+     */
+    @OnClick(R.id.account_message)
+    void setAccountMessage() {
     }
 
     /**
@@ -91,25 +111,10 @@ public class PersonalCenterActivity extends BaseFunctionActivity implements Adap
     }
 
     private void listBelongOrga() {
-        if (pop == null) {
-            Logger.d("-------");
-//            belongOrgs = (List<OrganizationAccount>) CacheUtils.getCache(Constants.BELONG_ORGA);
-//            if (belongOrgs != null) {
-//                for (OrganizationAccount a : belongOrgs) {
-//                    data.add(a.getOrganization().getName());
-//                }
-            HashMap<String, String> map =  new HashMap<String, String>();
-            map.put("name","保洁部");
-            data.add(map);
-            HashMap<String, String> map1 =  new HashMap<String, String>();
-            map1.put("name", "保洁1部");
-            data.add(map1);
-            HashMap<String, String> map2 =  new HashMap<String, String>();
-            map2.put("name", "工程部");
-            data.add(map2);
-            popAdapter = new ListPopAdapter(mCx);
-            popAdapter.setSpinnerValue(data);
-            View view = LayoutInflater.from(mCx).inflate(R.layout.popmenu_single, null);
+        belongOrgs = (List<OrganizationAccount>) CacheUtils.getCache("belongOrgas");
+        if (pop == null && belongOrgs!=null) {
+            popAdapter = new BelongOrgasAdapter(belongOrgs);
+            View view = LayoutInflater.from(mCx).inflate(R.layout.item_change_belong_orga, null);
             // 设置 listview
             listView = (ListView) view.findViewById(R.id.first_list);
             listView.setOnItemClickListener(PersonalCenterActivity.this);
@@ -136,14 +141,10 @@ public class PersonalCenterActivity extends BaseFunctionActivity implements Adap
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //设置切换的默认组织
-        HashMap<String, String> map = (HashMap<String, String>) popAdapter.getItem(position);
-        //  belongOrga.setText(data.get(position));
-        belongOrga.setText(map.get("name"));
+        OrganizationAccount oa = belongOrgs.get(position);
+        belongOrga.setText(StringUtils.belongOgaName(oa.getOrganizationId()));
         pop.dismiss();
     }
-
-
 
 
 

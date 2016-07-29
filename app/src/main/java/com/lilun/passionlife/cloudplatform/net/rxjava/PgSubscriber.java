@@ -2,8 +2,11 @@ package com.lilun.passionlife.cloudplatform.net.rxjava;
 
 import android.content.Context;
 
+import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.custom_view.ProgressDialog;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.DealErrorUtils;
+import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 
 import rx.Subscriber;
 
@@ -21,6 +24,9 @@ public abstract class PgSubscriber<T> extends Subscriber<T>  {
         this.context = context;
     }
 
+    public PgSubscriber() {
+    }
+
     public abstract void on_Next(T t);
     public  void on_Error(){};
 
@@ -30,7 +36,9 @@ public abstract class PgSubscriber<T> extends Subscriber<T>  {
     @Override
     public void onStart() {
 
-        initProgressDialog();
+        if (context!=null){
+            initProgressDialog();
+        }
 
     }
 
@@ -42,9 +50,14 @@ public abstract class PgSubscriber<T> extends Subscriber<T>  {
 
     @Override
     public void onError(Throwable e) {
-        dismissProgressDialog();
-        DealErrorUtils.dealError(e);
-        on_Error();
+        try {
+            dismissProgressDialog();
+            DealErrorUtils.dealError(e);
+            on_Error();
+        }catch (Throwable e1) {
+            ToastHelper.get().showShort(App.app.getString(R.string.net_time_out));
+//            Logger.d(e1.toString());
+        }
 
     }
 

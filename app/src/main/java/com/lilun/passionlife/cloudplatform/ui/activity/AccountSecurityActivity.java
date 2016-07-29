@@ -5,9 +5,13 @@ import android.widget.TextView;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
+import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.LogUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
+import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -38,4 +42,14 @@ public class AccountSecurityActivity extends BaseFunctionActivity {
     public void changePassword(){
        IntentUtils.startAct(mAc,ModifyPasswordActivity.class);
    }
+
+    /**
+    *退出登录
+    */
+    @OnClick(R.id.logout)
+    void logout(){
+        SpUtils.setBoolean("logined",false);
+        Logger.d("post event");
+        EventBus.getDefault().post(new Event.AuthoriseEvent());
+    }
 }

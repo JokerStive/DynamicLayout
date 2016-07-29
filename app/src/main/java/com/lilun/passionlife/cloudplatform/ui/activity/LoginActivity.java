@@ -50,7 +50,7 @@ public class LoginActivity extends BaseActivity {
         username_next = SpUtils.getString("username");
 
         //不是首次登陆，跳转首页
-        if (isLogined) {
+        if (isLogined  && TextUtils.isEmpty(authrovity)) {
             IntentUtils.startAct(mAc, HomeActivity.class);
             finish();
         }

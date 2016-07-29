@@ -28,8 +28,8 @@
 
             <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
                 android:id="@+id/iv_head"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/def_circle_width"
+                android:layout_height="@dimen/def_circle_width"
                 android:layout_marginLeft="50dp"
                 android:layout_toRightOf="@id/head"
                 android:src="@drawable/head_portrait" />

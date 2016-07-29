@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/module_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/def_circle_width"
+        android:layout_height="@dimen/def_circle_width"
         tools:background="@drawable/launcher"/>
 
     <TextView

@@ -26,10 +26,15 @@
         <attr name="is_show_add_btn" format="boolean" />
     </declare-styleable>
 
+    <!--面包屑控件-->
     <declare-styleable name="CrumbViewAttrs">
         <attr name="light_color" format="color"/>
         <attr name="dark_color" format="color"/>
         <attr name="padding" format="dimension"/>
+        <attr name="back_ground" format="reference"/>
+        <attr name="is_tv_bg" format="boolean"/>
+        <attr name="tv_color" format="color"/>
+        <attr name="tv_size" format="dimension"/>
     </declare-styleable>
 
 

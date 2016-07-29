@@ -24,16 +24,15 @@ import java.util.List;
 public class addStaff_roleListAdapter extends BaseAdapter {
 
 
-    ViewHolder holder;
+
     public HashMap<Integer, Boolean> mCBFlag;
     private List<Role> data;
-    private onItemCancleLister listen;
+    private onHaveCancleListener listen;
 
 
     public addStaff_roleListAdapter(List<Role> data) {
         this.data = data;
         mCBFlag = new HashMap<Integer, Boolean>();
-//        Logger.d("data size = " + data.size());
         initData();
     }
 
@@ -43,9 +42,7 @@ public class addStaff_roleListAdapter extends BaseAdapter {
         }
     }
 
-    public void setOnItemCancleListener(onItemCancleLister listener) {
-        this.listen = listener;
-    }
+
 
     @Override
     public int getCount() {
@@ -65,7 +62,7 @@ public class addStaff_roleListAdapter extends BaseAdapter {
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
+        ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(App.app).inflate(R.layout.item_container, null);
             holder = new ViewHolder();
@@ -73,26 +70,22 @@ public class addStaff_roleListAdapter extends BaseAdapter {
             //名称
             holder.item_name = (TextView) convertView.findViewById(R.id.item_name);
             holder.item_ll = (LinearLayout) convertView.findViewById(R.id.item_ll);
+            holder.item_ll.setOnClickListener(v -> {
+                if (data.get(position).isBelong() && listen != null) {
+                    listen.onHaveCancle(position,holder.item_name);
+                } else {
+                    mCBFlag.put(position, !holder.item_name.isEnabled());
+                    holder.item_name.setEnabled(mCBFlag.get(position));
+                }
+            });
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         holder.item_name.setText(data.get(position).getTitle());
-        holder.item_ll.setOnClickListener(v -> {
-
-            if (data.get(position).isBelong() && listen != null) {
-                listen.onItemCancle(position);
-            }else{
-                mCBFlag.put(position, !holder.item_name.isEnabled());
-                holder.item_name.setEnabled(mCBFlag.get(position));
-            }
-
-
-        });
-
         holder.item_name.setEnabled(mCBFlag.get(position));
-//        holder.item_name.setTextColor(App.app.getColor(R.color.default_tv_gray));
         return convertView;
     }
 
@@ -115,14 +108,30 @@ public class addStaff_roleListAdapter extends BaseAdapter {
     }
 
 
-    public interface onItemCancleLister {
-        void onItemCancle(int position);
+
+    public interface onHaveCancleListener {
+        void onHaveCancle(int position, TextView item_name);
     }
 
 
-    public void setEnable(int position,boolean enable){
-        mCBFlag.put(position, !holder.item_name.isEnabled());
-        holder.item_name.setEnabled(mCBFlag.get(position));
+    public void setOnHaveCancle(onHaveCancleListener listen){
+        this.listen = listen;
+    }
+
+    public void setmCBFlag(int position,boolean b) {
+        mCBFlag.put(position,b);
+        data.get(position).setHave(b);
+    }
+
+
+    public int getIsHaveCount(){
+        int count=0;
+        for(Integer i:mCBFlag.keySet()){
+            if (mCBFlag.get(i)){
+                count++;
+            }
+        }
+        return count;
     }
 
 

@@ -1,10 +1,12 @@
 package com.lilun.passionlife.cloudplatform.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/5/19.
  */
-public class Account {
-
+public class Account implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String mobile;
     private Object id;
     private boolean mobileVerified;

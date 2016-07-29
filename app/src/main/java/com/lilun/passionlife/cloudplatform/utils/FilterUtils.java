@@ -15,7 +15,8 @@ public class FilterUtils {
     *直接获取组织下的staff信息的filter
     */
     public static String orgaAccountFilter(String orgaId){
-        return "{\"include\":\"account\", \"like\": {\"organizationId\": \""+orgaId+"/#staff\"}}";
+//        return "{\"include\":\"account\", \"like\":{\"organizationId\": \""+orgaId+"/#staff\"}}";
+        return "{\"include\":\"account\",\"where\":{\"organizationId\":\""+orgaId+"/#staff\"}}";
     }
 
 

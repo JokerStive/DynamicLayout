@@ -14,13 +14,16 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Service;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -115,15 +118,19 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     }
 
     private void setInitData() {
+        Picasso.with(App.app).load(PicloadManager.orgaServiceIconUrl(service.getId()))
+                .error(R.drawable.head_portrait)
+                .into(ivHead);
+
         inputServiceName.setInput(service.getTitle()==null?"":service.getTitle());
         inputServiceDetail.setInput(service.getDescription()==null?"":service.getDescription());
-        inputService.setShow_data(service.getServiceName()==null?"":service.getServiceName());
+        inputService.setShow_data(StringUtils.getServiceName(service.getServiceId()));
         if (service.getSettings()==null){
             tv_hint.setEnabled(false);
         }else if (service.getSettings().getVisible()==null){
             tv_hint.setEnabled(false);
         }else {
-            tv_hint.setEnabled(Boolean.parseBoolean(service.getSettings().getVisible()));
+            tv_hint.setEnabled(!Boolean.parseBoolean(service.getSettings().getVisible()));
         }
 //        tv_hint.setEnabled(service.getSettings()== null && service.getSettings().getVisible() != null && !Boolean.parseBoolean(service.getSettings().getVisible()));
 
@@ -140,6 +147,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
                     return;
                 }
                 allService = servicess;
+                list.clear();
                 for (Service service : servicess) {
                     list.add(service.getTitle());
                 }

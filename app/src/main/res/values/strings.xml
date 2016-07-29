@@ -1,6 +1,7 @@
 <resources>
     <string name="net_error">无可用网络</string>
-    <string name="net_time_out">连接超时,稍后再试</string>
+    <string name="net_time_out">请求超时,稍后再试</string>
+    <string name="request_time_out">请求异常,稍后再试</string>
 
     <!--首页-->
     <string name="app_name">励生活</string>
@@ -34,6 +35,7 @@
     <string name="person_center_title">个人中心</string>
     <string name="personal_info">个人资料</string>
     <string name="account_safe">账户与安全</string>
+    <string name="account_message">消息中心</string>
     <string name="belong">当前所在组织</string>
     <string name="change_password">修改登录密码</string>
     <string name="accounts">帐号</string>
@@ -47,10 +49,14 @@
     <string name="person_name">名称</string>
 
 
+    <!--账户与安全-->
+    <string name="logout">退出登录</string>
+
+
     <!--系统配置-->
     <string name="system_config">系统配置</string>
     <string name="organization">组织机构</string>
-    <string name="role_manager">角色管理</string>
+    <string name="role_manager">职位管理</string>
     <string name="staff_manager">员工管理</string>
     <string name="module_manager">模块管理</string>
 
@@ -70,6 +76,8 @@
     <string name="belong_department">部门列表</string>
     <string name="extend_fatfer">继承自父组织</string>
     <string name="not_orginame_empty">输入不能为空</string>
+    <string name="orga_icon_upload_success">组织图标上传成功</string>
+    <string name="orga_icon_upload_false">组织图标上传失败</string>
     <!--新增部门-->
     <string name="add_department">新增部门</string>
     <string name="dept_role_list">职位列表</string>
@@ -77,6 +85,8 @@
     <string name="empty_child_dept">子组织部门为空</string>
     <string name="put_department_success">更新部门成功</string>
     <string name="put_department_false">更新部门失败</string>
+    <string name="add_department_success">新增部门成功</string>
+    <string name="add_department_false">新增部门失败</string>
     <string name="depar_name">部门名称</string>
     <string name="depar_et1">请输入你的部门名称</string>
     <string name="depar_desc">部门描述</string>
@@ -102,7 +112,9 @@
     <string name="dept_et1">请输入你的部门名</string>
     <string name="dept_detail">部门描述</string>
     <string name="dept_et2">请输入此部门的描述</string>
-    <!--新增部门角色-->
+    <string name="dept_icon_upload_success">部门图标上传成功</string>
+    <string name="dept_icon_upload_false">部门图标上传失败</string>
+    <!--新增部门职位-->
     <string name="role_et1">请输入职位的名称</string>
     <string name="role_namee">职位名称</string>
     <string name="role_desc">职位描述</string>
@@ -114,6 +126,10 @@
     <string name="service_add">新增功能</string>
     <string name="service_edit">功能编辑</string>
     <string name="delete_orgservice_success">删除功能成功</string>
+    <string name="add_orgservice_success">添加功能成功</string>
+    <string name="add_orgservice_false">添加功能失败</string>
+    <string name="add_orgservice_icon_false">添加功能图标失败</string>
+    <string name="add_orgservice_icon_success">添加功能图标成功</string>
     <!--新增功能-->
     <string name="service_name">功能名称</string>
     <string name="service_et1">请输入你的功能名</string>
@@ -127,15 +143,15 @@
     <string name="service_hint">隐藏</string>
 
 
-    <!--角色管理-->
-    <string name="role_add">新增角色</string>
-    <string name="role_edit">角色编辑</string>
-    <string name="delete_orgRole_success">刪除角色成功</string>
-    <!--新增角色-->
-    <string name="role_name">角色名称</string>
-    <string name="add_orgRole_success">添加角色成功</string>
+    <!--职位管理-->
+    <string name="role_add">新增职位</string>
+    <string name="role_edit">职位编辑</string>
+    <string name="delete_orgRole_success">刪除职位成功</string>
+    <!--新增职位-->
+    <string name="role_name">职位描述</string>
+    <string name="add_orgRole_success">添加职位成功</string>
     <string name="empty_authrovity_list">权限列表为空</string>
-    <string name="role_name_et1">请输入你的角色名</string>
+    <string name="role_name_et1">请输入你的职位名</string>
     <string name="role_authority_list">权限列表</string>
     <!--新增权限-->
     <string name="authority_add">新增权限</string>
@@ -165,7 +181,7 @@
     <!--权限-->
     <string name="no_view_permissoion">对不起,你不具备查看权限</string>
     <string name="empty_depart_list">部门列表为空</string>
-    <string name="empty_role_list">角色列表为空</string>
+    <string name="empty_role_list">职位列表为空</string>
     <string name="Write_Open">暂未开放</string>
     <string name="delete_dept_false">删除部门失败</string>
     <string name="dept_manager">部门管理</string>
@@ -173,4 +189,20 @@
     <!--自定义dialog-->
     <string name="config">确定</string>
     <string name="cancle">取消</string>
+
+
+    <!--信息发布-->
+    <!--发布消息-->
+    <string name="message_title">标题</string>
+    <string name="message_title_et">请输入标题</string>
+    <string name="message_content">内容</string>
+    <string name="message_content_et">请输入内容</string>
+    <string name="message_allow_review">允许他人评论</string>
+    <string name="message_publish">发表</string>
+
+    <!--信息详情-->
+    <string name="message_add_review">添加评论</string>
+
+
+
 </resources>

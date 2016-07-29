@@ -14,18 +14,21 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
+import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.ExtendItem;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,9 +70,10 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     private boolean isRestore;
     private boolean isSaveData;
     private boolean currentCheck;
-    private String currIsInheritedid;
+//    private String currIsInheritedid;
     private Boolean isInherited;
     private Boolean ISINHERITED;
+    private String currIsInheritedid;
 
     @Override
     public View setView() {
@@ -103,13 +107,14 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
      * 设置初始化显示数据
      */
     private void setInitData(Organization organi) {
+        Picasso.with(App.app).load(PicloadManager.orgaIconUrl(organi.getId())).into(ivHead);
         orgaName = orgaName == null ? organi.getName() : orgaName;
         orgaDesc = orgaDesc == null ? organi.getDescription() : orgaDesc;
         currentOrgaId = organi.getId();
         currIsInheritedid = currentOrgaId+Constants.special_orgi_department;
 
         if (isRestore){return;}
-        rootActivity.getIsInherited(currIsInheritedid, isInherite -> {
+        rootActivity.getIsInherited(currentOrgaId, isInherite -> {
             ISINHERITED = isInherite;
             isInherited = isInherite;
             exvAddOrgi.setBtnCheck(isInherited);
@@ -156,26 +161,22 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
             return;
         }
         if (ownDepts != null && ownDepts.size() != 0) {
+            List<Organization>  depts = new ArrayList<>();
             for (Organization depart : ownDepts) {
                 if (depart.isNew()) {
                     Logger.d("  当前部门所属组织id = " + currentOrgaId);
                     depart.setId(currentOrgaId + Constants.special_orgi_department + "/" + depart.getName());
                     depart.setParentId(currentOrgaId + Constants.special_orgi_department);
-                    rootActivity.addSubscription(ApiFactory.postOrganization(depart), new PgSubscriber<Organization>(rootActivity) {
-                        @Override
-                        public void on_Next(Organization organizationBean) {
-//                            then();
-
-                        }
-
-                        @Override
-                        public void on_Error() {
-                            super.on_Error();
-                            ToastHelper.get(mCx).showShort("更新部门失败");
-                        }
-                    });
+                    depts.add(depart);
                 }
             }
+            if (depts.size()==0){return;}
+            rootActivity.addSubscription(ApiFactory.postOrganizations(depts), new PgSubscriber<List<Organization>>(rootActivity) {
+                @Override
+                public void on_Next(List<Organization> organizationBean) {
+                    ToastHelper.get().showShort(App.app.getString(R.string.put_department_success));
+                }
+            });
         }
     }
 
@@ -189,7 +190,10 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         String inputName = inputOrgiName.getInput();
         String inputDesc = inputOrgiDesc.getInput();
         boolean b = ISINHERITED == exvAddOrgi.isInherited();
-        if (inputName.equals(orgna.getName()) && inputDesc.equals(orgna.getDescription()) && b) {
+        if (!b){
+            rootActivity.setIsInherited(currIsInheritedid, new IsInherited(isInherited));
+        }
+        if (inputName.equals(orgna.getName()) && inputDesc.equals(orgna.getDescription())) {
             checkIsAddDepartment();
             rootActivity.backStack();
             return;
@@ -210,15 +214,15 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         }
 
 
-//        orgna.setInherited(exvAddOrgi.isInherited());
+        organizationBean.setInherited(exvAddOrgi.isInherited());
 
         //更新
         rootActivity.addSubscription(ApiFactory.putOrganization(currentOrgaId, organizationBean), new PgSubscriber<Organization>(rootActivity) {
             @Override
             public void on_Next(Organization orga) {
 
-                rootActivity.setIsInherited(currIsInheritedid, new IsInherited(isInherited));
-                Logger.d(" set isInherited id = "+currIsInheritedid+"---"+"isInherited = "+orga.isInherited());
+
+//                Logger.d(" set isInherited id = "+currIsInheritedid+"---"+"isInherited = "+orga.isInherited());
                 checkIsAddDepartment();
                 rootActivity.backStack();
             }
@@ -324,21 +328,20 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
             else {
 
                 String deptId = ownDepts.get(position).getId();
+                new AlertDiaog(rootActivity, "确定移除该部门？", () -> {
+                    rootActivity.addSubscription(ApiFactory.deleteOrganization(deptId), new PgSubscriber<Object>(rootActivity) {
+                        @Override
+                        public void on_Next(Object o) {
+                            ownDepts.remove(position);
+                            showDeptAdapter.notifyDataSetChanged();
+                        }
 
-
-
-                rootActivity.addSubscription(ApiFactory.deleteOrganization(deptId), new PgSubscriber<Object>(rootActivity) {
-                    @Override
-                    public void on_Next(Object o) {
-                        ownDepts.remove(position);
-                        showDeptAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void on_Error() {
-                        super.on_Error();
-                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_dept_false));
-                    }
+                        @Override
+                        public void on_Error() {
+                            super.on_Error();
+                            ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_dept_false));
+                        }
+                    });
                 });
             }
         }
@@ -354,7 +357,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         if (isSaveData){
             outState.putString("organiName", inputOrgiName.getInput());
             outState.putString("organiDesc", inputOrgiDesc.getInput());
-            outState.putSerializable("ownDepts", (Serializable) ownDepts);
+//            outState.putSerializable("ownDepts", (Serializable) ownDepts);
         }
     }
 
@@ -377,9 +380,9 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
 
 //            newAddDepartments = (List<Organization>) savedInstanceState.get("newAddDepartments");
             //恢复部门列表
-            ownDepts = (List<Organization>) savedInstanceState.get("ownDepts");
+//            ownDepts = (List<Organization>) savedInstanceState.get("ownDepts");
             if (ownDepts != null) {
-                newDepartment = null;
+//                newDepartment = null;
                 exvAddOrgi.setBtnCheck(false);
                 exvAddOrgi.setListviewData(new ExtDeptAdapter(ownDepts, true, (parentOrgisAdapter, position) -> {
                     //TODO

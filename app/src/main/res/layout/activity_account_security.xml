@@ -59,4 +59,16 @@
 
     <View
         style="@style/line_gray"/>
+
+    <Button
+        android:layout_marginTop="50dp"
+        android:id="@+id/logout"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        style="@style/btn_green"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:text="@string/logout"
+        />
 </LinearLayout>

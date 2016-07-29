@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.lilun.passionlife.cloudplatform.custom_view.FlowLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/lv_role"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginBottom="10dp"
 
-   >
-
-
-   <LinearLayout
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:orientation="horizontal"
-
-       >
-   <TextView
-       android:id="@+id/container_title"
-       android:layout_width="match_parent"
-
-       style="@style/def_textview" />
-      <TextView
-          android:id="@+id/container_delete"
-          style="@style/def_textview"
-          android:layout_marginLeft="10dp"
-          android:background="@drawable/delete"/>
-   </LinearLayout>
+    >
 
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
 
-</com.lilun.passionlife.cloudplatform.custom_view.FlowLayout>
+        >
+
+        <TextView
+            android:id="@+id/container_title"
+            style="@style/def_textview"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent" />
+
+        <ImageView
+            android:id="@+id/container_delete"
+            style="@style/def_textview"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/delete" />
+    </LinearLayout>
+
+    <com.lilun.passionlife.cloudplatform.custom_view.FlowLayout
+        android:id="@+id/container_flow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.lilun.passionlife.cloudplatform.custom_view.FlowLayout>
+
+</LinearLayout>

@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lilun.passionlife.R;
+import com.lilun.passionlife.cloudplatform.ui.App;
 
 
 /**
@@ -39,6 +40,16 @@ public class ToastHelper {
         if (instance == null) {
             synchronized (ToastHelper.class) {
                 instance = new ToastHelper(context);
+            }
+        }
+        return instance;
+    }
+
+
+    public static ToastHelper get() {
+        if (instance == null) {
+            synchronized (ToastHelper.class) {
+                instance = new ToastHelper(App.app);
             }
         }
         return instance;

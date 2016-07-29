@@ -23,18 +23,18 @@ import java.util.Map;
 public class AuthrovityListAdapter extends BaseAdapter {
 
 
-    public   HashMap<Integer, Boolean> mCBFlag;
-    private  List<Role> data;
-    private  OnItemClickListen listen;
+    public  HashMap<Integer, Boolean> mCBFlag;
+    private List<Role> data;
     private final boolean isShowDelete;
+    private OnHaveCancleListener listener;
 
 
-    public AuthrovityListAdapter(List<Role> data, boolean isShowDelete, OnItemClickListen listen) {
-        this.data=data;
-        this.listen =listen;
+
+    public AuthrovityListAdapter(List<Role> data, boolean isShowDelete) {
+        this.data = data;
         this.isShowDelete = isShowDelete;
         mCBFlag = new HashMap<Integer, Boolean>();
-        Logger.d("data size = "+data.size());
+        Logger.d("data size = " + data.size());
         initData();
     }
 
@@ -61,12 +61,12 @@ public class AuthrovityListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+         ViewHolder holder;
         if (convertView == null) {
             int layout = R.layout.item_authority_list;
             LayoutInflater inflater = LayoutInflater.from(App.app);
             convertView = inflater.inflate(layout, parent, false);
-            holder=new ViewHolder();
+            holder = new ViewHolder();
 
             //字体颜色
             TextView authro_title = (TextView) convertView.findViewById(R.id.authro_title);
@@ -75,75 +75,63 @@ public class AuthrovityListAdapter extends BaseAdapter {
             RelativeLayout authro_delete = (RelativeLayout) convertView.findViewById(R.id.authro_delete);
 
 
-            tv_delete.setVisibility(isShowDelete ?View.VISIBLE:View.GONE);
-            authro_choise.setVisibility(!isShowDelete ?View.VISIBLE:View.GONE);
+            tv_delete.setVisibility(isShowDelete ? View.VISIBLE : View.GONE);
+            authro_choise.setVisibility(!isShowDelete ? View.VISIBLE : View.GONE);
 
 
-
-
-
-            holder.item_authro_choise= authro_choise;
-            holder.item_authro_delete= authro_delete;
-            holder.item_authro_title= authro_title;
-            holder.item_tv_delete= tv_delete;
+            holder.item_authro_choise = authro_choise;
+            holder.item_authro_delete = authro_delete;
+            holder.item_authro_title = authro_title;
+            holder.item_tv_delete = tv_delete;
             convertView.setTag(holder);
-        }else{
-            holder= (ViewHolder) convertView.getTag();
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
         holder.item_authro_title.setText(data.get(position).getTitle());
 
 
         //初始化选中的勾选
-        if(data.get(position).isHave()){
+        if (data.get(position).isHave()) {
             mCBFlag.put(position, true);
         }
         holder.item_authro_delete.setOnClickListener(v -> {
-            if (holder.item_authro_choise.getVisibility()==View.VISIBLE){
+            if (holder.item_authro_choise.getVisibility() == View.VISIBLE) {
 
 
+                if (data.get(position).isHave()) {
+                    if (listener != null) {
+                        listener.onHaveCancle(position,holder.item_authro_choise);
+                    }
+                }
+
+                else {
                     mCBFlag.put(position, !holder.item_authro_choise.isEnabled());
-
-
-                //取消选中的监听
-//                if(data.get(position).isHave()){
-//                    Logger.d("删除权限");
-//                    listen.onChoiseItemCancle(AuthrovityListAdapter.this,position);
-//                }
-//
-//                if (holder.item_authro_choise.isEnabled()){
-//                    mCBFlag.put(position, false);
-//                }else{
-//                    mCBFlag.put(position, true);
-//                }
-                holder.item_authro_choise.setEnabled(mCBFlag.get(position));
+                    holder.item_authro_choise.setEnabled(mCBFlag.get(position));
+                }
 
             }
-//            else{
-//                listen.onChoiseItemCancle(AuthrovityListAdapter.this,position);
-//            }
         });
 
         holder.item_authro_choise.setEnabled(mCBFlag.get(position));
         return convertView;
     }
 
-public void setEnable(int position,boolean enable){
 
-}
-
-   public static class ViewHolder{
-      public   TextView  item_authro_title;
-      public   TextView  item_tv_delete;
-       public RelativeLayout item_authro_delete;
-       public TextView  item_authro_choise;
+    public static class ViewHolder {
+        public TextView item_authro_title;
+        public TextView item_tv_delete;
+        public RelativeLayout item_authro_delete;
+        public TextView item_authro_choise;
     }
 
 
+    public interface OnHaveCancleListener {
+        void onHaveCancle(int position,TextView item_authro_choise);
 
-    public interface  OnItemClickListen{
-        void onChoiseItemCancle(AuthrovityListAdapter authrovityListAdapter, int position);
+    }
 
-
+    public void setOnHaveCancleListener(OnHaveCancleListener listener) {
+        this.listener = listener;
     }
 
 
@@ -151,8 +139,9 @@ public void setEnable(int position,boolean enable){
         return mCBFlag;
     }
 
-    public void setmCBFlag(HashMap<Integer, Boolean> mCBFlag) {
-        this.mCBFlag = mCBFlag;
+    public void setmCBFlag(int position,boolean b) {
+        mCBFlag.put(position,b);
+        data.get(position).setHave(b);
     }
 
 }

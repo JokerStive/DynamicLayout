@@ -41,7 +41,7 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
         rootActivity= (BaseModuleActivity) getActivity();
         mCx= App.app;
 //        bundle=savedInstanceState;
-        orgiId= SpUtils.getString(Constants.key_defOrginaId);
+        orgiId= SpUtils.getString(Constants.key_currentOrgaId);
     }
 
     @Override
@@ -90,7 +90,7 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        ButterKnife.unbind(view);
+        ButterKnife.unbind(this);
         EventBus.getDefault().unregister(this);
     }
 }

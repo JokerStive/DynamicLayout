@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <TextView
@@ -42,6 +43,14 @@
             android:layout_marginTop="25dp"
             app:reg_hint="@string/role_name_et1"
             app:reg_title="@string/role_name" />
+
+        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            android:id="@+id/input_role_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            app:reg_hint="@string/role_et2"
+            app:reg_title="@string/role_desc" />
 
        <RelativeLayout
            android:layout_width="match_parent"

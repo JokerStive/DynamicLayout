@@ -5,12 +5,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import com.lilun.passionlife.cloudplatform.bean.Event;
-import com.lilun.passionlife.cloudplatform.common.TokenManager;
-
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.ButterKnife;
 
@@ -38,13 +33,6 @@ public abstract class BaseActivity extends BaseNetActivity {
 
     public void onCreate(){};
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    /**
-    *接受token过期事件，跳转登录界面
-    */
-    public void login(Event.AuthoriseEvent event){
-        TokenManager.translateLogin(mAc);
-    }
 
     public abstract int  setContentView();
 
@@ -53,7 +41,7 @@ public abstract class BaseActivity extends BaseNetActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        onUnsubscribe();
+        ButterKnife.unbind(this);
         EventBus.getDefault().unregister(this);
     }
 }

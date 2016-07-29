@@ -15,27 +15,35 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
-
-import static com.lilun.passionlife.R.color.default_white;
+import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.UIUtils;
 
 /**
  * Created by youke on 2016/6/10.
  */
 public class CrumbView extends HorizontalScrollView{
 
+    private final int tv_color;
     private int LIGHT_COLOR, DARK_COLOR;
     private Resources mRes;
     private LinearLayout mContainer;
     private FragmentManager mFragmentManager;
+    private  int backGround;
+    private final boolean isTvBg;
+    private final float tv_size;
 
     public CrumbView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        setHorizontalScrollBarEnabled(false);
         mRes = context.getResources();
         TypedArray typedArray = mRes.obtainAttributes(attrs, R.styleable.CrumbViewAttrs);
         try{
-            LIGHT_COLOR = typedArray.getColor(R.styleable.CrumbViewAttrs_light_color, -1);
-            DARK_COLOR = typedArray.getColor(R.styleable.CrumbViewAttrs_dark_color,-1);
+            tv_color = typedArray.getColor(R.styleable.CrumbViewAttrs_tv_color,-1);
+
+            tv_size = typedArray.getDimension(R.styleable.CrumbViewAttrs_tv_size, 40);
+            isTvBg = typedArray.getBoolean(R.styleable.CrumbViewAttrs_is_tv_bg, true);
+            backGround = typedArray.getColor(R.styleable.CrumbViewAttrs_back_ground, -1);
         }finally {
             typedArray.recycle();
         }
@@ -45,7 +53,7 @@ public class CrumbView extends HorizontalScrollView{
 
     private void initView(Context context) {
         mContainer = new LinearLayout(context);
-        mContainer.setBackgroundResource(default_white);
+//        mContainer.setBackgroundResource(default_white);
         mContainer.setOrientation(LinearLayout.HORIZONTAL);
         mContainer.setPadding(mRes.getDimensionPixelOffset(R.dimen.crumb_view_padding), 0,
                 mRes.getDimensionPixelOffset(R.dimen.crumb_view_padding), 0);
@@ -87,7 +95,12 @@ public class CrumbView extends HorizontalScrollView{
                 itemView.setGravity(Gravity.CENTER);
                 itemView.setTextColor(Color.WHITE);
 //                itemView.setcolo
-                itemView.setBackgroundResource(i <= 0 ? R.drawable.crumbs1 : R.drawable.crumbs2);
+
+                if (isTvBg){
+                    itemView.setBackgroundResource(i <= 0 ? R.drawable.crumbs1 : R.drawable.crumbs2);
+                }
+                itemView.setTextColor(tv_color);
+                itemView.setTextSize(UIUtils.px2sp(App.app,tv_size));
                 itemView.setText(backStackEntry.getBreadCrumbTitle());
                 itemView.setTag(backStackEntry);
                 itemView.setOnClickListener(new OnClickListener() {

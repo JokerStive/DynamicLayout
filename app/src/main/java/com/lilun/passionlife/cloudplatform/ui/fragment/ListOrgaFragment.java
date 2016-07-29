@@ -64,7 +64,7 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
     }
 
     public void getOrgiChildren() {
-            String defOrgId = SpUtils.getString(Constants.key_defOrginaId);
+            String defOrgId = SpUtils.getString(Constants.key_currentOrgaId);
             if (!TextUtils.isEmpty(defOrgId)){
                 rootActivity.addSubscription(ApiFactory.getOrgiChildren(defOrgId), new PgSubscriber<List<Organization>>(rootActivity) {
                     @Override

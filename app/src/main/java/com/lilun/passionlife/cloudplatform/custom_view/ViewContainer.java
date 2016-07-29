@@ -4,7 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -12,21 +13,20 @@ import com.lilun.passionlife.cloudplatform.adapter.addStaff_roleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.UIUtils;
-import com.zhy.view.flowlayout.TagFlowLayout;
 
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/7/12.
  */
-public class ViewContainer extends FlowLayout {
+public class ViewContainer extends LinearLayout {
 
     private  ItemDeleteListener listen;
     private addStaff_roleListAdapter adapter;
     private String titl;
     private Context context;
     private TextView title;
-    private TagFlowLayout content;
+    private FlowLayout flow;
 
     //
     public ViewContainer(String titl, addStaff_roleListAdapter adapter) {
@@ -53,18 +53,20 @@ public class ViewContainer extends FlowLayout {
 
 
     private void init() {
-        setHorizontalSpacing(UIUtils.dip2px(App.app,10));
-        setVerticalSpacing(UIUtils.dip2px(App.app,10));
+
         View view = LayoutInflater.from(App.app).inflate(R.layout.custom_view_container, this);
         title = (TextView) view.findViewById(R.id.container_title);
+        flow = (FlowLayout) view.findViewById(R.id.container_flow);
         title.setText(titl);
-        TextView delete = (TextView) view.findViewById(R.id.container_delete);
+        ImageView delete = (ImageView) view.findViewById(R.id.container_delete);
         delete.setOnClickListener(v -> {
-            ViewGroup parent = (ViewGroup) getParent();
-            parent.removeView(this);
+//            ViewGroup parent = (ViewGroup) getParent();
+//            parent.removeView(this);
             listen.onItemDelete();
         });
-        setAdapter(adapter);
+        flow.setAdapter(adapter);
+        flow.setHorizontalSpacing(UIUtils.dip2px(App.app,10));
+        flow.setVerticalSpacing(UIUtils.dip2px(App.app,10));
 
 
     }

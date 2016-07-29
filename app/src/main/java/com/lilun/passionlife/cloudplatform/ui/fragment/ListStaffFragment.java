@@ -19,7 +19,10 @@ import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import butterknife.Bind;
 
@@ -68,6 +71,17 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
             @Override
             public void on_Next(List<OrganizationAccount> organizationAccounts) {
                 orgaAccs = organizationAccounts;
+                //数据去重复
+                Set<OrganizationAccount>  set = new TreeSet<>((lhs, rhs) -> {
+                    int id1 = lhs.getAccountId();
+                    int id2 = rhs.getAccountId();
+                    if (id1 == id2) {
+                        return 0;
+                    }
+                    return 1;
+                });
+                set.addAll(orgaAccs);
+                orgaAccs = new ArrayList<>(set);
                 adapter = new OrgaAccountListAdapter(orgaAccs,ListStaffFragment.this);
                 gvModuleList.setAdapter(adapter);
             }

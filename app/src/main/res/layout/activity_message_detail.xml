@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/default_white">
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/iv_message_writer"
+            style="@style/def_textview"
+            android:textSize="@dimen/def_tv_size_small"
+            tools:text="张三" />
+
+        <TextView
+            android:id="@+id/iv_message_time"
+            style="@style/def_textview"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/default_tv_gray"
+            android:textSize="@dimen/def_tv_size_small_1"
+            tools:text="今天19:21" />
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_0"
+        style="@style/line_gray"
+        android:layout_below="@id/ll_title" />
+
+    <LinearLayout
+        android:id="@+id/ll_detail_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_0"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/iv_message_title"
+            style="@style/def_textview"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/def_tv_size"
+            tools:text="标题" />
+
+        <TextView
+            android:id="@+id/iv_message_content"
+            style="@style/def_textview_gray"
+            android:layout_marginTop="10dp"
+            android:textSize="@dimen/def_tv_size_small"
+            tools:text="内容打谁ha------------------------------------------------------------------------------------------------------------------" />
+
+        <LinearLayout
+            android:id="@+id/ll_detail_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/line_0"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/message_add_pic" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/line_1"
+        style="@style/line_gray"
+        android:layout_below="@id/ll_detail_content" />
+
+    <com.lilun.passionlife.cloudplatform.custom_view.XListView
+        android:id="@+id/xlv_review_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_1">
+
+    </com.lilun.passionlife.cloudplatform.custom_view.XListView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/shape_gray"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:id="@+id/message_review"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/im_message_review"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/selector_message_review" />
+
+            <TextView
+                android:id="@+id/iv_message_review"
+                style="@style/def_textview"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:textSize="@dimen/def_tv_size"
+                android:text="@string/message_add_review"  />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/im_message_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+
+            android:src="@drawable/message_share" />
+
+            >
+
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
