@@ -6,10 +6,10 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
 import com.lilun.passionlife.cloudplatform.bean.Event;
+import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.LogUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -48,8 +48,10 @@ public class AccountSecurityActivity extends BaseFunctionActivity {
     */
     @OnClick(R.id.logout)
     void logout(){
+        //退出登录，信息重置
+        SpUtils.setString(Constants.key_currentOrgaName,"");
+        SpUtils.setString(Constants.key_currentOrgaId,"");
         SpUtils.setBoolean("logined",false);
-        Logger.d("post event");
         EventBus.getDefault().post(new Event.AuthoriseEvent());
     }
 }

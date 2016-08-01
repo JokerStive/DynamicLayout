@@ -12,8 +12,12 @@ import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnowPermission;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
@@ -35,6 +39,10 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
 
     private List<Organization> orgiChildren;
     private OrgaListAdapter adapter;
+    private String orgaAddPermission = KnownServices.Organization_Service + KnowPermission.addPermission;
+    private String orgaEditPermission = KnownServices.Organization_Service + KnowPermission.editPermission;
+    private String orgaDeletePermission = KnownServices.Organization_Service + KnowPermission.deletePermission;
+    private Double userId;
 
     @Override
     public View setView() {
@@ -48,19 +56,46 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
     public void onStart() {
         super.onStart();
         bundle = new Bundle();
+        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
         getOrgiChildren();
 
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position == 0) {
-                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), mCx.getString(R.string.add_orgi)));
+                if (isAdmin()){
+                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), mCx.getString(R.string.add_orgi)));
+                    return;
+                }
+                rootActivity.checkHasPermission(userId, orgaAddPermission, hasPermission -> {
+                    if (hasPermission) {
+                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), mCx.getString(R.string.add_orgi)));
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }else{
-                bundle.putSerializable("organiChildren",orgiChildren.get(position-1));
-                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditOrganizationFragment(), mCx.getString(R.string.edit_orgi));
-                event.setBundle(bundle);
-                EventBus.getDefault().post(event);
+                if (isAdmin()){
+                    editOrga(position);
+                    return;
+                }
+                rootActivity.checkHasPermission(userId,orgaEditPermission,hasPermission -> {
+                    if (hasPermission){
+                        editOrga(position);
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }
         });
 
+    }
+
+    private void editOrga(int position) {
+        bundle.putSerializable("organiChildren",orgiChildren.get(position-1));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditOrganizationFragment(), mCx.getString(R.string.edit_orgi));
+        event.setBundle(bundle);
+        EventBus.getDefault().post(event);
     }
 
     public void getOrgiChildren() {
@@ -96,6 +131,22 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
      */
     @Override
     public void onDeleteClick(int position) {
+        if (isAdmin()){
+            deleteOrga(position);
+            return;
+        }
+        rootActivity.checkHasPermission(userId, orgaDeletePermission, hasPermission -> {
+            if (hasPermission){
+                deleteOrga(position);
+            }else{
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+
+
+    }
+
+    private void deleteOrga(int position) {
         if (orgiChildren!=null && orgiChildren.size()!=0){
             String deleOrgId = orgiChildren.get(position).getId();
             Logger.d("deleOrgId = "+deleOrgId);

@@ -34,7 +34,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
@@ -152,14 +151,11 @@ public class BaseNetActivity extends FragmentActivity {
             addSubscription(ApiFactory.getOrgiServices(url), new PgSubscriber<List<OrganizationService>>(this) {
                 @Override
                 public void on_Next(List<OrganizationService> OrganizationServices) {
-                    visibleOrgiService=new ArrayList<>();
-                    if (OrganizationServices.size() == 0) {
-                        ToastHelper.get(App.app).showShort(App.app.getString(R.string.no_services_list));
-                        return;
-                    }
+//                    visibleOrgiService=new ArrayList<>();
 
                     //首先检查setting选项的visible值
                     List<OrganizationService> settingVisible = checkSettingVisible(OrganizationServices);
+                    callBack.onGetVisibleService(settingVisible);
 
                     //如果是超级管理员，不需要检查权限
                     if (isAdmin()) {
@@ -216,6 +212,17 @@ public class BaseNetActivity extends FragmentActivity {
         });
 
 
+    }
+
+
+    public String checkHasPermission(double userId, String permission, callBack_hsdPermission listen){
+        addSubscription(ApiFactory.hasPermission(userId,permission), new PgSubscriber<Boolean>(this) {
+            @Override
+            public void on_Next(Boolean hasPermisson) {
+                listen.setHasPermission(hasPermisson);
+            }
+        });
+        return permission;
     }
 
     private void then(int serviceCount, callBack_visible_service callBack) {
@@ -364,6 +371,10 @@ public class BaseNetActivity extends FragmentActivity {
 
     public interface callBack_getIsInherited{
         void onGetIsInherited(Boolean isInherited);
+    }
+
+    public interface callBack_hsdPermission{
+        void setHasPermission(Boolean hasPermission);
     }
 
 

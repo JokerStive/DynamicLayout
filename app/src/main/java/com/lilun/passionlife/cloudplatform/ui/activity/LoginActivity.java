@@ -1,6 +1,5 @@
 package com.lilun.passionlife.cloudplatform.ui.activity;
 
-import android.text.TextUtils;
 import android.widget.EditText;
 
 import com.lilun.passionlife.R;
@@ -8,6 +7,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseActivity;
 import com.lilun.passionlife.cloudplatform.bean.Account;
 import com.lilun.passionlife.cloudplatform.bean.LoginRes;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnowPermission;
 import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
@@ -31,6 +31,7 @@ public class LoginActivity extends BaseActivity {
     private String authrovity = "";
     private String username;
     private String username_next;
+    private boolean isLogined;
 
 
     @Override
@@ -46,11 +47,11 @@ public class LoginActivity extends BaseActivity {
         //authrovity 是否因为token失效跳转到login
         authrovity = getIntent().getStringExtra(TokenManager.AUTHROVITY);
 
-        boolean isLogined = SpUtils.getBoolean(spKey);
+        isLogined = SpUtils.getBoolean(spKey);
         username_next = SpUtils.getString("username");
 
         //不是首次登陆，跳转首页
-        if (isLogined  && TextUtils.isEmpty(authrovity)) {
+        if (isLogined && authrovity==null) {
             IntentUtils.startAct(mAc, HomeActivity.class);
             finish();
         }
@@ -90,14 +91,13 @@ public class LoginActivity extends BaseActivity {
     private void then(LoginRes loginRes) {
         ToastHelper.get(mAc).showShort(R.string.login_success);
         setAccountInf(loginRes);
-        if (TextUtils.isEmpty(authrovity) || !username.equals(username_next)) {
-            //是否超级用户
+        if (authrovity!=null){
+            finish();
+        }else{
+            SpUtils.setBoolean(spKey, true);
             IntentUtils.startAct(mAc, HomeActivity.class);
             isAdmin(loginRes.getUserId());
-        } else {
-            finish();
         }
-
 
     }
 
@@ -108,13 +108,9 @@ public class LoginActivity extends BaseActivity {
      * @param userId
      */
     public void isAdmin(int userId) {
-//        addSubscription(ApiFactory.hasPermission(userId, Constants.ADMIN), new PgSubscriber<Boolean>(mAc) {
-//            @Override
-//            public void on_Next(Boolean hasPermisson) {
-//                SpUtils.setBoolean(Constants.ADMIN, hasPermisson);
-//            }
-//        });
-        SpUtils.setBoolean(Constants.ADMIN, username.equals("admin"));
+        checkHasPermission(userId, KnowPermission.adminPermission, hasPermission -> {
+                SpUtils.setBoolean(Constants.ADMIN, hasPermission);
+        });
     }
 
 
@@ -123,7 +119,7 @@ public class LoginActivity extends BaseActivity {
      */
     private void setAccountInf(LoginRes loginRes) {
         Logger.d("存储登录信息");
-        SpUtils.setBoolean(spKey, true);
+
         SpUtils.setString("username", username);
         SpUtils.setString(TokenManager.TOKEN, loginRes.getId());
         SpUtils.setString(TokenManager.CREATED, loginRes.getCreated());

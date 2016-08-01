@@ -156,6 +156,15 @@ public class ApiFactory {
 
 
 
+    /**
+     * *获取account所属的role
+     */
+    public static    Observable<List<OrganizationAccount>> getAccountDept(double userId){
+        return getRes(service.getAccountDept((int) userId));
+    }
+
+
+
 
     /**
      * 获取OrganizationAccount列表

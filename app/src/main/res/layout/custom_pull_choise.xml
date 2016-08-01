@@ -12,15 +12,16 @@
         android:paddingBottom="3dp"
         android:paddingLeft="10dp"
         style="@style/btn_green"
+        android:layout_centerVertical="true"
         android:layout_width="match_parent"
         tools:text="功能"/>
 
-  <TextView
+  <ImageView
       android:id="@+id/pull_choise_icon"
       style="@style/def_textview"
       android:layout_alignRight="@id/show_data"
       android:layout_marginRight="10dp"
-
+      android:layout_centerVertical="true"
       android:background="@drawable/selector_pull_choise"/>
 
 </RelativeLayout>

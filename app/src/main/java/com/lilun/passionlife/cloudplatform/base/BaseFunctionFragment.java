@@ -61,6 +61,9 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
     }
 
 
+    public boolean isAdmin(){
+        return SpUtils.getBoolean(Constants.ADMIN);
+    }
     /**
     *
      *  设置编辑框

@@ -6,7 +6,6 @@ import android.widget.GridView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.adapter.SystemConfigGvAdapter;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
-import com.lilun.passionlife.cloudplatform.base.BaseNetActivity;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.common.Constants;
@@ -15,16 +14,15 @@ import com.lilun.passionlife.cloudplatform.custom_view.ShowOrgiPopupwindow;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ACache;
 import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
-import com.lilun.passionlife.cloudplatform.utils.SpUtils;
-import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 
 
-public class SystemConfigActivity extends BaseFunctionActivity implements ShowOrgiPopupwindow.onItemClick, BaseNetActivity.callBack_orgiChildren {
+public class SystemConfigActivity extends BaseFunctionActivity {
 
 
     @Bind(R.id.gv_service)
@@ -35,45 +33,9 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
     private ShowOrgiPopupwindow pop;
     private String childOrginaId;
     private String childOrginaName;
+    private boolean hasModuleService;
     private List<OrganizationService> visibleOrgiService;
 
-//    @OnClick(R.id.orgi_manager)
-//    /**
-//     *组织机构管理
-//     */
-//    public void orgi_manager() {
-//        IntentUtils.startAct(mAc, OrganizationActivity.class);
-//    }
-//
-//    @OnClick(R.id.role_manager)
-//    /**
-//     *角色管理
-//     */
-//    void role_manager() {
-//        IntentUtils.startAct(mAc, RoleManagerActivity.class);
-//    }
-//
-//    @OnClick(R.id.staff_manager)
-//    /**
-//     *员工管理
-//     */
-//    void staff_manager() {
-////        ToastHelper.get(App.app).showShort(App.app.getString(R.string.Write_Open));
-//        IntentUtils.startAct(mAc, StaffManagerActivity.class);
-//    }
-//
-//
-//
-//    @OnClick(R.id.dept_manager)
-//    void dept_manager(){IntentUtils.startAct(mAc, DeptManagerActivity.class);}
-//
-//    @OnClick(R.id.module_manager)
-//    /**
-//     *模块管理
-//     */
-//    void module_manager() {
-//        IntentUtils.startAct(mAc, ModuleManagerActivity.class);
-//    }
 
 
     @Override
@@ -86,16 +48,27 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
 
     @Override
     public void onCreate() {
+        OrganizationService os = new OrganizationService();
+        os.setTitle(App.app.getString(R.string.module_manager));
+        os.setServiceId(KnownServices.Module_Service);
         visibleOrgiService = (List<OrganizationService>) ACache.get(App.app).getAsObject(Constants.cacheKey_service);
-        if (visibleOrgiService != null) {
+
+        if (visibleOrgiService != null ) {
+            for(int i=0;i<visibleOrgiService.size();i++){
+                if (visibleOrgiService.get(i).getServiceId().equals(KnownServices.Module_Service)){
+                    hasModuleService=true;
+                }
+            }
+            if (!hasModuleService){
+                visibleOrgiService.add(os);
+            }
             showServices(visibleOrgiService);
         } else {
-            Logger.d("showServices  is null");
+            visibleOrgiService = new ArrayList<>();
+            visibleOrgiService.add(os);
+            showServices(visibleOrgiService);
+
         }
-//        setInitData();
-//        childOrginaName =  SpUtils.getString(Constants.key_currentOrgaName);
-//        def_org.setVisibility(View.VISIBLE);
-//        def_org.setText(childOrginaName);
 
     }
 
@@ -110,26 +83,31 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
             //模块管理
             if (serviceId.equals(KnownServices.Module_Service)){
                 IntentUtils.startAct(mAc, ModuleManagerActivity.class);
+                finishThis();
             }
 
             //员工管理
             else if(serviceId.equals(KnownServices.Account_Service)){
                 IntentUtils.startAct(mAc, StaffManagerActivity.class);
+                finishThis();
             }
 
             //角色管理
             else  if(serviceId.equals(KnownServices.Role_Service)){
                 IntentUtils.startAct(mAc, RoleManagerActivity.class);
+                finishThis();
             }
 
             //组织机构管理
             else if(serviceId.equals(KnownServices.Organization_Service)){
                 IntentUtils.startAct(mAc, OrganizationActivity.class);
+                finishThis();
             }
 
             //系统配置
             else if(serviceId.equals(KnownServices.SysConfig_Service)){
                 IntentUtils.startAct(mAc, SystemConfigActivity.class);
+                finishThis();
             }
 
 
@@ -137,63 +115,15 @@ public class SystemConfigActivity extends BaseFunctionActivity implements ShowOr
             //部门管理
             else if(serviceId.equals(KnownServices.Department_Service)){
                 IntentUtils.startAct(mAc, DeptManagerActivity.class);
+                finishThis();
             }
         });
     }
 
 
-    /**
-//     * 设置初始化显示数据
-//     */
-//
-//    private void setInitData() {
-//        childOrginaId = SpUtils.getString(Constants.key_child_OrginaId);
-//        childOrginaName = SpUtils.getString(Constants.key_child_OrginaName);
-//        if (TextUtils.isEmpty(childOrginaId) || TextUtils.isEmpty(childOrginaName)) {
-//            childOrginaId = SpUtils.getString(Constants.key_currentOrgaId);
-//            //
-//            childOrginaName = SpUtils.getString(Constants.key_currentOrgaName);
-//        }
-//        //设置显示
-//        def_org.setVisibility(View.VISIBLE);
-//        def_org.setText(childOrginaName);
-//
-//        //获取默认组织直接儿子们
-//        getOrgiChildren(childOrginaId, this);
-//
-//        //设置点击事件,show popupwindow
-//        def_org.setOnClickListener(v -> {
-//            pop = new ShowOrgiPopupwindow(App.app, first.getWidth(), first.getHeight(), this);
-//            pop.setData(data);
-//            bg.setVisibility(View.VISIBLE);
-//            pop.getPopupWindow(def_org);
-//        });
-//
-//
-//    }
-//
-    @Override
-    public void onItemClick(String orgId, String orgName) {
-        //给默认的儿子赋值
-        childOrginaId = orgId;
-        childOrginaName = orgName;
-        def_org.setText(orgName);
-        getOrgiChildren(orgId, this);
+    public void finishThis(){
+        finish();
     }
 
-    @Override
-    public void onDismiss() {
-        //pop消失的时候把默认的儿子存进sp
-        SpUtils.setString(Constants.key_child_OrginaId, childOrginaId);
-        SpUtils.setString(Constants.key_child_OrginaName, childOrginaName);
-//        bg.setVisibility(View.GONE);
-    }
 
-    @Override
-    public void onGetOgriChildren(List<Organization> orgis) {
-        data = orgis;
-        if (pop != null) {
-            pop.setData(data);
-        }
-    }
 }

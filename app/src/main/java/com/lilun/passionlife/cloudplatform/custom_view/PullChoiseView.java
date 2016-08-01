@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -21,7 +22,7 @@ public class PullChoiseView extends RelativeLayout{
 
     private  Context cx;
     private TextView show_data;
-    private TextView icon;
+    private ImageView icon;
     private View view;
     private PopupWindow pop;
     private BaseAdapter adapter;
@@ -42,7 +43,7 @@ public class PullChoiseView extends RelativeLayout{
     private void init() {
         view = View.inflate(cx, R.layout.custom_pull_choise, this);
         show_data = (TextView) view.findViewById(R.id.show_data);
-        icon = (TextView) view.findViewById(R.id.pull_choise_icon);
+        icon = (ImageView) view.findViewById(R.id.pull_choise_icon);
         view.setOnClickListener(listen ->{
             setEnable(!icon.isEnabled());
         });
@@ -69,20 +70,6 @@ public class PullChoiseView extends RelativeLayout{
 
 
 
-    /*class pullChoisePupup extends PopupWindow{
-        private final BaseAdapter adapter;
-        private View targetView;
-        private Context cx;
-        private OnItemChooseListener listener;
-        private PopupWindow pop;
-
-        public pullChoisePupup(Context cx, OnItemChooseListener listener, View targetView, BaseAdapter adapter) {
-            this.adapter=adapter;
-            this.cx = cx;
-            this.listener = listener;
-            this.targetView = targetView;
-//            initView();
-        }*/
 
         private void initPopupWindow(Context cx, OnItemChooseListener listener, View targetView, BaseAdapter adapter) {
             View view = LayoutInflater.from(cx).inflate(R.layout.custom_pull_choise_popup, null);

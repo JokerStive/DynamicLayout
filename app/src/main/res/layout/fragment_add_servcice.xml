@@ -143,7 +143,7 @@
                 style="@style/def_textview"
                 android:text="@string/service_hint" />
 
-            <TextView
+            <ImageView
                 android:id="@+id/tv_hint"
                 style="@style/def_textview"
                 android:background="@drawable/selector_btn_choise"

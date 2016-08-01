@@ -22,7 +22,7 @@ public class Constants {
 
     //接口base_url
 //    public static final String BASE_URL = "http://222.182.202.94:3000/api/";
-    public static final String BASE_URL = "http://192.168.3.105:3000/api/";
+    public static final String BASE_URL = "http://192.168.3.106:3000/api/";
 
     //日志打印ltag
     public static final String LOGGER_TAG = "yk";

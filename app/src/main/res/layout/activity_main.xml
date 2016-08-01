@@ -30,6 +30,7 @@
             tools:text="财务部"
             android:layout_marginLeft="10dp"
             android:layout_centerVertical="true"
+            android:paddingRight="20dp"
             android:layout_toRightOf="@id/home_personal"
             />
         <TextView

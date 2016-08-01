@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,7 +46,7 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
     TextView head;
 
     @Bind(R.id.tv_hint)
-    TextView tv_hint;
+    ImageView tv_hint;
 
     @Bind(R.id.input_service)
     PullChoiseView inputService;
@@ -99,17 +100,15 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
     @Override
     public void onStart() {
         super.onStart();
-        Logger.d(" fragment onstar");
-        /*if (icon==null){
-            icon= BitmapFactory.decodeResource(App.app.getResources(),R.drawable.head_portrait);
-            StringUtils.getBytesFromBitmap(icon);
-        }*/
+        tv_hint.setEnabled(false);
+        rootActivity.setTitle(mCx.getString(R.string.service_add));
         setSettingData();
         getServiceData();
     }
 
     @OnClick(R.id.iv_head)
     void headPic() {
+        Logger.d(" 默认组织id = "+orgiId);
         Logger.d("选择头像");
         rootActivity.choiseHeadPic(view);
     }
@@ -130,7 +129,7 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
         wigthList.add("2");
         inputServiceWigth.setShow_data("1");
         inputServiceHeight.setShow_data("1");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, wigthList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, R.layout.item_change_belong_orga, wigthList);
         inputServiceWigth.init(position -> {
             inputServiceWigth.setShow_data(wigthList.get(position));
             wigth = wigthList.get(position);
@@ -150,8 +149,8 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
                 for (Service service : servicess) {
                     list.add(service.getTitle());
                 }
-                Logger.d("list size " + list.size());
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, list);
+//                Logger.d("list size " + list.size());
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, R.layout.item_change_belong_orga, list);
                 inputService.init(AddServiceFragment.this, adapter);
             }
 

@@ -27,17 +27,17 @@ public class BelongOrgasAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return data.size() + 1;
+        return data.size();
     }
 
     @Override
     public OrganizationAccount getItem(int position) {
-        return data.get(position - 1);
+        return data.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        return position - 1;
+        return position;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BelongOrgasAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = View.inflate(App.app, R.layout.item_change_belong_orga, null);
             viewHolder = new ViewHolder();
-            viewHolder.module_title = (TextView) convertView.findViewById(R.id.module_list_title);
+            viewHolder.module_title = (TextView) convertView;
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();

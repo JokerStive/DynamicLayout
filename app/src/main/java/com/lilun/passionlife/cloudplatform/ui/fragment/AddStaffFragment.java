@@ -21,7 +21,6 @@ import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.custom_view.ViewContainer;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
-import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
@@ -231,20 +230,20 @@ public class AddStaffFragment extends BaseFunctionFragment {
                 @Override
                 public void on_Next(Role o) {
                     Logger.d("设置所属职位--"+roleName+"--成功");
-                    then_role(allChoiseRole.size());
+//                    then_role(allChoiseRole.size());
                 }
             });
         }
     }
 
-    private void then_role(int size) {
-        if (dex_role == size - 1) {
-            //把所属部门和旗下的role缓存起来，在员工编辑界面使用
-            CacheUtils.putCache(userId+"",cacheDeptAndRole);
-            return;
-        }
-        dex_role++;
-    }
+//    private void then_role(int size) {
+//        if (dex_role == size - 1) {
+//            //把所属部门和旗下的role缓存起来，在员工编辑界面使用
+//            CacheUtils.putCache(userId+"",cacheDeptAndRole);
+//            return;
+//        }
+//        dex_role++;
+//    }
 
 
 

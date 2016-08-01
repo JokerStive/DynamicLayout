@@ -202,7 +202,7 @@
 
     <!--信息详情-->
     <string name="message_add_review">添加评论</string>
-
+    <string name="no_permission">对不起，您没有权限</string>
 
 
 </resources>

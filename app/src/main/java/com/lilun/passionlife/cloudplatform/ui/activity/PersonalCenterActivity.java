@@ -1,6 +1,7 @@
 package com.lilun.passionlife.cloudplatform.ui.activity;
 
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class PersonalCenterActivity extends BaseActivity implements AdapterView.OnItemClickListener {
@@ -49,8 +51,15 @@ public class PersonalCenterActivity extends BaseActivity implements AdapterView.
     @Bind(R.id.title)
     TextView title;
 
+    @Bind(R.id.line)
+    View line;
+
     @OnClick(R.id.back)
-    void back(){finish();};
+    void back() {
+        finish();
+    }
+
+    ;
 
     @Bind(R.id.message)
     ImageView message;
@@ -112,15 +121,31 @@ public class PersonalCenterActivity extends BaseActivity implements AdapterView.
 
     private void listBelongOrga() {
         belongOrgs = (List<OrganizationAccount>) CacheUtils.getCache("belongOrgas");
-        if (pop == null && belongOrgs!=null) {
+        if (belongOrgs == null) {
+            getBelongOrga(new callBack_getBelongOrga() {
+                @Override
+                public void onGetBelongOrga(List<OrganizationAccount> orgas) {
+                    showPop(belongOrgs);
+                }
+            });
+        } else {
+            showPop(belongOrgs);
+        }
+
+    }
+
+    private void showPop(List<OrganizationAccount> belongOrgs) {
+        if (pop == null) {
+//            pop = new PopupWindow();
             popAdapter = new BelongOrgasAdapter(belongOrgs);
-            View view = LayoutInflater.from(mCx).inflate(R.layout.item_change_belong_orga, null);
+            View view = LayoutInflater.from(mCx).inflate(R.layout.popmenu_single, null);
             // 设置 listview
             listView = (ListView) view.findViewById(R.id.first_list);
+
+            listView.setAdapter(popAdapter);
             listView.setOnItemClickListener(PersonalCenterActivity.this);
             listView.setFocusableInTouchMode(true);
             listView.setFocusable(true);
-            listView.setAdapter(popAdapter);
             pop = new PopupWindow(view, ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
 
@@ -131,11 +156,11 @@ public class PersonalCenterActivity extends BaseActivity implements AdapterView.
             pop.setOutsideTouchable(true);
             // 刷新状态
             pop.update();
-            pop.showAsDropDown(belongOrga);
+            pop.showAsDropDown(line);
 
             //  }
         } else {
-            pop.showAsDropDown(belongOrga);
+            pop.showAsDropDown(line);
         }
     }
 
@@ -147,5 +172,10 @@ public class PersonalCenterActivity extends BaseActivity implements AdapterView.
     }
 
 
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: add setContentView(...) invocation
+        ButterKnife.bind(this);
+    }
 }

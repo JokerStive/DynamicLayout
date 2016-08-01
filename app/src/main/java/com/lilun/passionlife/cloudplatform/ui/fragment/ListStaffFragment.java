@@ -11,9 +11,14 @@ import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnowPermission;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
+import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +41,10 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
 
     private List<OrganizationAccount> orgaAccs;
     private OrgaAccountListAdapter adapter;
+    private String staffAddPermission = KnownServices.Account_Service+ KnowPermission.addPermission;
+    private String staffEditPermission = KnownServices.Account_Service+KnowPermission.editPermission;
+    private String staffDeletePermission = KnownServices.Account_Service+KnowPermission.deletePermission;
+    private Double userId;
 
     @Override
     public View setView() {
@@ -48,18 +57,47 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
     public void onStart() {
         super.onStart();
         bundle=new Bundle();
+        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
         getStaffList();
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position==0){
-                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
+                if (isAdmin()){
+                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
+                    return;
+                }
+                rootActivity.checkHasPermission(userId, staffAddPermission, hasPermission -> {
+                    if (hasPermission){
+                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
             }else{
-                bundle.putSerializable(Constants.orgaAccount,orgaAccs.get(position-1));
-                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditStaffFragment(), mCx.getString(R.string.staff_edit));
-                event.setBundle(bundle);
-                EventBus.getDefault().post(event);
+                if (isAdmin()){
+                    editeStaff(position);
+                    return;
+                }
+                rootActivity.checkHasPermission(userId,staffEditPermission,hasPermission -> {
+                    if (hasPermission){
+                        editeStaff(position);
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }
         });
 
+    }
+
+    /**
+    *进入员工编辑界面
+    */
+    private void editeStaff(int position) {
+        bundle.putSerializable(Constants.orgaAccount,orgaAccs.get(position-1));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditStaffFragment(), mCx.getString(R.string.staff_edit));
+        event.setBundle(bundle);
+        EventBus.getDefault().post(event);
     }
 
     /**
@@ -99,6 +137,21 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
 
     @Override
     public void onDeleteClick(int position) {
+        if (isAdmin()){
+            deleteStaff(position);
+            return;
+        }
+        //是否有删除员工的权限
+        rootActivity.checkHasPermission(userId, staffDeletePermission, hasPermission -> {
+            if (hasPermission){
+                deleteStaff(position);
+            }else{
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+    }
+
+    private void deleteStaff(int position) {
         if (orgaAccs!=null && orgaAccs.size()!=0){
             double ocId = (double) orgaAccs.get(position).getId();
             rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<Object>(rootActivity) {

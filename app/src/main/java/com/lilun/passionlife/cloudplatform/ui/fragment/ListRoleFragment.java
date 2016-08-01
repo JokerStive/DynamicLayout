@@ -8,13 +8,18 @@ import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.adapter.OrgaRoleListAdapter;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
+import com.lilun.passionlife.cloudplatform.base.BaseNetActivity;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Role;
-import com.lilun.passionlife.cloudplatform.bean.Service;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnowPermission;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
+import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -33,10 +38,13 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     @Bind(R.id.module_list)
     GridView gvModuleList;
 
-    private List<Service> services;
-    private String crumb_title;
+
     private OrgaRoleListAdapter adapter;
     private List<Role> roles;
+    private String roleAddPermission = KnownServices.Role_Service + KnowPermission.addPermission;
+    private String roleEditPermission = KnownServices.Role_Service + KnowPermission.editPermission;
+    private String roleDeletePermission = KnownServices.Role_Service +KnowPermission.deletePermission;
+    private Double userId;
 
     @Override
     public View setView() {
@@ -47,34 +55,61 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     @Override
     public void onStart() {
         super.onStart();
+        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
         bundle = new Bundle();
         getOrgaRoles();
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
-            if (position==0){
-                //新增角色
-                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(),mCx.getString(R.string.role_add)));
-            }else{
-                bundle.putSerializable(Constants.role,roles.get(position-1));
-                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditRoleFragment(), mCx.getString(R.string.role_edit));
-                event.setBundle(bundle);
-                EventBus.getDefault().post(event);
+            if (position == 0) {
+                if (position == 0) {
+                    if (isAdmin()){
+                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(), mCx.getString(R.string.role_add)));
+                        return;
+                    }
+                    rootActivity.checkHasPermission(userId, roleAddPermission, hasPermission -> {
+                        if (hasPermission) {
+                            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(), mCx.getString(R.string.role_add)));
+                        }else{
+                            ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                        }
+                    });
+                }
+            } else {
+                if (isAdmin()){
+                    editRole(position);
+                    return;
+                }
+                rootActivity.checkHasPermission(userId,roleEditPermission,hasPermission -> {
+                    if (hasPermission){
+                        editRole(position);
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }
         });
 
     }
 
+    private void editRole(int position) {
+        bundle.putSerializable(Constants.role, roles.get(position - 1));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditRoleFragment(), mCx.getString(R.string.role_edit));
+        event.setBundle(bundle);
+        EventBus.getDefault().post(event);
+    }
+
     /**
-    *获取角色列表数据
-    */
+     * 获取角色列表数据
+     */
     private void getOrgaRoles() {
-        String url  = orgiId+ Constants.special_orgi_role;
+        String url = orgiId + Constants.special_orgi_role;
         Logger.d(orgiId);
         String filter = "{\"include\":\"principals\"}";
         rootActivity.addSubscription(ApiFactory.getOrgiRoleFilter(url, FilterUtils.role()), new PgSubscriber<List<Role>>(rootActivity) {
             @Override
             public void on_Next(List<Role> roless) {
                 roles = roless;
-                Logger.d("roless size = " +roless.size());
+                Logger.d("roless size = " + roless.size());
                 adapter = new OrgaRoleListAdapter(roless, ListRoleFragment.this);
                 gvModuleList.setAdapter(adapter);
             }
@@ -84,17 +119,35 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
 
 
     @Subscribe
-    public void onEditClick(Event.EditClickEvent event){
-        if (adapter!=null){
+    public void onEditClick(Event.EditClickEvent event) {
+        if (adapter != null) {
             setEdText(adapter);
         }
     }
 
     @Override
     public void onDeleteClick(int position) {
-        if (roles!=null && roles.size()!=0){
+        if (isAdmin()){
+            deleteRole(position);
+            return;
+        }
+        rootActivity.checkHasPermission(userId, roleDeletePermission, new BaseNetActivity.callBack_hsdPermission() {
+            @Override
+            public void setHasPermission(Boolean hasPermission) {
+                if (hasPermission){
+                    deleteRole(position);
+                }else{
+                    ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                }
+            }
+        });
+
+    }
+
+    private void deleteRole(int position) {
+        if (roles != null && roles.size() != 0) {
             double rolesId = (double) roles.get(position).getId();
-            Logger.d("roles = "+rolesId);
+            Logger.d("roles = " + rolesId);
             rootActivity.addSubscription(ApiFactory.deleteRole(rolesId), new PgSubscriber<Object>(rootActivity) {
                 @Override
                 public void on_Next(Object integer) {

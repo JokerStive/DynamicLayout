@@ -12,8 +12,13 @@ import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.KnowPermission;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
+import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -34,6 +39,11 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
 
     private List<Organization> orgiChildren;
     private OrgaListAdapter adapter;
+    private String deptAddPermission = KnownServices.Department_Service + KnowPermission.addPermission;
+    private String deptEditPermission = KnownServices.Department_Service + KnowPermission.editPermission;
+    private String deptDeletePermission = KnownServices.Department_Service + KnowPermission.deletePermission;
+    private Double userId;
+
 
     @Override
     public View setView() {
@@ -47,19 +57,46 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
     public void onStart() {
         super.onStart();
         bundle = new Bundle();
+        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
         getOrgiChildren();
 
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position == 0) {
-                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddDeptFragment(), mCx.getString(R.string.dept_add)));
+                if (isAdmin()){
+                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddDeptFragment(), mCx.getString(R.string.dept_add)));
+                    return;
+                }
+                rootActivity.checkHasPermission(userId, deptAddPermission, hasPermission -> {
+                    if (hasPermission) {
+                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddDeptFragment(), mCx.getString(R.string.dept_add)));
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }else{
-                bundle.putSerializable(Constants.orgaDept,orgiChildren.get(position-1));
-                Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditDeptFragment(), mCx.getString(R.string.edit_dept));
-                event.setBundle(bundle);
-                EventBus.getDefault().post(event);
+                if (isAdmin()){
+                    editDept(position);
+                    return;
+                }
+                rootActivity.checkHasPermission(userId,deptEditPermission,hasPermission -> {
+                    if (hasPermission){
+                        editDept(position);
+                    }else{
+                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+                    }
+                });
+
             }
         });
 
+    }
+
+    private void editDept(int position) {
+        bundle.putSerializable(Constants.orgaDept,orgiChildren.get(position-1));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditDeptFragment(), mCx.getString(R.string.edit_dept));
+        event.setBundle(bundle);
+        EventBus.getDefault().post(event);
     }
 
     public void getOrgiChildren() {
@@ -95,6 +132,22 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
      */
     @Override
     public void onDeleteClick(int position) {
+        if (isAdmin()){
+            deleteDept(position);
+            return;
+        }
+        rootActivity.checkHasPermission(userId, deptDeletePermission, hasPermission -> {
+            if (hasPermission){
+                deleteDept(position);
+            }else{
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+
+
+    }
+
+    private void deleteDept(int position) {
         if (orgiChildren!=null && orgiChildren.size()!=0){
             String deleOrgId = orgiChildren.get(position).getId();
             Logger.d("deleOrgId = "+deleOrgId);

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,7 +44,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
     TextView head;
 
     @Bind(R.id.tv_hint)
-    TextView tv_hint;
+    ImageView tv_hint;
 
     @Bind(R.id.input_service)
     PullChoiseView inputService;
@@ -111,7 +112,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         wigthList.add("2");
         inputServiceWigth.setShow_data(service.getSettings()==null?"1":service.getSettings().getWigth());
         inputServiceHeight.setShow_data("1");
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, wigthList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, R.layout.item_change_belong_orga, wigthList);
         inputServiceWigth.init(position -> {
             inputServiceWigth.setShow_data(wigthList.get(position));
         }, adapter);
@@ -151,7 +152,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
                 for (Service service : servicess) {
                     list.add(service.getTitle());
                 }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, android.R.layout.simple_list_item_1, list);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(mCx, R.layout.item_change_belong_orga, list);
                 inputService.init(EditServiceFragment.this, adapter);
             }
 
@@ -169,8 +170,9 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
             OrganizationService service = new OrganizationService();
 
 //            service.setId(orgiId+":"+serviceName);
+            service.setTitle(serviceName);
             service.setServiceId(serviceId);
-            service.setOrganizationId(orgiId);
+//            service.setOrganizationId(orgiId);
             service.setDescription(serviceDesc);
 
 

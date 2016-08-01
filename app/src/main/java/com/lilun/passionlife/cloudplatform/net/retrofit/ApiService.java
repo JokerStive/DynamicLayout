@@ -76,7 +76,7 @@ public interface ApiService {
     /**
      * *查询是否具有权限
      */
-//    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
+    @Headers("Cache-Control: public, max-age=600,  max-stale=800")
     @GET("Accounts/{id}/hasPermission")
     Observable<Boolean> hasPermission(@Path("id") int userid, @Query("role") String permission);
 
@@ -139,8 +139,17 @@ public interface ApiService {
     /**
      *获取account所属的role
      */
+    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
     @GET("Accounts/{id}/roles")
     Observable<List<Role>> getAccountRole(@Path("id") int userId);
+
+
+    /**
+     *获取account所属的role
+     */
+    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
+    @GET("Accounts/{id}/organizations")
+    Observable<List<OrganizationAccount>> getAccountDept(@Path("id") int userId);
 
 
 
