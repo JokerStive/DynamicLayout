@@ -164,17 +164,17 @@ public class BaseNetActivity extends FragmentActivity {
 
 
     public List<OrganizationService> checkSettingVisible(List<OrganizationService> servicess){
-//        OrganizationService.SettingsBean settings;
-//        for (int i=0;i<servicess.size();i++){
-//            settings = servicess.get(i).getSettings();
-//            if (settings!=null){
-//                if (settings.getVisible()!=null && settings.getVisible().equals("false")){
-//                    servicess.remove(i);
-//                }
-//            }
-//
-//
-//        }
+        OrganizationService.SettingsBean settings;
+        for (int i=0;i<servicess.size();i++){
+            settings = servicess.get(i).getSettings();
+            if (settings!=null){
+                if (settings.getVisible()!=null && settings.getVisible().equals("false")){
+                    servicess.remove(i);
+                }
+            }
+
+
+        }
         return servicess;
     }
 

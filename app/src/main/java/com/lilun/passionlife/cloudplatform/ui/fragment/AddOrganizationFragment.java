@@ -153,11 +153,15 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
      * 存新增的组织
      */
     private void postOrganization() {
-        Observable observable;
-        if (!exvAddOrgi.isInherited() && checkHasDept()) {
-            observable =  ApiFactory.postOrganization(newOrganization())
-                    .concatMap(organization -> postIsInherited(organization.getId()))
-                    .concatMap(o -> postDept());
+        Observable observable ;
+        if (!exvAddOrgi.isInherited()) {
+            if (checkHasDept()){
+                observable =  ApiFactory.postOrganization(newOrganization())
+                        .concatMap(organization -> postIsInherited(organization.getId()))
+                        .concatMap(o -> postDept());
+            }else {
+                observable =  ApiFactory.postOrganization(newOrganization()).concatMap(o -> postDept());
+            }
         }else{
             observable = ApiFactory.postOrganization(newOrganization());
         }

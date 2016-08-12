@@ -60,6 +60,15 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
         return inflater.inflate(R.layout.fragment_module_list, null);
     }
 
+
+    /**
+     *新增或者编辑了角色，需要刷新组织列表视图
+     */
+    @Subscribe
+    public void reflashDeptList(Event.reflashDeptList event){
+        getOrgiChildren();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

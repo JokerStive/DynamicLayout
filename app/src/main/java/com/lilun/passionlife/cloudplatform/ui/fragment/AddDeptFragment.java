@@ -170,19 +170,25 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
      */
     private void saveDept() {
         Observable observable;
-        if (!exvAddOrgi.isInherited() && checkHasRole()) {
-            observable =  ApiFactory.postOrganization(newOrganization())
-                    .concatMap(organization -> postRole(organization.getId()))
-                    .concatMap(this::postPrincipal)
-                    .concatMap(o -> postIsInherited());
+        if (!exvAddOrgi.isInherited()) {
+            if (checkHasRole()){
+                observable =  ApiFactory.postOrganization(newOrganization())
+                        .concatMap(organization -> postRole(organization.getId()))
+                        .concatMap(this::postPrincipal)
+                        .concatMap(o -> postIsInherited(false));
+            }else{
+                observable = ApiFactory.postOrganization(newOrganization()).concatMap(o -> postIsInherited(false));
+            }
         }else{
             observable = ApiFactory.postOrganization(newOrganization());
         }
+
 
         rootActivity.addSubscription(observable, new PgSubscriber(rootActivity) {
             @Override
             public void on_Next(Object o) {
                 Logger.d("部门添加成功");
+                EventBus.getDefault().post(new Event.reflashDeptList());
                 ToastHelper.get().showShort(App.app.getString(R.string.add_department_success));
                 saveIcon();
                 rootActivity.backStack();
@@ -200,9 +206,10 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
     /**
      * 设置是否继承
      */
-    private Observable postIsInherited() {
+    private Observable postIsInherited(boolean isInherited) {
         String id = deptId + Constants.special_orgi_role;
-        return ApiFactory.putIsInheroted(id, new IsInherited(false));
+        Logger.d("id = "+id);
+        return ApiFactory.putIsInheroted(id, new IsInherited(isInherited));
     }
 
     /**

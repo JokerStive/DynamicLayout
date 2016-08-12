@@ -19,7 +19,7 @@
             android:layout_centerInParent="true"
             app:border_color="@color/default_black"
             app:border_width="1dp"
-            tools:background="@drawable/add" />
+            tools:background="@drawable/default_pic" />
         <ImageView
             android:id="@+id/module_list_delete"
             android:layout_toRightOf="@id/module_list_icon"

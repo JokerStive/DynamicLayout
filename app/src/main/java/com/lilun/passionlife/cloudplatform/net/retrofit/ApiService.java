@@ -109,7 +109,7 @@ public interface ApiService {
     /**
      *获取所有的服务
      */
-//    @Headers("Cache-Control: public, max-age=604800,  max-stale=704800")
+    @Headers("Cache-Control: public, max-age=604800,  max-stale=704800")
     @GET("Services")
     Observable<List<Service>> getServicess();
 

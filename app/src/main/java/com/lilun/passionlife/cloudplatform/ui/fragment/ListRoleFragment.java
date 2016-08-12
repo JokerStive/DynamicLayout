@@ -61,6 +61,7 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
 
     @Override
     public View setView() {
+        rootActivity.setTitle(mCx.getString(R.string.role_manager));
         rootActivity.setIsEditShow(true);
         return inflater.inflate(R.layout.fragment_module_list, null);
     }

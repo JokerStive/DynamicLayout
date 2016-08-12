@@ -8,8 +8,10 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Role;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -71,13 +73,18 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
         } else {
             //TODO 从网络url加载图片
             String RoleName = data.get(position - 1).getTitle();
-            viewHolder.module_icon.setBackgroundResource(R.drawable.default_pic);
+//            viewHolder.module_icon.setBackgroundResource(R.drawable.default_pic);
             viewHolder.module_title.setText(RoleName);
 
             viewHolder.module_delete.setVisibility(isShowDelete ? View.VISIBLE : View.GONE);
             viewHolder.module_delete.setOnClickListener(v -> {
                 listener.onDeleteClick(position - 1);
             });
+
+            Picasso.with(App.app).load(PicloadManager.orgaIconUrl(""))
+                    .placeholder(R.drawable.default_pic)
+                    .error(R.drawable.default_pic)
+                    .into(viewHolder.module_icon);
         }
     }
 
