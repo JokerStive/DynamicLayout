@@ -14,19 +14,17 @@ import com.lilun.passionlife.cloudplatform.bean.Service;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.KnowPermission;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
-import com.lilun.passionlife.cloudplatform.common.TokenManager;
+import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
-import com.lilun.passionlife.cloudplatform.utils.ACache;
-import com.lilun.passionlife.cloudplatform.utils.SpUtils;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -45,9 +43,11 @@ public class ListOrgaServiceFragment extends BaseFunctionFragment implements Bas
     private double userId;
     private OrgaServiceListAdapter adapter;
     private Bundle bundle;
-    private String serviceAddPermission = KnownServices.Module_Service+ KnowPermission.addPermission;
-    private String serviceEditPermission = KnownServices.Module_Service+KnowPermission.editPermission;
-    private String serviceDeletePermission = KnownServices.Module_Service+KnowPermission.deletePermission;
+    private String serviceAddPermission = KnownServices.Module_Service + KnowPermission.addPermission;
+    private String serviceEditPermission = KnownServices.Module_Service + KnowPermission.editPermission;
+    private String serviceDeletePermission = KnownServices.Module_Service + KnowPermission.deletePermission;
+    private String url;
+
 
     @Override
     public View setView() {
@@ -59,9 +59,15 @@ public class ListOrgaServiceFragment extends BaseFunctionFragment implements Bas
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Logger.d("onCreate");
-        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
+        getOrgaService();
+    }
 
+    /**
+     *新增或者编辑了功能服务，需要刷新组织列表视图
+     */
+    @Subscribe
+    public void reflashServiceList(Event.reflashServiceList event){
+        getOrgaService();
     }
 
 
@@ -70,56 +76,73 @@ public class ListOrgaServiceFragment extends BaseFunctionFragment implements Bas
         super.onStart();
         rootActivity.setTitle(App.app.getString(R.string.module_manager));
         bundle = new Bundle();
-        visibleOrgiService = (List<OrganizationService>) ACache.get(App.app).getAsObject(Constants.cacheKey_service);
-        if (visibleOrgiService!=null){
-            showServices(visibleOrgiService);
-        }else{
-            visibleOrgiService = new ArrayList<>();
-            showServices(visibleOrgiService);
+        if (adapter != null) {
+            gvModuleList.setAdapter(adapter);
         }
-
-
-    }
-
-    public void showServices(List<OrganizationService> data) {
-        adapter = new OrgaServiceListAdapter(data,this);
-        gvModuleList.setAdapter(adapter);
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
-            if (position==0){
-                if (isAdmin()){
-                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddServiceFragment(),mCx.getString(R.string.service_add)));
-                    return;
-                }
-                //检查是否有Service.add权限
-                rootActivity.checkHasPermission(userId, serviceAddPermission, hasPermission -> {
-                    if (hasPermission){
-                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddServiceFragment(),mCx.getString(R.string.service_add)));
-                    }else{
-                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
-                    }
-                });
-            }else{
-                if (isAdmin()){
-                    editOrgaService(position);
-                    return;
-                }
-                //检查是否有编辑权限
-                rootActivity.checkHasPermission(userId, serviceEditPermission, hasPermission -> {
-                    if (hasPermission){
-                        editOrgaService(position);
-                    }else{
-                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
-                    }
-                });
-
-
+            if (position == 0) {
+                openAddServiceFeagment();
+            } else {
+                openEditServiceFragment(position);
             }
         });
 
     }
 
+    //获取功能服务列表
+    private void getOrgaService() {
+        url = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_service;
+        rootActivity.addSubscription(ApiFactory.getOrgiServices(url), new PgSubscriber<List<OrganizationService>>(rootActivity) {
+            @Override
+            public void on_Next(List<OrganizationService> services) {
+                visibleOrgiService = services;
+                adapter = new OrgaServiceListAdapter(services, ListOrgaServiceFragment.this);
+                gvModuleList.setAdapter(adapter);
+            }
+        });
+    }
+
+
+    /**
+    *打开编辑服务界面
+    */
+    private void openEditServiceFragment(int position) {
+        if (isAdmin() || hasCheckAddPermission) {
+            editOrgaService(position);
+            return;
+        }
+        //检查是否有编辑权限
+        rootActivity.checkHasPermission(userId, serviceEditPermission, hasPermission -> {
+            setHasAddCheckPermission();
+            if (hasPermission) {
+                editOrgaService(position);
+            } else {
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+    }
+
+    /**
+    *打开新增服务界面
+    */
+    private void openAddServiceFeagment() {
+        if (isAdmin() || hasCheckEditPermission) {
+            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddServiceFragment(), mCx.getString(R.string.service_add)));
+            return;
+        }
+        //检查是否有Service.add权限
+        rootActivity.checkHasPermission(userId, serviceAddPermission, hasPermission -> {
+            setHasEditCheckPermission();
+            if (hasPermission) {
+                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddServiceFragment(), mCx.getString(R.string.service_add)));
+            } else {
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+    }
+
     private void editOrgaService(int position) {
-        bundle.putSerializable(Constants.orgaService,visibleOrgiService.get(position-1));
+        bundle.putSerializable(Constants.orgaService, visibleOrgiService.get(position - 1));
         Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditServiceFragment(), mCx.getString(R.string.service_edit));
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
@@ -127,30 +150,31 @@ public class ListOrgaServiceFragment extends BaseFunctionFragment implements Bas
 
 
     /**
-    *刷新 “编辑” 显示
-    */
+     * 刷新 “编辑” 显示
+     */
     @Subscribe
-    public void onEditClick(Event.EditClickEvent event){
-        if (adapter!=null){
+    public void onEditClick(Event.EditClickEvent event) {
+        if (adapter != null) {
             setEdText(adapter);
         }
     }
 
 
     /**
-    *删除一个服务
-    */
+     * 删除一个服务
+     */
     @Override
     public void onDeleteClick(int position) {
-        if (isAdmin()){
+        if (isAdmin() || hasCheckDeletePermission) {
             deleteService(position);
             return;
         }
         //是否有删除服务的权限
         rootActivity.checkHasPermission(userId, serviceDeletePermission, hasPermission -> {
-            if (hasPermission){
+            setHasDeleteCheckPermission();
+            if (hasPermission) {
                 deleteService(position);
-            }else{
+            } else {
                 ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
             }
         });
@@ -158,21 +182,24 @@ public class ListOrgaServiceFragment extends BaseFunctionFragment implements Bas
     }
 
     private void deleteService(int position) {
-        if (visibleOrgiService!=null && visibleOrgiService.size()!=0){
-            String deleOrgServiceId = visibleOrgiService.get(position).getId();
-            Logger.d("deleOrgId = "+deleOrgServiceId);
-            rootActivity.addSubscription(ApiFactory.deleteOrganiService(deleOrgServiceId), new PgSubscriber<Object>(rootActivity) {
-                @Override
-                public void on_Next(Object integer) {
-                    visibleOrgiService.remove(position);
-                    adapter.notifyDataSetChanged();
-                    ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_orgservice_success));
-                    //post一个事件，告诉“首页”刷新数据
-                    EventBus.getDefault().post(new Event.deleteOrganiService());
-                }
-            });
+        new AlertDiaog(rootActivity, App.app.getString(R.string.confire_delete), () -> {
+            if (visibleOrgiService != null && visibleOrgiService.size() != 0) {
+                String deleOrgServiceId = visibleOrgiService.get(position).getId();
+                Logger.d("deleOrgId = " + deleOrgServiceId);
+                rootActivity.addSubscription(ApiFactory.deleteOrganiService(deleOrgServiceId), new PgSubscriber<Object>(rootActivity) {
+                    @Override
+                    public void on_Next(Object integer) {
+                        visibleOrgiService.remove(position);
+                        adapter.notifyDataSetChanged();
+                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_orgservice_success));
+                        //post一个事件，告诉“首页”刷新数据
+                        EventBus.getDefault().post(new Event.deleteOrganiService());
+                    }
+                });
 
-        }
+            }
+
+        });
     }
 
 

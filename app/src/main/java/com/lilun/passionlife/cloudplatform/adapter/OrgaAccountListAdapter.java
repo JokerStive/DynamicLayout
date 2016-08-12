@@ -8,7 +8,9 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -69,17 +71,22 @@ public class OrgaAccountListAdapter extends BaseModuleListAdapter {
             viewHolder.module_title.setText(add);
         } else {
             //TODO 从网络url加载图片
-            String staffNane="";
-            if (data.get(position - 1).getAccount()!=null){
-                 staffNane = data.get(position - 1).getAccount().getName();
-            }
-            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
+
+            String staffNane = data.get(position - 1).getAccount().getName()==null? data.get(position - 1).getAccount().getUsername():data.get(position - 1).getAccount().getName();
+//            String staffNane = "";
+
+//            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
             viewHolder.module_title.setText(staffNane);
 
             viewHolder.module_delete.setVisibility(isShowDelete ? View.VISIBLE : View.GONE);
             viewHolder.module_delete.setOnClickListener(v -> {
                 listener.onDeleteClick(position - 1);
             });
+
+            Picasso.with(App.app).load(PicloadManager.accountIconUrl((double) data.get(position - 1).getId()))
+                    .placeholder(R.drawable.default_pic)
+                    .error(R.drawable.default_pic)
+                    .into(viewHolder.module_icon);
         }
     }
 

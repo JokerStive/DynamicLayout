@@ -35,4 +35,7 @@ public class XListView extends LinearLayout {
     }
 
 
+    public void setOrentation(int h){
+        this.setOrientation(h);
+    }
 }

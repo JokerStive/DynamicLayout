@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.adapter;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -51,9 +52,12 @@ public class BelongOrgasAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        String name = StringUtils.belongOgaName(data.get(position).getOrganizationId());
+        if (TextUtils.isEmpty(name)){
+            name="/";
+        }
 
-        String belongOgaName = StringUtils.belongOgaName(data.get(position).getOrganizationId());
-        viewHolder.module_title.setText(belongOgaName);
+        viewHolder.module_title.setText(name);
 
 
         return convertView;

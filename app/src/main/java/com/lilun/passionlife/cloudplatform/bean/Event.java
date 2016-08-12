@@ -5,8 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
-
 import java.util.List;
 import java.util.Map;
 
@@ -20,21 +18,28 @@ public class Event {
      * 验证失效
      */
     public static class AuthoriseEvent {
-
     }
 
     /**
      * 401event
      */
-    public static class Event401{
+    public static class Event401 {
+    }
 
+    /**
+     * 登录成功事件
+     */
+    public static class LoginSuccess {
     }
 
     ;
 
 
+    /**
+     * 开启一个新的fragment
+     */
     public static class OpenNewFragmentEvent {
-        public BaseFunctionFragment newFragment;
+        public Fragment newFragment;
         public String cuumb_title;
         public Bundle bundle;
 
@@ -47,7 +52,7 @@ public class Event {
             return this;
         }
 
-        public OpenNewFragmentEvent(BaseFunctionFragment newFragment, String cuumb_title) {
+        public OpenNewFragmentEvent(Fragment newFragment, String cuumb_title) {
             this.cuumb_title = cuumb_title;
             this.newFragment = newFragment;
         }
@@ -56,136 +61,60 @@ public class Event {
     }
 
 
+//    public static class OpenNewFragmentEventCopy {
+//        public Fragment newFragment;
+//        public String cuumb_title;
+//        public Bundle bundle;
+//
+//        public Bundle getBundle() {
+//            return bundle;
+//        }
+//
+//        public OpenNewFragmentEventCopy setBundle(Bundle bundle) {
+//            this.bundle = bundle;
+//            return this;
+//        }
+//
+//        public OpenNewFragmentEventCopy(Fragment newFragment, String cuumb_title) {
+//            this.cuumb_title = cuumb_title;
+//            this.newFragment = newFragment;
+//        }
+//
+//
+//    }
 
-    public static class OpenNewFragmentEventCopy {
-        public Fragment newFragment;
-        public String cuumb_title;
-        public Bundle bundle;
-
-        public Bundle getBundle() {
-            return bundle;
-        }
-
-        public OpenNewFragmentEventCopy setBundle(Bundle bundle) {
-            this.bundle = bundle;
-            return this;
-        }
-
-        public OpenNewFragmentEventCopy(Fragment newFragment, String cuumb_title) {
-            this.cuumb_title = cuumb_title;
-            this.newFragment = newFragment;
-        }
-
-
-    }
-
+    /**
+     * 编辑按钮被点击的事件
+     */
     public static class EditClickEvent {
 
     }
 
 
-    public static class AllOrganEvent {
-        private List<OrganizationAccount> allOrganization;
-        private String defOrgaId;
-
-        public AllOrganEvent(List<OrganizationAccount> allOrganization, String defOrgaId, String defOrgaName) {
-            this.allOrganization = allOrganization;
-            this.defOrgaId = defOrgaId;
-            this.defOrgaName = defOrgaName;
-        }
-
-        private String defOrgaName;
-    }
-
     /**
-     * create by youke
-     * desc : 查询服务列表成功
+     * 默认的组织机构有变化的事件
      */
-    public static class getOrgiServices_ok {
-        private List<OrganizationService> data;
-
-        public getOrgiServices_ok(List<OrganizationService> data) {
-            this.data = data;
+    public static class DefOrgaHasChanges {
+        public DefOrgaHasChanges(OrganizationAccount oa) {
+            this.oa = oa;
         }
 
-        public List<OrganizationService> getData() {
-            return data;
+        public OrganizationAccount getOa() {
+            return oa;
         }
+
+        private OrganizationAccount oa;
     }
 
 
     /**
-     * create by youke
-     * desc : 查询组织结构列表成功
+     * 当前组织下的模块已经缓存成功的事件
      */
-    public static class getOrgiList_ok {
-        private List<OrganizationAccount> data;
-        private String defOrgiName;
-
-        public getOrgiList_ok(List<OrganizationAccount> data, String defOrgiName) {
-            this.data = data;
-            this.defOrgiName = defOrgiName;
-        }
-
-        public String getDefOrgiName() {
-            return defOrgiName;
-        }
-
-        public List<OrganizationAccount> getData() {
-            return data;
-
-        }
+    public static class CurrentOsHasCached {
     }
 
     /**
-     * create by youke
-     * desc : 查看view权限事件
-     */
-    public static class checkViewPermission {
-        private OrganizationService service;
-        private boolean viewPermission;
-        private int serviceCount;
-
-        public checkViewPermission(OrganizationService service, boolean viewPermission, int serviceCount) {
-            this.service = service;
-            this.viewPermission = viewPermission;
-            this.serviceCount = serviceCount;
-        }
-
-        public int getServiceCount() {
-            return serviceCount;
-        }
-
-        public OrganizationService getService() {
-
-            return service;
-        }
-
-        public boolean isViewPermission() {
-            return viewPermission;
-        }
-    }
-
-
-    /**
-     * create by youke
-     * desc : 默认的组织机构有变化的事件
-     */
-    public static class SystemConfigOrgId {
-        public SystemConfigOrgId(String orgId) {
-            this.orgId = orgId;
-        }
-
-        public String getOrgId() {
-            return orgId;
-        }
-
-        private String orgId;
-    }
-
-    /**
-     * create by youke
-     * desc : 新增了一个服务事件
+     * 新增了一个服务事件
      */
     public static class postService {
         private OrganizationService service;
@@ -201,8 +130,7 @@ public class Event {
 
 
     /**
-     * create by youke
-     * desc : put服务事件
+     * de put服务事件
      */
     public static class putService {
         private OrganizationService service;
@@ -218,12 +146,12 @@ public class Event {
 
 
     /**
-     * create by youke
-     * desc :新增了一个department事件
+     * 新增了一个department事件
      */
     public static class addNewDepartment {
-        public addNewDepartment(Organization department) {
+        public addNewDepartment(Organization department, Bitmap icon) {
             this.department = department;
+            this.icon = icon;
         }
 
         public Organization getDepartment() {
@@ -231,12 +159,16 @@ public class Event {
         }
 
         private Organization department;
+        private Bitmap icon;
+
+        public Bitmap getIcon() {
+            return icon;
+        }
     }
 
 
     /**
-     * create by youke
-     * desc :新增了一个role
+     * 新增了一个role
      */
     public static class addNewRole {
 
@@ -314,7 +246,6 @@ public class Event {
     }
 
 
-
     /**
      * 切换了旗下组织的事件
      */
@@ -336,4 +267,60 @@ public class Event {
         }
     }
 
+
+    /**
+     * 复制职位到子组织成功的事件
+     */
+    public static class CopyRoleSuccess {
+
+    }
+
+    /**
+     * 复制部门到子组织成功的事件
+     */
+    public static class CopyDeptSuccess {
+
+    }
+
+
+    /**
+     * 刷新首页数据
+     */
+    public static class ReflashHomeData {
+
+    }
+
+
+//   组织管理 ====================================================================================
+    //需要刷新组织列表
+    public static class reflashOrgaList {
+
+    }
+
+//   部门管理管理 ====================================================================================
+    //需要刷新组织列表
+    public static class reflashDeptList {
+
+    }
+
+
+//   角色管理管理 ====================================================================================
+    //需要刷新组织列表
+    public static class reflashRoleList {
+
+    }
+
+
+//   员工管理管理 ====================================================================================
+    //需要刷新组织列表
+    public static class reflashStaffList {
+
+    }
+
+
+//   功能模块管理 ====================================================================================
+    //需要刷新组织列表
+    public static class reflashServiceList {
+
+    }
 }

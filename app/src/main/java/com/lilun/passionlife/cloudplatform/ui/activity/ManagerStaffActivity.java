@@ -7,7 +7,7 @@ import com.lilun.passionlife.cloudplatform.ui.fragment.ListStaffFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class StaffManagerActivity extends BaseModuleActivity {
+public class ManagerStaffActivity extends BaseModuleActivity {
 
 
     @Override

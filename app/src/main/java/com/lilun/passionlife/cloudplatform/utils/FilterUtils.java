@@ -16,7 +16,7 @@ public class FilterUtils {
     */
     public static String orgaAccountFilter(String orgaId){
 //        return "{\"include\":\"account\", \"like\":{\"organizationId\": \""+orgaId+"/#staff\"}}";
-        return "{\"include\":\"account\",\"where\":{\"organizationId\":\""+orgaId+"/#staff\"}}";
+        return "{\"include\":\"account\",\"where\":{\"organizationId\":\""+StringUtils.getCheckedOrgaId(orgaId)+"/#staff\"}}";
     }
 
 

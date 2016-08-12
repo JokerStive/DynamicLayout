@@ -24,6 +24,7 @@ import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -38,6 +39,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.RequestBody;
+import rx.Observable;
 
 /**
  * Created by youke on 2016/6/22.
@@ -74,6 +76,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
     private Role newRole;
     private View view;
     private Bitmap icon;
+    private String deptId;
 
     @Override
     public View setView() {
@@ -125,7 +128,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
             ToastHelper.get(mCx).showShort(mCx.getString(R.string.not_orginame_empty));
             return;
         }
-        saveOrgi();
+        saveDept();
 
     }
 
@@ -135,73 +138,98 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
      *
      * @param id
      */
-    private void saveRole(String id) {
-        size = roles.size();
+    private Observable<List<Role>> postRole(String id) {
+
         List<Role> roleList = new ArrayList<>();
         for (int i = 0; i < roles.size(); i++) {
             Role role = roles.get(i);
             role.setOrganizationId(id + Constants.special_orgi_role);
             role.setName(id + ":" + role.getTitle());
             roleList.add(role);
-
         }
 
-        if (roleList.size()==0){
-//            rootActivity.backStack();
-            return;
-        }
-        rootActivity.addSubscription(ApiFactory.postRoles(roleList), new PgSubscriber<List<Role>>(rootActivity) {
-            @Override
-            public void on_Next(List<Role> roles) {
-                ToastHelper.get(mCx).showShort("新增职位成功");
-                Logger.d("新增职位成功");
-                for (int i = 0; i < roles.size(); i++) {
-                    Role role = roles.get(i);
-                    Map<Role, List<Principal>> roleListMap = rolePrinMapping.get(i);
-                    List<Principal> principals = roleListMap.get(role);
-                    postPrincipal((double) role.getId(), principals);
-                }
-            }
-        });
+        return ApiFactory.postRoles(roleList);
     }
 
-    private void postPrincipal(double roleId, List<Principal> p) {
-        rootActivity.addSubscription(ApiFactory.postPrincipal(roleId, p), new PgSubscriber<Object>(rootActivity) {
-            @Override
-            public void on_Next(Object o) {
-//                rootActivity.backStack();
-                Logger.d("新增职位的权限成功");
-            }
-        });
+    private Observable<Object> postPrincipal(List<Role> roless) {
+        ArrayList<Observable<Object>> observables = new ArrayList<>();
+        for (int i = 0; i < roless.size(); i++) {
+            Role role = roless.get(i);
+            Map<Role, List<Principal>> roleListMap = rolePrinMapping.get(i);
+            List<Principal> principals = roleListMap.get(roles.get(i));
+            observables.add(ApiFactory.postPrincipal((double) role.getId(), principals));
+        }
+
+        return Observable.merge(observables);
 
     }
 
 
     /**
-     * 存 新增的部门
+     * 存新增的部门
      */
-    private void saveOrgi() {
-        orgna = new Organization();
-        orgna.setId(orgiId + Constants.special_orgi_department + "/" + orgaName);
-        orgna.setName(orgaName);
-        orgna.setInherited(exvAddOrgi.isInherited());
-        orgna.setParentId(orgiId + Constants.special_orgi_department);
-        Logger.d(" dept parent id = " + orgna.getParentId());
-        orgna.setDescription(orgaDesc);
-        //TODO 设置icon
-        rootActivity.addSubscription(ApiFactory.postOrganization(orgna), new PgSubscriber<Organization>(rootActivity) {
+    private void saveDept() {
+        Observable observable;
+        if (!exvAddOrgi.isInherited() && checkHasRole()) {
+            observable =  ApiFactory.postOrganization(newOrganization())
+                    .concatMap(organization -> postRole(organization.getId()))
+                    .concatMap(this::postPrincipal)
+                    .concatMap(o -> postIsInherited());
+        }else{
+            observable = ApiFactory.postOrganization(newOrganization());
+        }
+
+        rootActivity.addSubscription(observable, new PgSubscriber(rootActivity) {
             @Override
-            public void on_Next(Organization orga) {
-                saveIcon(orga.getId());
-                if (!orga.isInherited()) {
-                    String id = orga.getId() + Constants.special_orgi_role;
-                    rootActivity.setIsInherited(id, new IsInherited(orga.isInherited()));
-                    saveRole(orga.getId());
-                } rootActivity.backStack();
+            public void on_Next(Object o) {
+                Logger.d("部门添加成功");
+                ToastHelper.get().showShort(App.app.getString(R.string.add_department_success));
+                saveIcon();
+                rootActivity.backStack();
+            }
 
-
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+                ToastHelper.get().showShort(App.app.getString(R.string.add_department_false));
             }
         });
+
+    }
+
+    /**
+     * 设置是否继承
+     */
+    private Observable postIsInherited() {
+        String id = deptId + Constants.special_orgi_role;
+        return ApiFactory.putIsInheroted(id, new IsInherited(false));
+    }
+
+    /**
+    *检查是否有roles
+    */
+    private boolean checkHasRole() {
+        if (roles != null && roles.size() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+    *new 一个dept
+    */
+    private Organization newOrganization() {
+        orgna = new Organization();
+        orgna.setId(StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department + "/" + orgaName);
+        orgna.setParentId(StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department);
+
+        orgna.setName(orgaName);
+        orgna.setInherited(exvAddOrgi.isInherited());
+        Logger.d(" dept parent id = " + orgna.getParentId());
+        orgna.setDescription(orgaDesc);
+
+        deptId = orgna.getId();
+        return orgna;
     }
 
 
@@ -211,15 +239,35 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
     @Override
     public void onBtnChoise(boolean enabled) {
         if (enabled) {
-            getExtendsRole(orgiId);
+            getExtendsRole(StringUtils.getCheckedOrgaId(orgiId));
         } else if (roles != null) {
             //
             Logger.d("展示自己的部门");
-            exvAddOrgi.setListviewData(new ExtRoleAdapter(roles, true, (parentOrgisAdapter, position) -> {
-                deleteItem(parentOrgisAdapter, position);
-            }));
+            setExData(false, roles);
         }
 
+    }
+
+
+    /**
+     * 设置继承框显示数据
+     */
+    private void setExData(Boolean isInherited, List<Role> roles) {
+        if (isInherited) {
+            exvAddOrgi.setListviewData(new ExtRoleAdapter(roles));
+        } else {
+            exvAddOrgi.setListviewData(new ExtRoleAdapter(roles, new ExtRoleAdapter.OnItemDeleteListen() {
+                @Override
+                public void onItemDelete(ExtRoleAdapter parentOrgisAdapter, int position) {
+                    deleteItem(parentOrgisAdapter, position);
+                }
+
+                @Override
+                public void onItemEdit(ExtRoleAdapter parentOrgisAdapter, int position) {
+
+                }
+            }));
+        }
     }
 
     /**
@@ -240,9 +288,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
             if (roles.size() == 0) {
                 ToastHelper.get(mCx).showShort(mCx.getString(R.string.empty_role_list));
             }
-            exvAddOrgi.setListviewData(new ExtRoleAdapter(roles, false, (parentOrgisAdapter, position) -> {
-
-            }));
+            setExData(true, roles);
 
         });
 
@@ -281,15 +327,15 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
 
 
     /**
-     * 新增组织Icon
+     * 部门icon
      */
-    private void saveIcon(String orgaId) {
-        if (icon != null) {
+    private void saveIcon() {
+        if (icon!=null){
             RequestBody requestBody = PicloadManager.getUploadIconRequestBody(icon);
-            rootActivity.addSubscription(ApiFactory.postOrganizationIcon(orgaId, requestBody), new PgSubscriber() {
+            rootActivity.addSubscription(ApiFactory.postOrganizationIcon(deptId, requestBody), new PgSubscriber() {
                 @Override
                 public void on_Next(Object o) {
-                    ToastHelper.get().showShort(App.app.getString(R.string.dept_icon_upload_success));
+                    Logger.d("部门图标上传成功");
                 }
             });
         }
@@ -311,21 +357,17 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
         super.onRestoreState(savedInstanceState);
         if (savedInstanceState != null) {
             orgaName = savedInstanceState.getString("organiName");
-
             orgaDesc = savedInstanceState.getString("organiDesc");
 
         }
 
         Logger.d("organiName = " + orgaName + "organiDesc = " + orgaDesc + "  list size =  " + roles.size());
-
+        ivHead.setImageBitmap(icon);
         if (roles != null) {
-            exvAddOrgi.setListviewData(new ExtRoleAdapter(roles, true, (parentOrgisAdapter, position) -> {
-                deleteItem(parentOrgisAdapter, position);
-            }));
+            setExData(false, roles);
         }
 
 
-//        }
     }
 
     @Override
@@ -333,6 +375,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
         super.onResume();
         inputOrgiName.setInput(TextUtils.isEmpty(orgaName) ? "" : orgaName);
         inputOrgiDesc.setInput(TextUtils.isEmpty(orgaDesc) ? "" : orgaDesc);
+
     }
 
 

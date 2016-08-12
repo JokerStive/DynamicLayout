@@ -13,12 +13,11 @@ import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.KnowPermission;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
-import com.lilun.passionlife.cloudplatform.common.TokenManager;
+import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
-import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,7 +43,7 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
     private String staffAddPermission = KnownServices.Account_Service+ KnowPermission.addPermission;
     private String staffEditPermission = KnownServices.Account_Service+KnowPermission.editPermission;
     private String staffDeletePermission = KnownServices.Account_Service+KnowPermission.deletePermission;
-    private Double userId;
+
 
     @Override
     public View setView() {
@@ -54,40 +53,66 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getStaffList();
+
+    }
+
+    /**
+     *新增或者编辑了员工，需要刷新组织列表视图
+     */
+    @Subscribe
+    public void reflashStaffList(Event.reflashStaffList event){
+        getStaffList();
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         bundle=new Bundle();
-        userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
-        getStaffList();
+        if (adapter!=null){
+            gvModuleList.setAdapter(adapter);
+        }
         gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
             if (position==0){
-                if (isAdmin()){
-                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
-                    return;
-                }
-                rootActivity.checkHasPermission(userId, staffAddPermission, hasPermission -> {
-                    if (hasPermission){
-                        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
-                    }else{
-                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
-                    }
-                });
+                openAddStafFragment();
             }else{
-                if (isAdmin()){
-                    editeStaff(position);
-                    return;
-                }
-                rootActivity.checkHasPermission(userId,staffEditPermission,hasPermission -> {
-                    if (hasPermission){
-                        editeStaff(position);
-                    }else{
-                        ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
-                    }
-                });
+                openEditStaffFragment(position);
 
             }
         });
 
+    }
+
+    private void openEditStaffFragment(int position) {
+        if (isAdmin() || hasCheckEditPermission){
+            editeStaff(position);
+            return;
+        }
+        rootActivity.checkHasPermission(userId,staffEditPermission,hasPermission -> {
+            setHasEditCheckPermission();
+            if (hasPermission){
+                editeStaff(position);
+            }else{
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+    }
+
+    private void openAddStafFragment() {
+        if (isAdmin() || hasCheckAddPermission){
+            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
+            return;
+        }
+        rootActivity.checkHasPermission(userId, staffAddPermission, hasPermission -> {
+            setHasAddCheckPermission();
+            if (hasPermission){
+                EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddStaffFragment(),mCx.getString(R.string.staff_add)));
+            }else{
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
     }
 
     /**
@@ -137,12 +162,13 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
 
     @Override
     public void onDeleteClick(int position) {
-        if (isAdmin()){
+        if (isAdmin() || hasCheckDeletePermission){
             deleteStaff(position);
             return;
         }
         //是否有删除员工的权限
         rootActivity.checkHasPermission(userId, staffDeletePermission, hasPermission -> {
+            setHasDeleteCheckPermission();
             if (hasPermission){
                 deleteStaff(position);
             }else{
@@ -152,18 +178,21 @@ public class ListStaffFragment extends BaseFunctionFragment implements BaseModul
     }
 
     private void deleteStaff(int position) {
-        if (orgaAccs!=null && orgaAccs.size()!=0){
-            double ocId = (double) orgaAccs.get(position).getId();
-            rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<Object>(rootActivity) {
-                @Override
-                public void on_Next(Object object) {
-                    orgaAccs.remove(position);
-                    adapter.notifyDataSetChanged();
-                    ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_staff_success));
-                }
+        new AlertDiaog(rootActivity, App.app.getString(R.string.confire_delete), () -> {
+            if (orgaAccs!=null && orgaAccs.size()!=0){
+                double ocId = (double) orgaAccs.get(position).getId();
+                rootActivity.addSubscription(ApiFactory.deleteOrgaAccount(ocId), new PgSubscriber<Object>(rootActivity) {
+                    @Override
+                    public void on_Next(Object object) {
+                        orgaAccs.remove(position);
+                        adapter.notifyDataSetChanged();
+                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_staff_success));
+                    }
 
-            });
-        }
+                });
+            }
+
+        });
     }
 
 

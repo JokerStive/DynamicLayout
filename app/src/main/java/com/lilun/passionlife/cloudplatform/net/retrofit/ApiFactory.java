@@ -13,7 +13,6 @@ import com.lilun.passionlife.cloudplatform.bean.Service;
 import java.util.List;
 
 import okhttp3.RequestBody;
-import retrofit2.Response;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -23,21 +22,32 @@ import rx.schedulers.Schedulers;
  */
 public class ApiFactory {
 
+    public static void setService(String url ){
+        RetrofitManager.getRetrofitManager().setRetrofitUrl(url);
+    }
     private static ApiService service = RetrofitManager.getRetrofit().create(ApiService.class);
+
 
     public static Observable getRes(Observable observable) {
         return observable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
-//                .flatMap(RxJavaUtil::flatResult);
     }
 
 
     /**
      * 用户注册
      */
-    public static Observable<Response<Account>> register(Account account) {
+    public static Observable<Account> register(Account account) {
         return getRes(service.register(account));
+    }
+
+
+    /**
+     *新增组织机构图标
+     */
+    public static  Observable<Object> postAccountIcon(double userId, RequestBody file) {
+        return getRes(service.postAccountIcon((int) userId,file));
     }
 
 
@@ -55,8 +65,12 @@ public class ApiFactory {
     public static Observable<LoginRes> login(Account account) {
         return getRes(service.login(account));
     }
-/*
-    *//**
+
+
+
+    //  GET  ========================================================================================================================================================
+
+/**
      * 获取所有的组织列表
      */
     public static Observable<List<OrganizationAccount>> getOrganizationList(double userid,String filter) {
@@ -148,6 +162,14 @@ public class ApiFactory {
 
 
     /**
+     * 获取所有的权限
+     */
+    public static  Observable<List<Principal>> getRolePrincials(double roleId){
+        return getRes(service.getRolePrincials((int)roleId));
+    }
+
+
+    /**
      * *获取account所属的role
      */
     public static    Observable<List<Role>> getAccountRole(double userId){
@@ -182,6 +204,13 @@ public class ApiFactory {
     }
 
 
+
+
+
+
+
+
+    //  post  ========================================================================================================================================================
 
 
     /**
@@ -267,6 +296,12 @@ public class ApiFactory {
     }
 
 
+
+
+
+
+//  DELETE  ========================================================================================================================================================
+
     /**
      * 删除一个组织
      */
@@ -333,11 +368,23 @@ public class ApiFactory {
 
 
 
+
+//   PUT ==================================================================================================================================
+
     /**
      *更新一个account
      */
     public static  Observable<Account> putAccount(double accountId,Account account){
         return getRes(service.putAccount((int) accountId,account));
+    }
+
+
+
+    /**
+     *更新account所属组织
+     */
+    public static  Observable<OrganizationAccount> putDefBelongOrga(double accountId,String orgaId,OrganizationAccount oa){
+        return getRes(service.putDefBelongOrga((int) accountId,orgaId,oa));
     }
 
 
@@ -361,7 +408,7 @@ public class ApiFactory {
     /**
      *更新OrgaService
      */
-    public static Observable<OrganizationService> putRole(double roleId,Role role){
+    public static Observable<Role> putRole(double roleId,Role role){
         return getRes(service.putRole((int)roleId,role));
     }
 

@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 
@@ -16,6 +15,7 @@ import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Role;
+import com.lilun.passionlife.cloudplatform.common.Admin;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.common.TokenManager;
@@ -25,7 +25,9 @@ import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.ACache;
 import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
+import com.lilun.passionlife.cloudplatform.utils.FilterUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -70,19 +72,7 @@ public class BaseNetActivity extends FragmentActivity {
             pgSubscriber = (PgSubscriber) subscriber;
         }
         mCompositeSubscription.add(observable
-//                .doOnSubscribe(() -> {
-//                    String token = SpUtils.getString(TokenManager.TOKEN);
-//                    if (!TextUtils.isEmpty(token)) {
-//                        if (!TokenManager.isTokenEnble()) {
-//                            mCompositeSubscription.unsubscribe();
-//                            Logger.d("登录失效");
-//                            EventBus.getDefault().post(new Event.AuthoriseEvent());
-//                            if (pgSubscriber != null) {
-//                                pgSubscriber.dismissProgressDialog();
-//                            }
-//                        }
-//                    }
-//                })
+
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber));
@@ -129,6 +119,7 @@ public class BaseNetActivity extends FragmentActivity {
             @Override
             public void on_Error() {
                 super.on_Error();
+                ToastHelper.get().showShort(App.app.getString(R.string.get_belong_orga_false));
                 listen.onError();
             }
         });
@@ -144,35 +135,28 @@ public class BaseNetActivity extends FragmentActivity {
     /**
      * 从网络获取功能服务列表
      */
-    public void getSerListFromNet(double userId,String defOrgaId,callBack_visible_service callBack) {
-//        String defOrgaId = SpUtils.getString(Constants.key_currentOrgaId);
-        if (!TextUtils.isEmpty(defOrgaId)) {
-            String url = defOrgaId + "/#service";
+    public void getSerListFromNet(String defOrgaId,callBack_visible_service callBack) {
+        if (defOrgaId!=null) {
+            String url;
+            if (defOrgaId.equals(Admin.id)){
+                url = "" + Constants.special_orgi_service;
+            }else{
+                url = defOrgaId+Constants.special_orgi_service;
+            }
             addSubscription(ApiFactory.getOrgiServices(url), new PgSubscriber<List<OrganizationService>>(this) {
                 @Override
                 public void on_Next(List<OrganizationService> OrganizationServices) {
-//                    visibleOrgiService=new ArrayList<>();
-
                     //首先检查setting选项的visible值
+                    Logger.d("获取服务成功");
                     List<OrganizationService> settingVisible = checkSettingVisible(OrganizationServices);
                     callBack.onGetVisibleService(settingVisible);
 
-                    //如果是超级管理员，不需要检查权限
-                    if (isAdmin()) {
-                        //把可见的service存起来
-                        ACache.get(App.app).put(Constants.cacheKey_service,(Serializable)settingVisible);
-                        callBack.onGetVisibleService(settingVisible);
-                        return;
+                }
 
-                    }
-
-                    serviceCount = settingVisible.size();
-                    //普通用户，需要逐个检车服务的visible权限和seting项的visiblse属性
-//                    checkViewPermission(userId,settingVisible.get(0),callBack);
-                    for (int i = 0; i < serviceCount; i++) {
-                        checkViewPermission(userId,settingVisible.get(i),callBack);
-                    }
-
+                @Override
+                public void on_Error() {
+                    super.on_Error();
+                    callBack.onError();
                 }
             });
         }
@@ -180,43 +164,26 @@ public class BaseNetActivity extends FragmentActivity {
 
 
     public List<OrganizationService> checkSettingVisible(List<OrganizationService> servicess){
-        OrganizationService.SettingsBean settings;
-        for (int i=0;i<servicess.size();i++){
-            settings = servicess.get(i).getSettings();
-            if (settings!=null){
-                if (settings.getVisible()!=null && settings.getVisible().equals("false")){
-                    servicess.remove(i);
-                }
-            }
-
-
-        }
+//        OrganizationService.SettingsBean settings;
+//        for (int i=0;i<servicess.size();i++){
+//            settings = servicess.get(i).getSettings();
+//            if (settings!=null){
+//                if (settings.getVisible()!=null && settings.getVisible().equals("false")){
+//                    servicess.remove(i);
+//                }
+//            }
+//
+//
+//        }
         return servicess;
     }
 
 
-    /**
-     * 检查权限
-     */
-    public  void checkViewPermission(double userId, OrganizationService services, callBack_visible_service callBack) {
-        addSubscription(ApiFactory.hasPermission(userId,services.getServiceId()+".view"), new PgSubscriber<Boolean>(this) {
-            @Override
-            public void on_Next(Boolean hasPermisson) {
-                if (hasPermisson){
-                    visibleOrgiService.add(services);
-                }
-                then(serviceCount,callBack);
-            }
 
-
-        });
-
-
-    }
 
 
     public String checkHasPermission(double userId, String permission, callBack_hsdPermission listen){
-        addSubscription(ApiFactory.hasPermission(userId,permission), new PgSubscriber<Boolean>(this) {
+        addSubscription(ApiFactory.hasPermission(userId,permission), new PgSubscriber<Boolean>() {
             @Override
             public void on_Next(Boolean hasPermisson) {
                 listen.setHasPermission(hasPermisson);
@@ -254,11 +221,11 @@ public class BaseNetActivity extends FragmentActivity {
     *获取部门列表
     */
     public void getOrgaDepartment(String organiId,callBack_getOrgaDepartment listen) {
-        String url = organiId+ Constants.special_orgi_department;
+        String url = StringUtils.getCheckedOrgaId(organiId)+ Constants.special_orgi_department;
         addSubscription(ApiFactory.getOrgiDepartment(url), new PgSubscriber<List<Organization>>(this) {
             @Override
             public void on_Next(List<Organization> depts) {
-                CacheUtils.putCacheExpri(Constants.cacheKey_department,depts,Constants.LONG_CACHE_TIME);
+                CacheUtils.putCacheExpri(Constants.cacheKey_department,depts,Constants.SHORT_CACHE_TIME);
                 listen.onGetOrgaDepartment(depts);
             }
 
@@ -271,9 +238,9 @@ public class BaseNetActivity extends FragmentActivity {
     /**
      * 获取权限列表
      */
-    public void getAuthrovityList(String orgiId,callBack_getAuthrovity callBack) {
+    public void getAuthrovityList(callBack_getAuthrovity callBack) {
         //TODO 可能有什么限制
-        addSubscription(ApiFactory.getRoleList(), new PgSubscriber<List<Role>>(this) {
+        addSubscription(ApiFactory.getRoleList(), new PgSubscriber<List<Role>>() {
 
             @Override
             public void on_Next(List<Role> role) {
@@ -300,6 +267,22 @@ public class BaseNetActivity extends FragmentActivity {
     public void getOrgRoleList(String orgId, callBack_getRole listen){
         String s = orgId + Constants.special_orgi_role;
         addSubscription(ApiFactory.getOrgiRole(s), new PgSubscriber<List<Role>>(this) {
+            @Override
+            public void on_Next(List<Role> roles) {
+                listen.onGetRoleList(roles);
+            }
+
+
+        });
+    }
+
+
+    /**
+     *获取组织下的role
+     */
+    public void getOrgRolesWithFilter(String orgId, callBack_getRole listen){
+        String s = orgId + Constants.special_orgi_role;
+        addSubscription(ApiFactory.getOrgiRoleFilter(s, FilterUtils.role()), new PgSubscriber<List<Role>>(this) {
             @Override
             public void on_Next(List<Role> roles) {
                 listen.onGetRoleList(roles);
@@ -342,8 +325,9 @@ public class BaseNetActivity extends FragmentActivity {
 
 
 
-    public interface callBack_visible_service{
-        void onGetVisibleService(List<OrganizationService> visibleOrgiService);
+    public abstract class callBack_visible_service{
+        public abstract void onGetVisibleService(List<OrganizationService> oss);
+        public void onError(){}
     }
 
     public interface callBack_orgiChildren{
@@ -361,7 +345,7 @@ public class BaseNetActivity extends FragmentActivity {
 
     public abstract class callBack_getBelongOrga{
         public abstract void onGetBelongOrga(List<OrganizationAccount> orgas);
-        public void onError(){};
+        public void onError(){}
     }
 
     public interface callBack_getRole{

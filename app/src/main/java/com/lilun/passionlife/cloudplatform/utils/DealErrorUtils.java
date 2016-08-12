@@ -12,6 +12,7 @@ import retrofit2.adapter.rxjava.HttpException;
 public class DealErrorUtils {
     public static void dealError(Throwable e){
         if(!NetUtil.checkNet(App.app)){
+
             ToastHelper.get(App.app).showShort("网络异常");
             return;
         }

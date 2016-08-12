@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/default_bg_gray"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <View
+        style="@style/line_gray"/>
+    <android.support.v7.widget.RecyclerView
+        android:padding="10dp"
+        android:id="@+id/rv_message_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+    <View
+        style="@style/line_gray"/>
+
+    <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/rv_messages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

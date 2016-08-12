@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId "com.lilun.passionlife"
-        minSdkVersion 14
-        targetSdkVersion 23
+        minSdkVersion 19
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
 
@@ -42,36 +42,24 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.0.0'
+
+    compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.nineoldandroids:library:2.4.0'
-    //
     compile 'org.greenrobot:eventbus:3.0.0'
-    //rxjava+rxAmdroid
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxjava:x.y.z'
     compile 'io.reactivex:rxandroid:1.1.0'
-    //retrofit2.0
     compile 'com.squareup.retrofit2:retrofit:2.0.0-beta4'
     compile 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.0.0-beta4'
-    //适配retrofit2.0的OKhttp3
     compile 'com.squareup.okhttp3:okhttp:3.0.1'
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.orhanobut:logger:1.12'
-    //    compile 'com.github.manuelpeinado.multichoiceadapter:multichoiceadapter:3.0.0'
-    //iso格式转换
     compile 'joda-time:joda-time:2.9.4'
-    //保存状态的fragment
     compile 'com.inthecheesefactory.thecheeselibrary:stated-fragment-support-v4:0.10.0'
-    //下拉刷新
     compile 'in.srain.cube:ultra-ptr:1.0.11'
-
-    //图片加载库
     compile 'com.squareup.picasso:picasso:2.5.2'
-
-    //通用adapter
     compile 'com.github.thepacific:adapter:1.0.5'
-
-
+    compile 'com.android.support:design:23.4.0'
 }

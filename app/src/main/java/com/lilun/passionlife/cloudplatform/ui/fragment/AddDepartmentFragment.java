@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +12,12 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -37,11 +41,32 @@ public class AddDepartmentFragment extends BaseFunctionFragment {
     RegItemView inputDepartmentDesc;
     private String orgId;
     private Organization orgna;
+    private View view;
+    private Bitmap icon;
 
     @Override
     public View setView() {
         rootActivity.setTitle(mCx.getString(R.string.add_department));
-        return inflater.inflate(R.layout.fragment_add_department, null);
+        view = inflater.inflate(R.layout.fragment_add_department, null);
+        return view;
+    }
+
+    @OnClick(R.id.iv_head)
+    void choiseHead() {
+        Logger.d("选择头像");
+        rootActivity.choiseHeadPic(view);
+    }
+
+
+    @Subscribe
+    public void choisHead(Event.choiseHeadPic event) {
+        Bitmap bitmap = event.getBitmap();
+        if (bitmap != null) {
+            StringUtils.getBytesFromBitmap(bitmap);
+            icon = bitmap;
+            ivHead.setImageBitmap(bitmap);
+
+        }
     }
 
 
@@ -58,8 +83,10 @@ public class AddDepartmentFragment extends BaseFunctionFragment {
         orgna.setName(depName);
         orgna.setDescription(depDesc);
         orgna.setNew(true);
+//        orgna.setId(orgiId + Constants.special_orgi_department + "/" + depName);
+//        orgna.setParentId(orgiId + Constants.special_orgi_department);
 
-        EventBus.getDefault().post(new Event.addNewDepartment(orgna));
+        EventBus.getDefault().post(new Event.addNewDepartment(orgna,icon==null?null:icon));
         rootActivity.backStack();
 
     }

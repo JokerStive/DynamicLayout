@@ -60,7 +60,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     RegItemView inputOrgiDesc;
 
     private List<Organization> parentDepts;
-    private List<Organization> ownDepts=new ArrayList<>();
+    private List<Organization> ownDepts;
     private String orgaName;
     private Organization orgna;
     private String orgaDesc;
@@ -69,8 +69,6 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     private String currentOrgaId;
     private boolean isRestore;
     private boolean isSaveData;
-    private boolean currentCheck;
-//    private String currIsInheritedid;
     private Boolean isInherited;
     private Boolean ISINHERITED;
     private String currIsInheritedid;
@@ -86,13 +84,13 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     public void onAttach(Context context) {
         super.onAttach(context);
 
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
-//        newAddDepartments = new ArrayList<>();
+        Logger.d("edit orga--onStart");
+        Logger.d("isretore =  "+isRestore);
         Bundle bundle = getArguments();
         if (bundle != null) {
             orgna = (Organization) bundle.get("organiChildren");
@@ -107,14 +105,16 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
      * 设置初始化显示数据
      */
     private void setInitData(Organization organi) {
-        Picasso.with(App.app).load(PicloadManager.orgaIconUrl(organi.getId())).into(ivHead);
+        Picasso.with(App.app).load(PicloadManager.orgaIconUrl(organi.getId())).error(R.drawable.head_portrait).into(ivHead);
         orgaName = orgaName == null ? organi.getName() : orgaName;
         orgaDesc = orgaDesc == null ? organi.getDescription() : orgaDesc;
         currentOrgaId = organi.getId();
-        currIsInheritedid = currentOrgaId+Constants.special_orgi_department;
+        currIsInheritedid = currentOrgaId + Constants.special_orgi_department;
 
-        if (isRestore){return;}
-        rootActivity.getIsInherited(currentOrgaId, isInherite -> {
+        if (isRestore) {
+            return;
+        }
+        rootActivity.getIsInherited(currIsInheritedid, isInherite -> {
             ISINHERITED = isInherite;
             isInherited = isInherite;
             exvAddOrgi.setBtnCheck(isInherited);
@@ -137,16 +137,16 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
      * 检查是否新增了部门
      */
     private void checkIsAddDepartment() {
-        if (exvAddOrgi.isInherited()){
-            if (ownDepts!=null){
-                for(int i=0;i<ownDepts.size();i++){
-                    if (!ownDepts.get(i).isNew()){
+        if (exvAddOrgi.isInherited()) {
+            if (ownDepts != null) {
+                for (int i = 0; i < ownDepts.size(); i++) {
+                    if (!ownDepts.get(i).isNew()) {
                         //删除本来的部门
                         String deptId = ownDepts.get(i).getId();
                         rootActivity.addSubscription(ApiFactory.deleteOrganization(deptId), new PgSubscriber<Object>(rootActivity) {
                             @Override
                             public void on_Next(Object o) {
-                           ;
+                                ;
                             }
 
                             @Override
@@ -161,7 +161,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
             return;
         }
         if (ownDepts != null && ownDepts.size() != 0) {
-            List<Organization>  depts = new ArrayList<>();
+            List<Organization> depts = new ArrayList<>();
             for (Organization depart : ownDepts) {
                 if (depart.isNew()) {
                     Logger.d("  当前部门所属组织id = " + currentOrgaId);
@@ -170,7 +170,9 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
                     depts.add(depart);
                 }
             }
-            if (depts.size()==0){return;}
+            if (depts.size() == 0) {
+                return;
+            }
             rootActivity.addSubscription(ApiFactory.postOrganizations(depts), new PgSubscriber<List<Organization>>(rootActivity) {
                 @Override
                 public void on_Next(List<Organization> organizationBean) {
@@ -181,7 +183,6 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     }
 
 
-
     /**
      * 检查组织数据是否有变化
      */
@@ -190,7 +191,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
         String inputName = inputOrgiName.getInput();
         String inputDesc = inputOrgiDesc.getInput();
         boolean b = ISINHERITED == exvAddOrgi.isInherited();
-        if (!b){
+        if (!b) {
             rootActivity.setIsInherited(currIsInheritedid, new IsInherited(isInherited));
         }
         if (inputName.equals(orgna.getName()) && inputDesc.equals(orgna.getDescription())) {
@@ -205,7 +206,6 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
             organizationBean.setName(inputName);
 
         }
-
 
 
         //描述与变化
@@ -232,7 +232,6 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     }
 
 
-
     @Override
     /**
      *显示继承自父的东西
@@ -240,20 +239,39 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     public void onBtnChoise(boolean enabled) {
         isInherited = enabled;
         if (enabled) {
-            if (parentDepts!=null){
-                exvAddOrgi.setListviewData(new ExtDeptAdapter(parentDepts, false, (parentOrgisAdapter, position) -> {
-                }));
-            }else{
+            if (parentDepts != null) {
+                setExData(true,parentDepts);
+//                exvAddOrgi.setListviewData(new ExtDeptAdapter(parentDepts, false, (parentOrgisAdapter, position) -> {
+//                }));
+            } else {
                 getOrganiDepartment(orgiId);
             }
-        } else if (ownDepts !=null){
-            //
-            Logger.d("展示自己的部门");
-            exvAddOrgi.setListviewData(new ExtDeptAdapter(ownDepts, true, (parentOrgisAdapter, position) -> {
+        } else {
+            if (ownDepts == null) {
+                ownDepts = parentDepts;
+                for (Organization dept : ownDepts) {
+                    dept.setNew(true);
+                }
+            }
+            setExData(false,ownDepts);
+//            exvAddOrgi.setListviewData(new ExtDeptAdapter(ownDepts, true, (parentOrgisAdapter, position) -> {
+//                deleteDeptItem(parentOrgisAdapter, position);
+//            }));
+        }
+    }
+
+
+    /**
+    *显示继承或否的东西
+    */
+    private void setExData(Boolean isInherited, List<Organization> depts) {
+        if (isInherited){
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(depts));
+        }else{
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(depts, (parentOrgisAdapter, position) -> {
                 deleteDeptItem(parentOrgisAdapter, position);
             }));
         }
-
     }
 
     /**
@@ -261,24 +279,25 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
      */
     private void getOrganiDepartment(String parentOrgId) {
         //如果是恢复数据，就不用从网络获取部门列表了
-        String url  = parentOrgId+Constants.special_orgi_department;
+        String url = parentOrgId + Constants.special_orgi_department;
         rootActivity.addSubscription(ApiFactory.getOrgiDepartment(url), new PgSubscriber<List<Organization>>(rootActivity) {
             @Override
             public void on_Next(List<Organization> organizations) {
                 if (organizations.size() == 0) {
-                    String s = isInherited ?mCx.getString(R.string.empty_parent_dept):mCx.getString(R.string.empty_child_dept);
+                    String s = isInherited ? mCx.getString(R.string.empty_parent_dept) : mCx.getString(R.string.empty_child_dept);
                     ToastHelper.get(mCx).showShort(s);
-                    return;
+//                    return;
                 }
-                if (isInherited){
+                if (isInherited) {
                     parentDepts = organizations;
-                }else{
+                } else {
                     ownDepts = organizations;
                 }
-                exvAddOrgi.setListviewData(new ExtDeptAdapter(organizations, !isInherited, (parentOrgisAdapter, position) -> {
-                    //TODO
-                    deleteDeptItem(parentOrgisAdapter, position);
-                }));
+                setExData(isInherited,organizations);
+//                exvAddOrgi.setListviewData(new ExtDeptAdapter(organizations, !isInherited, (parentOrgisAdapter, position) -> {
+//                    //TODO
+//                    deleteDeptItem(parentOrgisAdapter, position);
+//                }));
             }
 
 
@@ -292,7 +311,7 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     @Override
     public void onAddWhatClick() {
         Logger.d("接收到 新增部门 click");
-        isSaveData=true;
+        isSaveData = true;
         Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new AddDepartmentFragment(), mCx.getString(R.string.add_department));
         EventBus.getDefault().post(event);
 
@@ -348,13 +367,12 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     }
 
 
-
     //  保存fragmen状态  =====================================================================================================================
 //
     @Override
     protected void onSaveState(Bundle outState) {
         super.onSaveState(outState);
-        if (isSaveData){
+        if (isSaveData) {
             outState.putString("organiName", inputOrgiName.getInput());
             outState.putString("organiDesc", inputOrgiDesc.getInput());
 //            outState.putSerializable("ownDepts", (Serializable) ownDepts);
@@ -368,26 +386,20 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     @Override
     protected void onRestoreState(Bundle savedInstanceState) {
         super.onRestoreState(savedInstanceState);
+        Logger.d("edit orga--onRestoreState");
         if (savedInstanceState != null) {
 
             //恢复数据的表示
-            isRestore=true;
+            isRestore = true;
 
             //恢复显示的名称和描述
             orgaName = savedInstanceState.getString("organiName");
             orgaDesc = savedInstanceState.getString("organiDesc");
 
 
-//            newAddDepartments = (List<Organization>) savedInstanceState.get("newAddDepartments");
-            //恢复部门列表
-//            ownDepts = (List<Organization>) savedInstanceState.get("ownDepts");
             if (ownDepts != null) {
-//                newDepartment = null;
                 exvAddOrgi.setBtnCheck(false);
-                exvAddOrgi.setListviewData(new ExtDeptAdapter(ownDepts, true, (parentOrgisAdapter, position) -> {
-                    //TODO
-                    deleteDeptItem(parentOrgisAdapter, position);
-                }));
+                setExData(false,ownDepts);
                 Logger.d("organiName = " + orgaName + "organiDesc = " + orgaDesc + "  list size =  " + ownDepts.size());
             }
         }
@@ -403,4 +415,16 @@ public class EditOrganizationFragment extends BaseFunctionFragment implements Ex
     }
 
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Logger.d("edit orga--onDestroyView");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        isRestore=false;
+        Logger.d("edit orga--onDestroy");
+    }
 }

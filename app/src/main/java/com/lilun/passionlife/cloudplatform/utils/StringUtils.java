@@ -3,6 +3,7 @@ package com.lilun.passionlife.cloudplatform.utils;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.lilun.passionlife.cloudplatform.common.Admin;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.orhanobut.logger.Logger;
@@ -66,16 +67,28 @@ public class StringUtils {
      * 根据account的orgaId的到所属组织的Id
      */
     public static String belongOgaId(String orgId) {
-        return orgId.substring(0, orgId.length() - 7);
+        return orgId.substring(0, orgId.lastIndexOf("/"));
     }
 
 
     /**
-     * 根据account的orgaId的到所属组织的Id
+     * 根据account的orgaId的到所属组织的name
      */
     public static String belongOgaName(String orgId) {
         String s = belongOgaId(orgId);
         return s.substring(s.lastIndexOf("/") + 1);
+    }
+
+
+    /**
+     * 根据orgaId 过滤特殊组织
+     */
+    public static boolean isSpecialOrga(String orgId) {
+        String substring = orgId.substring(orgId.lastIndexOf("/") + 1);
+        if (substring.startsWith("#") || Admin.isRootOrganization(orgId)){
+            return true;
+        }
+        return false;
     }
 
 
@@ -99,6 +112,16 @@ public class StringUtils {
             return DEPARTMENT;
         }
         return "";
+    }
+
+
+
+    public static String getCheckedOrgaId(String orgaId){
+        if (orgaId.equals(Admin.id)){
+            return "";
+        }else{
+            return orgaId;
+        }
     }
 
 

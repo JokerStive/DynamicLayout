@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+
+    <item
+        android:id="@+id/message_delete"
+        android:orderInCategory="1"
+        android:title="@string/message_delete"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/message_main"
+        android:orderInCategory="1"
+        android:title="@string/message_main"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/message_about"
+        android:orderInCategory="1"
+        android:title="@string/message_about"
+        app:showAsAction="never" />
+</menu>

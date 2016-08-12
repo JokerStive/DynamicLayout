@@ -15,6 +15,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Service;
+import com.lilun.passionlife.cloudplatform.common.Admin;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
@@ -173,7 +174,7 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
         String serviceName = inputServiceName.getInput();
         String serviceDesc = inputServiceDetail.getInput();
 
-        if (checkData(serviceName, serviceDesc) && !TextUtils.isEmpty(orgiId)) {
+        if (checkData(serviceName, serviceDesc)) {
             OrganizationService.SettingsBean setting = new OrganizationService.SettingsBean();
             OrganizationService service = new OrganizationService();
 
@@ -181,7 +182,11 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
             service.setId(orgiId + ":" + serviceName);
             service.setServiceId(serviceId);
             service.setServiceName(serviceNamee);
-            service.setOrganizationId(orgiId + Constants.special_orgi_service);
+            if (orgiId.equals(Admin.id)){
+                service.setOrganizationId("" + Constants.special_orgi_service);
+            }else{
+                service.setOrganizationId(orgiId + Constants.special_orgi_service);
+            }
             Logger.d("service parent id  = " + orgiId + Constants.special_orgi_service);
             service.setDescription(serviceDesc);
 
@@ -194,12 +199,10 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
                 @Override
                 public void on_Next(OrganizationService services) {
                     ToastHelper.get(mCx).showShort(App.app.getString(R.string.add_orgservice_success));
-                    if (icon==null){
-                        EventBus.getDefault().post(new Event.postService(service));
-                        rootActivity.backStack();
-                    }else{
-                        saveIcon(service.getId(), services);
-                    }
+                    EventBus.getDefault().post(new Event.postService(service));
+                    EventBus.getDefault().post(new Event.reflashServiceList());
+                    saveIcon(service.getId());
+                    rootActivity.backStack();
                 }
             });
         }
@@ -208,28 +211,19 @@ public class AddServiceFragment extends BaseFunctionFragment implements PullChoi
     /**
      * 上传icon
      */
-    private void saveIcon(String orgaServiceId, OrganizationService service) {
-            String visible = service.getSettings().getVisible();
-            boolean isVisible = Boolean.parseBoolean(visible);
+    private void saveIcon(String orgaServiceId) {
+        if (icon==null){return;}
             RequestBody requestBody = PicloadManager.getUploadIconRequestBody(icon);
-            rootActivity.addSubscription(ApiFactory.postOrgaServiceIcon(orgaServiceId, requestBody), new PgSubscriber(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.postOrgaServiceIcon(orgaServiceId, requestBody), new PgSubscriber() {
                 @Override
                 public void on_Next(Object o) {
                     ToastHelper.get(mCx).showShort(App.app.getString(R.string.add_orgservice_icon_success));
-                   if (isVisible){
-                       EventBus.getDefault().post(new Event.postService(service));
-                       rootActivity.backStack();
-                   }
                 }
 
                 @Override
                 public void on_Error() {
                     super.on_Error();
                     ToastHelper.get(mCx).showShort(App.app.getString(R.string.add_orgservice_icon_false));
-                    if (isVisible){
-                        EventBus.getDefault().post(new Event.postService(service));
-                        rootActivity.backStack();
-                    }
                 }
             });
 

@@ -1,138 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/default_bg_gray">
+    android:background="@color/default_bg_gray"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/personal_img"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/def_require"
         android:background="@color/default_white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="20dp">
+
+
+        <ImageView
+            android:id="@+id/im_advance"
+            style="@style/def_require"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/arrow_right" />
 
         <TextView
+
             style="@style/def_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="4"
+            android:layout_centerVertical="true"
             android:text="@string/person_img" />
 
         <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
             android:id="@+id/person_change_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/test_head" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/im_advance"
+            tools:src="@drawable/test_head" />
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/arrow_right" />
-    </LinearLayout>
+    </RelativeLayout>
+
     <View style="@style/line_gray" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/default_white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="20dp">
 
         <TextView
             style="@style/def_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="4"
             android:text="@string/person_name" />
 
         <TextView
-            style="@style/def_textview_gray"
-            android:id="@+id/personal_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/test_head"
-            android:text="@string/person_name"/>
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:id="@+id/name"
+            style="@style/def_textview"
+            android:layout_alignParentRight="true"
+            tools:text="YOU"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/default_tv_gray" />
+
+    </RelativeLayout>
+
     <View style="@style/line_gray" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/default_white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="20dp">
 
         <TextView
             style="@style/def_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="4"
             android:text="@string/belong_dept" />
 
         <TextView
-            style="@style/def_textview_gray"
             android:id="@+id/belong_dept"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/test_head"
-            android:text="@string/belong_dept"/>
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            style="@style/def_textview"
+            android:layout_alignParentRight="true"
+            tools:text="YOU"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/default_tv_gray" />
+
+    </RelativeLayout>
+
     <View style="@style/line_gray" />
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/default_white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:padding="20dp">
 
         <TextView
             style="@style/def_textview"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="4"
             android:text="@string/belong_role" />
 
         <TextView
-            style="@style/def_textview_gray"
             android:id="@+id/belong_role"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:src="@drawable/test_head"
-            android:text="@string/belong_role"/>
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            style="@style/def_textview"
+            android:layout_alignParentRight="true"
+            tools:text="YOU"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/default_tv_gray" />
+
+    </RelativeLayout>
+
     <View style="@style/line_gray" />
 
     <Button
-        android:id="@+id/save"
+        android:id="@+id/svae"
+        style="@style/btn_green"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:text="@string/save"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/save" />
 </LinearLayout>

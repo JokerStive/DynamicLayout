@@ -56,6 +56,13 @@ public class SpUtils {
     }
 
 
+    public static void clearSp(){
+        SharedPreferences sp = App.app.getSharedPreferences(Constants.SP_NAME, App.app.MODE_PRIVATE);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.clear();
+        edit.commit();
+    }
+
 
 
 }

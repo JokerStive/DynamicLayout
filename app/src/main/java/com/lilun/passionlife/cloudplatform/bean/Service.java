@@ -127,5 +127,6 @@ public class Service {
     }
 
     public static class SettingsBean {
+
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.StatedFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 
@@ -30,6 +31,19 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
     private View view;
     protected  Bundle bundle;
     protected String orgiId;
+    public double userId;
+    protected boolean hasCheckAddPermission;
+    protected boolean hasCheckEditPermission;
+    protected boolean hasCheckDeletePermission;
+    protected void setHasAddCheckPermission() {
+        this.hasCheckAddPermission = true;
+    }
+    protected void setHasEditCheckPermission() {
+        this.hasCheckEditPermission = true;
+    }
+    protected void setHasDeleteCheckPermission() {
+        this.hasCheckDeletePermission = true;
+    }
 
 
     @Override
@@ -42,6 +56,7 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
         mCx= App.app;
 //        bundle=savedInstanceState;
         orgiId= SpUtils.getString(Constants.key_currentOrgaId);
+        userId = (double)SpUtils.getInt(TokenManager.USERID);
     }
 
     @Override

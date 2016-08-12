@@ -8,6 +8,8 @@
         <TextView
             android:layout_marginTop="20dp"
             android:id="@+id/title"
+            android:maxLines="5"
+            android:layout_width="match_parent"
             style="@style/def_textview"
             android:text="啊哈哈哈'\n'哈哈" />
 

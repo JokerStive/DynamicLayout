@@ -1,5 +1,6 @@
 package com.lilun.passionlife.cloudplatform.ui.fragment;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
 import com.lilun.passionlife.cloudplatform.custom_view.ViewContainer;
@@ -36,6 +38,8 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import okhttp3.RequestBody;
+import rx.Observable;
 
 /**
  * Created by Administrator on 2016/6/22.
@@ -53,9 +57,6 @@ public class AddStaffFragment extends BaseFunctionFragment {
     RegItemView inputStaffName;
 
 
-
-
-
     @Bind(R.id.belong_role)
     LinearLayout belongRole;
 
@@ -69,7 +70,6 @@ public class AddStaffFragment extends BaseFunctionFragment {
     Button save;
 
 
-
     private List<String> allHaveDept = new ArrayList<>();
 
 
@@ -78,19 +78,21 @@ public class AddStaffFragment extends BaseFunctionFragment {
     private int dex_role;
 
     private List<Organization> depts;
-    private List<OrganizationAccount> orgaAccs = new ArrayList<>();
+    private List<OrganizationAccount> accountDepts = new ArrayList<>();
     private List<Role> allChoiseRole;
     private List<Map<OrganizationAccount, List<Role>>> cacheDeptAndRole = new ArrayList<>();
     private String staffName;
     private String staffUsername;
     private String staffPassword;
     private int choiseDeprCount;
+    private View view;
+    private Bitmap icon;
 
 
     @Override
     public View setView() {
         rootActivity.setTitle(mCx.getString(R.string.staff_add));
-        View view = inflater.inflate(R.layout.fragment_add_staff, null);
+        view = inflater.inflate(R.layout.fragment_add_staff, null);
         return view;
     }
 
@@ -99,6 +101,24 @@ public class AddStaffFragment extends BaseFunctionFragment {
     public void onStart() {
         super.onStart();
 
+    }
+
+
+
+    @OnClick(R.id.iv_head)
+    void headPic() {
+        Logger.d("选择头像");
+        rootActivity.choiseHeadPic(view);
+    }
+
+    @Subscribe
+    public void choisHead(Event.choiseHeadPic event) {
+        Bitmap bitmap = event.getBitmap();
+        if (bitmap != null) {
+            icon = bitmap;
+            ivHead.setImageBitmap(bitmap);
+
+        }
     }
 
     @OnClick(R.id.belong_dept)
@@ -126,9 +146,9 @@ public class AddStaffFragment extends BaseFunctionFragment {
             OrganizationAccount oa = new OrganizationAccount();
             oa.setOrganizationId(deptId + Constants.special_orgi_staff);
 
-            orgaAccs.add(oa);
+            accountDepts.add(oa);
             allHaveDept.add(deptName);
-            getRoleList(i,oa, deptId);
+            getRoleList(i, oa, deptId);
         }
     }
 
@@ -142,7 +162,7 @@ public class AddStaffFragment extends BaseFunctionFragment {
             Map<OrganizationAccount, List<Role>> orgAccAndRole = new HashMap<>();
 
             //map赋值
-            orgAccAndRole.put(oa,roles1);
+            orgAccAndRole.put(oa, roles1);
 
             //存进list
             cacheDeptAndRole.add(orgAccAndRole);
@@ -175,115 +195,120 @@ public class AddStaffFragment extends BaseFunctionFragment {
                     list.remove(map);
                     allHaveDept.remove(title);
                     Logger.d("all dept = " + allHaveDept.size());
-                }),i);
+                }), i);
             }
         }
 
     }
-
-
-
 
 
     @OnClick(R.id.save)
     void save() {
         if (checkData()) {
-            Logger.d("部门seize=" + depts.size());
-            Logger.d("职位size = " + allChoiseRole.size());
-            Account account = new Account();
-
-            account.setName(inputStaffName.getInput());
-            account.setUsername(inputStaffUsername.getInput());
-            account.setPassword(inputStaffPassword.getInput());
-            rootActivity.addSubscription(ApiFactory.register(account), new PgSubscriber<Account>(rootActivity) {
+            Logger.d("size = "+cacheDeptAndRole.size());
+            Observable observable = ApiFactory.register(newAccount()).concatMap(account -> postDefOrga(account));
+            rootActivity.addSubscription(observable, new PgSubscriber<Object>(rootActivity) {
                 @Override
-                public void on_Next(Account account) {
-                    //新增account成功之后
-                    userId = (double) account.getId();
-                    postDepartment(userId);
-                    //挂载职位
-//                    postRole(userId);
+                public void on_Next(Object o) {
+                    postDeptAndRole();
+                    saveIcon();
+                    EventBus.getDefault().post(new Event.reflashStaffList());
                     rootActivity.backStack();
                 }
-
             });
+
         }
 
+
     }
 
-    private List<OrganizationAccount> postDefOrga(List<OrganizationAccount> list) {
-        OrganizationAccount oa = new OrganizationAccount();
-        oa.setIsDefault(true);
-        oa.setOrganizationId(orgiId+Constants.special_orgi_staff);
-        list.add(oa);
-        return list;
-    }
-
-    /**
-     * 给account post 一个role
-     */
-    private void postRole(double userId) {
-        for (Role role : allChoiseRole) {
-            String roleName = role.getName();
-            Logger.d(" 添加的 roleName = " + roleName);
-            rootActivity.addSubscription(ApiFactory.postAccRole(userId, roleName), new PgSubscriber<Role>(rootActivity) {
-                @Override
-                public void on_Next(Role o) {
-                    Logger.d("设置所属职位--"+roleName+"--成功");
-//                    then_role(allChoiseRole.size());
-                }
-            });
-        }
-    }
-
-//    private void then_role(int size) {
-//        if (dex_role == size - 1) {
-//            //把所属部门和旗下的role缓存起来，在员工编辑界面使用
-//            CacheUtils.putCache(userId+"",cacheDeptAndRole);
-//            return;
-//        }
-//        dex_role++;
-//    }
-
-
-
-
-
-
-
-    /**
-     * 给account post一个depat
-     *
-     * @param id
-     */
-    private void
-    postDepartment(double id) {
-        List<OrganizationAccount>  organizationAccountList = new ArrayList<>();
-        organizationAccountList =  postDefOrga(organizationAccountList);
-        for (Map<OrganizationAccount, List<Role>> map : cacheDeptAndRole) {
-            for(OrganizationAccount oa1:map.keySet()){
-                organizationAccountList.add(oa1);
+    private void postDeptAndRole() {
+        Observable observable = null;
+        if (checkHasDept()) {
+            if(checkHasRole()){
+                observable =Observable.concat(postDept(),postRole());
             }
-
         }
 
-        rootActivity.addSubscription(ApiFactory.postAccOrganization(id, organizationAccountList), new PgSubscriber<List<OrganizationAccount>>(rootActivity) {
+
+        if (observable==null){
+            return;
+        }
+
+        rootActivity.addSubscription(observable, new PgSubscriber() {
             @Override
-            public void on_Next(List<OrganizationAccount> oas) {
-                postRole(userId);
-                for (int i=0;i<cacheDeptAndRole.size();i++) {
-                    Map<OrganizationAccount, List<Role>> map = cacheDeptAndRole.get(i);
-                    for(OrganizationAccount oa1:map.keySet()){
-                        oa1.setId(oas.get(i).getId());
-                        oa1.setBelong(true);
-                    }
-
-                }
-
+            public void on_Next(Object o) {
+                Logger.d("员工添加成功");
             }
-
         });
     }
+
+    private void saveIcon() {
+        if (icon!=null){
+            RequestBody requestBody = PicloadManager.getUploadIconRequestBody(icon);
+            rootActivity.addSubscription(ApiFactory.postAccountIcon(userId, requestBody), new PgSubscriber() {
+                @Override
+                public void on_Next(Object o) {
+                    Logger.d("员工图标上传成功");
+                }
+            });
+        }
+    }
+
+
+    /**
+    *新增role
+    */
+    private Observable<Object> postRole() {
+        List<Observable<Object>> observables = new ArrayList<>();
+        for (Role role : allChoiseRole) {
+            String roleName = role.getName();
+            observables.add(ApiFactory.postAccRole(userId, roleName));
+        }
+
+        return Observable.merge(observables);
+    }
+
+    /**
+     * 新增depts
+     */
+    private Observable<List<OrganizationAccount>> postDept() {
+
+//        accountDepts.add(newDefOrga());
+
+        return ApiFactory.postAccOrganization(userId, accountDepts);
+    }
+
+    /**
+    *新增默认组织
+    */
+    private Observable<List<OrganizationAccount>> postDefOrga(Account account) {
+        userId = (double) account.getId();
+        List<OrganizationAccount> list = new ArrayList<>();
+        list.add(newDefOrga());
+        return ApiFactory.postAccOrganization(userId, list);
+
+    }
+
+   /**
+   *
+   */
+    private OrganizationAccount newDefOrga() {
+        OrganizationAccount oa = new OrganizationAccount();
+        oa.setIsDefault(true);
+        oa.setOrganizationId(StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_staff);
+        return oa;
+    }
+
+    private Account newAccount() {
+        Account account = new Account();
+        account.setName(inputStaffName.getInput());
+        account.setUsername(inputStaffUsername.getInput());
+        account.setPassword(inputStaffPassword.getInput());
+        return account;
+    }
+
+
 
 
 
@@ -295,17 +320,14 @@ public class AddStaffFragment extends BaseFunctionFragment {
             ToastHelper.get(mCx).showShort("输入不能为空");
             return false;
         }
+        return true;
+    }
 
 
-        //检查是否至少选择了一个部门
-
-        if (depts == null || depts.size() == 0) {
-            ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
-            return false;
-        }
-
-
-        //检查是否至少选择了一个所属职位
+    /**
+     * 检查是否选择了一个部门
+     */
+    private boolean checkHasRole() {
         allChoiseRole = new ArrayList<>();
         int childCount = belongRole.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -317,10 +339,19 @@ public class AddStaffFragment extends BaseFunctionFragment {
         }
 
         if (allChoiseRole.size() == 0) {
-            ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
+            ToastHelper.get().showShort("请至少选择一个职位");
             return false;
         }
+        return true;
+    }
 
+    /**
+     * 检查是否选择了一个职位
+     */
+    private boolean checkHasDept() {
+        if (depts == null || depts.size() == 0) {
+            return false;
+        }
         return true;
     }
 
@@ -356,5 +387,6 @@ public class AddStaffFragment extends BaseFunctionFragment {
         if (cacheDeptAndRole != null) {
             setDeptAndRole(cacheDeptAndRole);
         }
+        ivHead.setImageBitmap(icon);
     }
 }

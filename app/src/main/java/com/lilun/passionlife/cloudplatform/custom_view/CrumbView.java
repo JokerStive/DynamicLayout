@@ -63,12 +63,7 @@ public class CrumbView extends HorizontalScrollView{
 
     public void setActivity(FragmentActivity activity){
         mFragmentManager = activity.getSupportFragmentManager();
-        mFragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
-            @Override
-            public void onBackStackChanged() {
-                updateCrumbs();
-            }
-        });
+        mFragmentManager.addOnBackStackChangedListener(() -> updateCrumbs());
         updateCrumbs();
     }
 

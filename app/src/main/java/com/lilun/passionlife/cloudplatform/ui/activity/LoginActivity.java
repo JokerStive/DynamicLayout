@@ -1,10 +1,12 @@
 package com.lilun.passionlife.cloudplatform.ui.activity;
 
+import android.text.TextUtils;
 import android.widget.EditText;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseActivity;
 import com.lilun.passionlife.cloudplatform.bean.Account;
+import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.LoginRes;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.KnowPermission;
@@ -15,6 +17,8 @@ import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -53,6 +57,7 @@ public class LoginActivity extends BaseActivity {
         //不是首次登陆，跳转首页
         if (isLogined && authrovity==null) {
             IntentUtils.startAct(mAc, HomeActivity.class);
+            EventBus.getDefault().post(new Event.LoginSuccess());
             finish();
         }
 
@@ -91,12 +96,14 @@ public class LoginActivity extends BaseActivity {
     private void then(LoginRes loginRes) {
         ToastHelper.get(mAc).showShort(R.string.login_success);
         setAccountInf(loginRes);
-        if (authrovity!=null){
+        if (!TextUtils.isEmpty(authrovity) && isLogined){
             finish();
         }else{
             SpUtils.setBoolean(spKey, true);
             IntentUtils.startAct(mAc, HomeActivity.class);
             isAdmin(loginRes.getUserId());
+            EventBus.getDefault().post(new Event.LoginSuccess());
+            finish();
         }
 
     }
@@ -141,7 +148,7 @@ public class LoginActivity extends BaseActivity {
      */
     @OnClick(R.id.regest)
     public void regest() {
-        IntentUtils.startAct(mAc, RegestActivity.class);
+//        IntentUtils.startAct(mAc, ChangeIpActivity.class);
     }
 
 

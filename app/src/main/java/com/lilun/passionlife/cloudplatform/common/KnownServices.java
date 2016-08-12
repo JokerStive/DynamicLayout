@@ -11,4 +11,11 @@ public class KnownServices {
     public static final String SysConfig_Service = "SysConfig";
     public static final String Information_Service = "Information";
     public static final String Department_Service = "Department";
+
+
+//    public static String getSpecialRole(String parentId){
+//        if (TextUtils.isEmpty(parentId)){
+//            return "/#"
+//        }
+//    }
 }

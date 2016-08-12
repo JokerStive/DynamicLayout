@@ -7,13 +7,15 @@
     <string name="app_name">励生活</string>
     <string name="save">保存</string>
     <string name="no_services_list">没有功能服务</string>
+    <string name="get_belong_orga_false">获取所属组织失败,请稍后再试</string>
+    <string name="get_orga_service_false">获取组织功能列表失败,请稍后再试</string>
 
 
     <!--登录界面-->
     <string name="moble_num">手机号</string>
     <string name="login_pwd">励生活登录密码</string>
     <string name="login">登录</string>
-    <string name="reg">注册</string>
+    <string name="reg">切换地址</string>
     <string name="login_res">请重新登录</string>
     <string name="login_success">登录成功</string>
 
@@ -59,6 +61,7 @@
     <string name="role_manager">职位管理</string>
     <string name="staff_manager">员工管理</string>
     <string name="module_manager">模块管理</string>
+    <string name="module_manager_desc">可以新增模块</string>
 
     <!--组织机构管理-->
     <string name="add">新增</string>
@@ -66,6 +69,7 @@
     <string name="add_orgi">新增组织</string>
     <string name="edit_orgi">编辑组织</string>
     <string name="add_orgi_success">新增组织成功</string>
+    <string name="add_orgi_false">新增组织成功</string>
     <string name="delete_orgi_success">删除组织成功</string>
     <string name="put_orgi_success">更新组织成功</string>
     <string name="head_portrait">图标</string>
@@ -148,7 +152,7 @@
     <string name="role_edit">职位编辑</string>
     <string name="delete_orgRole_success">刪除职位成功</string>
     <!--新增职位-->
-    <string name="role_name">职位描述</string>
+    <string name="role_name">职位名称</string>
     <string name="add_orgRole_success">添加职位成功</string>
     <string name="empty_authrovity_list">权限列表为空</string>
     <string name="role_name_et1">请输入你的职位名</string>
@@ -191,7 +195,12 @@
     <string name="cancle">取消</string>
 
 
-    <!--信息发布-->
+    <!--信息管理-->
+    <!--信息中心-->
+    <string name="message_info">信息中心</string>
+    <string name="message_delete">删除信息</string>
+    <string name="message_main">我的信息</string>
+    <string name="message_about">关于我的</string>
     <!--发布消息-->
     <string name="message_title">标题</string>
     <string name="message_title_et">请输入标题</string>
@@ -204,5 +213,13 @@
     <string name="message_add_review">添加评论</string>
     <string name="no_permission">对不起，您没有权限</string>
 
+
+    <!--alertDialog-->
+    <string name="confire_delete">确定删除?</string>
+    <string name="isInhe_can_not_operate">对不起,当前部门数据来自父组织,不允许操作。</string>
+    <string name="isInhe_copy_role_operate">注意!当前操作会把父组织职位复制到当前组织,确定?</string>
+    <string name="isInhe_copy_dept_operate">注意!当前操作会把父组织部门复制到当前组织,确定?</string>
+    <string name="title_activity_list_role">ListRoleActivity</string>
+    <string name="title_activity_manager_message">ManagerMessageActivity</string>
 
 </resources>

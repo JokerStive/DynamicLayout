@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitManager {
 
     private Retrofit retrofit;
-    private final OkHttpClient okhttpClient;
+    private  OkHttpClient okhttpClient;
 
     private RetrofitManager() {
 
@@ -29,9 +29,6 @@ public class RetrofitManager {
 //
 //        //缓存路劲
         File cacheFile = new File(App.app.getCacheDir(),"retrofitResCache");
-//        Logger.d(cacheFile.getAbsolutePath());
-//        Logger.d(App.app.getPackageResourcePath());
-//
 //        //缓存大小
         Cache cache = new Cache(cacheFile, 10 * 1024 * 1024);
 
@@ -57,10 +54,16 @@ public class RetrofitManager {
 
     }
 
+    void setRetrofitUrl(String url){
+        retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .build();
+    }
+
     //在访问HttpMethods时创建单例
 
     private static class SingletonHolder {
-        private static final RetrofitManager INSTANCE = new RetrofitManager();
+        private static  RetrofitManager INSTANCE = new RetrofitManager();
     }
 
     /**
@@ -68,6 +71,14 @@ public class RetrofitManager {
     */
     public static Retrofit getRetrofit() {
         return SingletonHolder.INSTANCE.retrofit;
+    }
+
+
+    /**
+     *获取retrofit实例
+     */
+    public static RetrofitManager getRetrofitManager() {
+        return SingletonHolder.INSTANCE;
     }
 
     /**

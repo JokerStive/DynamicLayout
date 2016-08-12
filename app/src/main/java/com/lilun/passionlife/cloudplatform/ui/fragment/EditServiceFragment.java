@@ -165,7 +165,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
         String serviceName = inputServiceName.getInput();
         String serviceDesc = inputServiceDetail.getInput();
 
-        if (checkData(serviceName, serviceDesc) && !TextUtils.isEmpty(orgiId)) {
+        if (checkData(serviceName, serviceDesc) && orgiId!=null) {
             OrganizationService.SettingsBean setting = new OrganizationService.SettingsBean();
             OrganizationService service = new OrganizationService();
 
@@ -183,6 +183,7 @@ public class EditServiceFragment extends BaseFunctionFragment implements PullCho
                 @Override
                 public void on_Next(OrganizationService services) {
                     EventBus.getDefault().post(new Event.putService(services));
+                    EventBus.getDefault().post(new Event.reflashServiceList());
                     rootActivity.backStack();
                 }
             });

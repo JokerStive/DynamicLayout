@@ -9,12 +9,14 @@ import android.widget.TextView;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 
 import java.util.List;
 
 
 /**
- * Created by Administrator on 2016/6/8.
+ * Created by youke on 2016/6/8.
  */
 public class SystemConfigGvAdapter extends BaseAdapter {
     private Context context;
@@ -26,7 +28,7 @@ public class SystemConfigGvAdapter extends BaseAdapter {
         this.servicess = servicess;
 
         for (int i=0;i<servicess.size();i++){
-            if (servicess.get(i).getServiceId()!=null && servicess.get(i).getServiceId().equals("SysConfig")){
+            if (servicess.get(i).getServiceId()!=null && servicess.get(i).getServiceId().equals(KnownServices.SysConfig_Service)){
                 servicess.remove(i);
             }
 
@@ -62,7 +64,10 @@ public class SystemConfigGvAdapter extends BaseAdapter {
             viewHolder= (ViewHolder) convertView.getTag();
         }
         //TODO :数据
-        viewHolder.module_icon.setBackgroundResource(R.drawable.property);
+        String serviceId = servicess.get(position).getServiceId();
+        if (PicloadManager.getServiceIcon(serviceId)!=0){
+            viewHolder.module_icon.setBackgroundResource(PicloadManager.getServiceIcon(serviceId));
+        }
         viewHolder.module_title.setText(servicess.get(position).getTitle());
         viewHolder.module_desc.setText(servicess.get(position).getDescription());
 

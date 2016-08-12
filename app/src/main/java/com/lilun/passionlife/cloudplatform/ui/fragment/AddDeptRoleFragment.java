@@ -83,7 +83,7 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
      * 获取权限列表
      */
     public void getAuthrovityList() {
-        rootActivity.getAuthrovityList(orgiId, authrovites -> {
+        rootActivity.getAuthrovityList(authrovites -> {
             adapter = new AuthrovityListAdapter(authrovites, false);
             roles = authrovites;
             lvAuthList.setAdapter(adapter);

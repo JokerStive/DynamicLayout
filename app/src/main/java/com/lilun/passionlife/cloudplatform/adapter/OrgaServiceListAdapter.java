@@ -26,12 +26,6 @@ public class OrgaServiceListAdapter extends BaseModuleListAdapter {
         super(listerer);
         services =serviceList;
 
-//        for (int i=0;i<serviceList.size();i++){
-//            if (serviceList.get(i).getServiceId()!=null && serviceList.get(i).getServiceId().equals("SysConfig")){
-//                serviceList.remove(i);
-//            }
-//
-//        }
         add= App.app.getString(R.string.add);
 
     }

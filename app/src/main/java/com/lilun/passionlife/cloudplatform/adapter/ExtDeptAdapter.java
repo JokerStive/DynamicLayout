@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -23,13 +23,16 @@ public class ExtDeptAdapter extends BaseAdapter {
 
     private  List<Organization> data;
     private  OnItemDeleteListen listen;
-    private final boolean isEnable;
 
 
-    public ExtDeptAdapter(List<Organization> data, boolean isEnable, OnItemDeleteListen listen) {
+    public ExtDeptAdapter(List<Organization> data,OnItemDeleteListen listen) {
         this.data=data;
         this.listen =listen;
-        this.isEnable = isEnable;
+        initData();
+    }
+
+    public ExtDeptAdapter(List<Organization> data) {
+        this.data=data;
         initData();
     }
 
@@ -56,24 +59,23 @@ public class ExtDeptAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            int layout = R.layout.item_checkbox;
+            int layout = R.layout.item_orga_dept;
             LayoutInflater inflater = LayoutInflater.from(App.app);
             convertView = inflater.inflate(layout, parent, false);
             holder=new ViewHolder();
 
             //字体颜色
             TextView tv = (TextView) convertView.findViewById(R.id.tv_title);
-            TextView delete = (TextView) convertView.findViewById(R.id.item_check);
-            FrameLayout fr_check = (FrameLayout) convertView.findViewById(R.id.fr_check);
-            if (!isEnable){
+            ImageView delete = (ImageView) convertView.findViewById(R.id.item_check);
+            if (listen==null){
                 tv.setTextColor(Color.GRAY);
             }
-            delete.setVisibility(isEnable ? View.VISIBLE:View.GONE);
+            delete.setVisibility(listen!=null ? View.VISIBLE:View.INVISIBLE);
 
-            fr_check.setOnClickListener(v -> {
-                listen.onItemDelete(ExtDeptAdapter.this,position);
-//                data.remove(position);
-//                notifyDataSetChanged();
+            delete.setOnClickListener(v -> {
+                if (listen!=null){
+                    listen.onItemDelete(ExtDeptAdapter.this,position);
+                }
             });
 
 
@@ -90,7 +92,7 @@ public class ExtDeptAdapter extends BaseAdapter {
 
    public static class ViewHolder{
       public   TextView  item_title;
-       public TextView  item_choise;
+       public ImageView  item_choise;
     }
 
 

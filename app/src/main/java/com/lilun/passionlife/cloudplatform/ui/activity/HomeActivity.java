@@ -2,7 +2,6 @@ package com.lilun.passionlife.cloudplatform.ui.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.GridView;
@@ -15,6 +14,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseActivity;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
+import com.lilun.passionlife.cloudplatform.common.Admin;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.KnowPermission;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
@@ -28,6 +28,7 @@ import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.Serializable;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -55,16 +55,18 @@ public class HomeActivity extends BaseActivity {
 
     private String defOrgaId = "";
     private String defOrgaName = "";
-    private List<OrganizationService> visibleOrgiService = new ArrayList<>();
+    private List<OrganizationService> visibleOrgiService;
+    private List<OrganizationAccount> belongOrgas;
     private ACache aCache;
     private double userId1;
     private boolean isReflash = false;
     private Bitmap icon;
     private int index = 0;
+    private int serviceSize = 0;
 
 
     @OnClick(R.id.home_setting)
-    void systemConfig(){
+    void systemConfig() {
         IntentUtils.startAct(mAc, SystemConfigActivity.class);
     }
 
@@ -75,14 +77,13 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-
     /**
-    *是否有systemConfig.view的权限
-    */
+     * 是否有systemConfig.view的权限
+     */
     private void viewSystemConfig() {
-        String permission = KnownServices.SysConfig_Service+ KnowPermission.viewPermission;
+        String permission = KnownServices.SysConfig_Service + KnowPermission.viewPermission;
         checkHasPermission(userId1, permission, hasPermission -> {
-            if (hasPermission){
+            if (hasPermission) {
                 homeSetting.setVisibility(View.VISIBLE);
             }
         });
@@ -91,11 +92,25 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void onCreate() {
         super.onCreate();
+        setInitData();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (TextUtils.isEmpty(tvDeforgi.getText())) {
+            tvDeforgi.setText(SpUtils.getString(Constants.key_currentBelongOrgaName));
+        }
+    }
+
+    /**
+     * 设置初始化显示数据
+     */
+    private void setInitData() {
         userId1 = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
-        if (isAdmin()){
+        if (isAdmin()) {
             homeSetting.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             viewSystemConfig();
         }
         aCache = ACache.get(App.app);
@@ -111,18 +126,7 @@ public class HomeActivity extends BaseActivity {
         homePtr.setPtrHandler(new PtrDefaultHandler() {
             @Override
             public void onRefreshBegin(PtrFrameLayout frame) {
-                isReflash = true;
-                getBelongOrga(new callBack_getBelongOrga() {
-                    @Override
-                    public void onGetBelongOrga(List<OrganizationAccount> orgas) {
-                        dealBelongOrgaData(orgas);
-                    }
-
-                    @Override
-                    public void onError() {
-                        homePtr.refreshComplete();
-                    }
-                });
+                EventBus.getDefault().post(new Event.ReflashHomeData());
             }
         });
     }
@@ -135,55 +139,6 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 获取到所属组织之后
-     *
-     * @param orgas
-     */
-    public void dealBelongOrgaData(List<OrganizationAccount> orgas) {
-        if (homePtr.isRefreshing()) {
-            homePtr.refreshComplete();
-        }
-        if (orgas.size() == 0) {
-            emptyBelOrga();
-        } else {
-            CacheUtils.putCache("belongOrgas", orgas);
-            int defBelongOrgaIndex=0;
-            for (int i=0;i< orgas.size();i++) {
-                if (orgas.get(i).isIsDefault()) {
-                    defBelongOrgaIndex = i;
-                }
-            }
-            //如果没有默认组织默认就是false
-            String oaId = orgas.get(defBelongOrgaIndex).getOrganizationId();
-            setDefOrgaSp(orgas.get(defBelongOrgaIndex));
-            getServiceList(StringUtils.belongOgaId(oaId));
-        }
-    }
-
-    private void setDefOrgaSp(OrganizationAccount oa) {
-        //获取到组织后，把默认组织的id存进本地，post事件方便系统配置界面使用
-        String organizationId = oa.getOrganizationId();
-        String id = StringUtils.belongOgaId(organizationId);
-        String name = StringUtils.belongOgaName(organizationId);
-
-        defOrgaId = id;
-        defOrgaName = name;
-//
-        if (TextUtils.isEmpty(id) || TextUtils.isEmpty(name)){
-            id = "/";
-            name="/";
-        }
-        //默认所属的组织
-        SpUtils.setString(Constants.key_currentBelongOrgaId, id);
-        SpUtils.setString(Constants.key_currentBelongOrgaName, name);
-
-        //当前组织就是默认的所属组织
-        SpUtils.setString(Constants.key_currentOrgaId, id);
-        SpUtils.setString(Constants.key_currentOrgaName, name);
-        tvDeforgi.setText(name);
-        Logger.d("默认组织  = " + id + "-----" + name);
-    }
 
     /**
      * 个人中心
@@ -198,18 +153,26 @@ public class HomeActivity extends BaseActivity {
      * 获取组织列表
      */
     private void getorgiList() {
-        defOrgaName = SpUtils.getString(Constants.key_currentOrgaName);
+        belongOrgas = (List<OrganizationAccount>) CacheUtils.getCache("belongOrgas");
         defOrgaId = SpUtils.getString(Constants.key_currentOrgaId);
-        if (!TextUtils.isEmpty(defOrgaName) && !TextUtils.isEmpty(defOrgaId)) {
-            getServiceList(defOrgaId);
-            tvDeforgi.setText(defOrgaName);
-        } else {
+        if (belongOrgas == null || isReflash) {
             getBelongOrga(new callBack_getBelongOrga() {
                 @Override
                 public void onGetBelongOrga(List<OrganizationAccount> orgas) {
                     dealBelongOrgaData(orgas);
                 }
+
+                @Override
+                public void onError() {
+                    super.onError();
+                    CacheUtils.putCache("belongOrgas", null);
+                    Logger.d("获取所属组织失败，请稍后再试");
+                    belongOrgas = new ArrayList<>();
+                    dealBelongOrgaData(belongOrgas);
+                }
             });
+        } else {
+            getServiceList(defOrgaId);
         }
 
 
@@ -217,28 +180,97 @@ public class HomeActivity extends BaseActivity {
 
 
     /**
+     * 处理获取到的 "所属组织"
+     *
+     * @param orgas
+     */
+    public void dealBelongOrgaData(List<OrganizationAccount> orgas) {
+//        isReflash=false;
+        if (homePtr.isRefreshing()) {
+            homePtr.refreshComplete();
+        }
+        if (orgas.size() == 0) {
+            emptyBelOrga();
+        } else {
+            CacheUtils.putCache("belongOrgas", orgas);
+            int defBelongOrgaIndex = 0;
+            for (int i = 0; i < orgas.size(); i++) {
+                if (orgas.get(i).isIsDefault()) {
+                    defBelongOrgaIndex = i;
+                }
+            }
+            //如果没有默认组织默认就是false
+            setDefOrgaSp(orgas.get(defBelongOrgaIndex));
+
+        }
+    }
+
+    /**
+     * 设置 本地"所属组织"数据
+     */
+    private void setDefOrgaSp(OrganizationAccount oa) {
+        //获取到组织后，把默认组织的id存进本地，post事件方便系统配置界面使用
+        String organizationId = oa.getOrganizationId();
+        String id = StringUtils.belongOgaId(organizationId);
+        String name = StringUtils.belongOgaName(organizationId);
+
+
+//
+        if (TextUtils.isEmpty(id) || TextUtils.isEmpty(name)) {
+            id = Admin.id;
+            name = Admin.name;
+        }
+
+        defOrgaId = id;
+        defOrgaName = name;
+        Logger.d(defOrgaName);
+//        tvDeforgi.setText(defOrgaName);
+        //默认所属的组织
+        SpUtils.setString(Constants.key_currentBelongOrgaId, id);
+        SpUtils.setString(Constants.key_currentBelongOrgaName, name);
+
+        //当前组织就是默认的所属组织
+        SpUtils.setString(Constants.key_currentOrgaId, id);
+        SpUtils.setString(Constants.key_currentOrgaName, name);
+
+        tvDeforgi.setText(defOrgaName);
+        getServiceList(defOrgaId);
+        Logger.d("默认组织  = " + id + "-----" + name);
+    }
+
+
+    /**
      * 组织为空的时候
      */
     private void emptyBelOrga() {
-
-        tvDeforgi.setText("");
+//        tvDeforgi.setText("");
         visibleOrgiService = new ArrayList<>();
-        SpUtils.setString(Constants.key_currentBelongOrgaId, "/");
         showServices(visibleOrgiService);
 
     }
 
 
     /**
-     * 异步获取服务列表
+     * 获取功能服务列表
      */
     public void getServiceList(String orgId) {
-
         visibleOrgiService = (List<OrganizationService>) aCache.getAsObject(Constants.cacheKey_service);
         if (visibleOrgiService == null || isReflash) {
             Logger.d("get service  from net");
-            getSerListFromNet(userId1, orgId, visibleOrgiService1 -> {
-                dealServiceData(visibleOrgiService1);
+            getSerListFromNet(orgId, new callBack_visible_service() {
+                @Override
+                public void onGetVisibleService(List<OrganizationService> oss) {
+                    visibleOrgiService = oss;
+                    dealServiceData(oss);
+                }
+
+                @Override
+                public void onError() {
+                    super.onError();
+                    ToastHelper.get().showShort(App.app.getString(R.string.get_orga_service_false));
+                    visibleOrgiService = new ArrayList<>();
+                    showServices(visibleOrgiService);
+                }
             });
         } else {
             showServices(visibleOrgiService);
@@ -250,35 +282,52 @@ public class HomeActivity extends BaseActivity {
      */
     private void dealServiceData(List<OrganizationService> vss) {
         if (isAdmin()) {
+            //当前组织下的服务数据已经缓存成功，系统配置见面可以刷新视图
             ACache.get(App.app).put(Constants.cacheKey_service, (Serializable) vss);
             showServices(vss);
+            EventBus.getDefault().post(new Event.CurrentOsHasCached());
         } else {
+            visibleOrgiService.clear();
             String permission;
+            serviceSize = vss.size();
             for (int i = 0; i < vss.size(); i++) {
                 OrganizationService os = vss.get(i);
                 permission = os.getServiceId() + KnowPermission.viewPermission;
                 checkHasPermission(userId1, permission, hasPermission -> {
-                    then(index, vss.size());
+                    then();
                     if (hasPermission) {
                         visibleOrgiService.add(os);
                     }
                 });
             }
+
         }
 
 
     }
 
-    private void then(int index, int size) {
-        if (index == size - 1) {
+    private void then() {
+        Logger.d("index = " + index + "-----" + "size = " + serviceSize);
+        if (index == serviceSize - 1) {
+            ACache.get(App.app).put(Constants.cacheKey_service, (Serializable) visibleOrgiService);
             showServices(visibleOrgiService);
+            //当前组织下的服务数据已经缓存成功，系统配置见面可以刷新视图
+            EventBus.getDefault().post(new Event.CurrentOsHasCached());
         }
         index++;
     }
 
 
+    @Subscribe
+    public void loginSuccess(Event.LoginSuccess event) {
+        Logger.d("登录成功设置首页初始换数据");
+        isReflash = true;
+        setInitData();
+    }
+
+
     /**
-     * 更新了服务，刷新缓存
+     * post服务，刷新缓存
      */
     @Subscribe
     public void addNewService(Event.postService event) {
@@ -304,7 +353,7 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void putService(Event.putService event) {
         OrganizationService service = event.getService();
-        String visible = service.getSettings().getVisible();
+        String visible = "true";
         if (visibleOrgiService != null) {
             for (int i = 0; i < visibleOrgiService.size(); i++) {
                 if (visibleOrgiService.get(i).getId().equals(service.getId())) {
@@ -328,10 +377,8 @@ public class HomeActivity extends BaseActivity {
         if (TextUtils.isEmpty(defOrgaId)) {
             return;
         }
-        getSerListFromNet(userId1, defOrgaId, visibleOrgiService1 -> {
-            visibleOrgiService = visibleOrgiService1;
-            showServices(visibleOrgiService1);
-        });
+        isReflash = true;
+        getServiceList(defOrgaId);
     }
 
     /**
@@ -342,68 +389,63 @@ public class HomeActivity extends BaseActivity {
         //切换了当前的组织，刷新sp里面的orgaId和orgaName
         defOrgaId = event.getOrganizationId();
         defOrgaName = event.getOrganizationName();
+        changCurrentShowData(defOrgaId, defOrgaName, false);
+
+    }
+
+
+    /**
+     * 切换了默认组织
+     */
+    @Subscribe
+    public void changDefBelongOrga(Event.DefOrgaHasChanges event) {
+        OrganizationAccount oa = event.getOa();
+        String id = StringUtils.belongOgaId(oa.getOrganizationId());
+        String name = StringUtils.belongOgaName(oa.getOrganizationId());
+        if (TextUtils.isEmpty(id) || TextUtils.isEmpty(name)) {
+            id = Admin.id;
+            name = Admin.id;
+        }
+        defOrgaId = id;
+        defOrgaName = name;
+        changCurrentShowData(id, name, true);
+    }
+
+    /**
+     * 刷新首页数据
+     */
+    @Subscribe
+    public void reflasHomeData(Event.ReflashHomeData event) {
+        isReflash = true;
+        getorgiList();
+    }
+
+
+    /**
+     * 组织切换，修改当前显示和本地存储的数据
+     */
+    private void changCurrentShowData(String defOrgaId, String defOrgaName, boolean isReflash) {
+        visibleOrgiService.clear();
         SpUtils.setString(Constants.key_currentOrgaId, defOrgaId);
         SpUtils.setString(Constants.key_currentOrgaName, defOrgaName);
         tvDeforgi.setText(defOrgaName);
-        isReflash=true;
+        this.isReflash = isReflash;
         getServiceList(defOrgaId);
     }
 
 
     private void showServices(List<OrganizationService> data) {
+        isReflash = false;
         gvModule.setNumColumns(data.size() == 1 ? 1 : 2);
         gvModule.setAdapter(new HomeGvAdapter(mCx, data));
         gvModule.setOnItemClickListener((parent, view, position, id) -> {
             if (data.get(position).getServiceId() != null) {
                 String serviceId = data.get(position).getServiceId();
+                IntentUtils.startModuleActivity(mAc,serviceId);
 
-
-                //模块管理
-                if (serviceId.equals(KnownServices.Module_Service)) {
-                    IntentUtils.startAct(mAc, ModuleManagerActivity.class);
-                }
-
-                //员工管理
-                else if (serviceId.equals(KnownServices.Account_Service)) {
-                    IntentUtils.startAct(mAc, StaffManagerActivity.class);
-                }
-
-                //角色管理
-                else if (serviceId.equals(KnownServices.Role_Service)) {
-                    Logger.d("角色管理");
-                    IntentUtils.startAct(mAc, RoleManagerActivity.class);
-                }
-
-                //组织机构管理
-                else if (serviceId.equals(KnownServices.Organization_Service)) {
-                    IntentUtils.startAct(mAc, OrganizationActivity.class);
-                }
-
-                //系统配置
-                else if (serviceId.equals(KnownServices.SysConfig_Service)) {
-                    IntentUtils.startAct(mAc, SystemConfigActivity.class);
-                }
-
-
-                //部门管理
-                else if (serviceId.equals(KnownServices.Department_Service)) {
-                    IntentUtils.startAct(mAc, DeptManagerActivity.class);
-                }
-
-                //部门管理
-                else if (serviceId.equals(KnownServices.Information_Service)) {
-//                    IntentUtils.startAct(mAc, DeptManagerActivity.class);
-                    ToastHelper.get().showShort("暂未实现");
-                }
             }
         });
     }
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: add setContentView(...) invocation
-        ButterKnife.bind(this);
-    }
 }

@@ -14,6 +14,7 @@ import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.custom_view.FlowLayout;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.ui.activity.ChangeOrganizationActivity;
+import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.UIUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -81,9 +82,11 @@ public class ChangeOrganizationFragment  extends StatedFragment {
     *设置显示数据
     */
     private void setData(List<Organization> organizations) {
+        fl_Container.removeAllViews();
         for (Organization orga:organizations){
             String name = orga.getName();
             String id = orga.getId();
+            if (StringUtils.isSpecialOrga(id)){continue;}
             View view = inflater.inflate(R.layout.item_change_orga_container, null);
             TextView tv_name = (TextView) view.findViewById(R.id.item_name);
             tv_name.setText(name);
@@ -104,7 +107,7 @@ public class ChangeOrganizationFragment  extends StatedFragment {
         bundle=new Bundle();
         bundle.putSerializable("id",id);
         bundle.putSerializable("name",name);
-        Event.OpenNewFragmentEventCopy event = new Event.OpenNewFragmentEventCopy(new ChangeOrganizationFragment(), name);
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new ChangeOrganizationFragment(), name);
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
     }

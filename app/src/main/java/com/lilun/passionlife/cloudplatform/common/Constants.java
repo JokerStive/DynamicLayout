@@ -7,7 +7,7 @@ import com.lilun.passionlife.cloudplatform.utils.SpUtils;
  */
 public class Constants {
     //默认超时时间
-    public static final int DEFAULT_TIMEOUT = 20;
+    public static final int DEFAULT_TIMEOUT = 15;
 
     //短缓存时间
     public static final int SHORT_CACHE_TIME = 60;
@@ -18,11 +18,13 @@ public class Constants {
 
 
     //所属组织
-    public static final String BELONG_ORGA="belong_orga";
+    public static String BASE_IP="192.168.1.232:3000";
+
 
     //接口base_url
-//    public static final String BASE_URL = "http://222.182.202.94:3000/api/";
-    public static final String BASE_URL = "http://192.168.3.106:3000/api/";
+
+//    public static  String BASE_URL = "http://192.168.1.232:3000/api/";
+    public static  String BASE_URL = "http://192.168.1.154:3000/api/";
 
     //日志打印ltag
     public static final String LOGGER_TAG = "yk";
@@ -72,10 +74,6 @@ public class Constants {
 
     //特殊的组织——department
     public static String special_orgi_department="/#department";
-
-    //特殊的组织——department
-    public static String special_orgi_department1="/#department";
-
 
 
     //特殊的组织——Role

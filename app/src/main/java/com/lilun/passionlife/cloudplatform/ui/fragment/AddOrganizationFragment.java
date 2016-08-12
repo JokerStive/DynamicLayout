@@ -29,11 +29,14 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import okhttp3.RequestBody;
+import rx.Observable;
 
 /**
  * Created by youke on 2016/6/22.
@@ -61,14 +64,14 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     RegItemView inputOrgiDesc;
 
     private List<Organization> departments = new ArrayList<>();
+    private List<Map<String, Bitmap>> deptIconMappings;
     private String orgaName;
     private Organization orgna;
     private String orgaDesc;
-    int dex = 0;
-    private int size;
     private Organization newDepartment;
     private View view;
     private Bitmap icon;
+    private String organizationId;
 
     @Override
     public View setView() {
@@ -77,7 +80,11 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
         return view;
     }
 
-
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        deptIconMappings = new ArrayList<>();
+    }
 
     @Override
     public void onStart() {
@@ -85,9 +92,6 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
         rootActivity.setTitle(App.app.getString(R.string.add_orgi));
         exvAddOrgi.setOnClickListen(this);
     }
-
-
-
 
 
     /**
@@ -101,24 +105,24 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
             ToastHelper.get(mCx).showShort(mCx.getString(R.string.not_orginame_empty));
             return;
         }
-        saveOrgi();
+        postOrganization();
 
     }
 
 
     @OnClick(R.id.iv_head)
-    void choiseHead(){
+    void choiseHead() {
         Logger.d("选择头像");
         rootActivity.choiseHeadPic(view);
     }
 
     @Subscribe
-    public void choisHead(Event.choiseHeadPic event){
+    public void choisHead(Event.choiseHeadPic event) {
         Bitmap bitmap = event.getBitmap();
-        if (bitmap!=null){
+        if (bitmap != null) {
             StringUtils.getBytesFromBitmap(bitmap);
-//            icon = bitmap;
-//            ivHead.setImageBitmap(bitmap);
+            icon = bitmap;
+            ivHead.setImageBitmap(bitmap);
 
         }
     }
@@ -127,36 +131,20 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     /**
      * 如果新增了自己的部门，就轮询提交服务器
      *
-     * @param id
      */
-    private void saveDepartment(String id) {
-        if (departments==null && departments.size()==0){return;}
-        List<Organization>  depts = new ArrayList<>();
+    private Observable<List<Organization>> postDept() {
+        List<Organization> depts = new ArrayList<>();
         for (int i = 0; i < departments.size(); i++) {
             Organization depart = departments.get(i);
-            depart.setId(id + Constants.special_orgi_department + "/" + depart.getName());
-            depart.setParentId(id + Constants.special_orgi_department);
-            Logger.d("department id  = " + id + Constants.special_orgi_department + "/" + depart.getName());
-            Logger.d("department parentid  = " + id + "/" + depart.getName() + Constants.special_orgi_department);
+            depart.setId(organizationId + Constants.special_orgi_department + "/" + depart.getName());
+            depart.setParentId(organizationId + Constants.special_orgi_department);
+//            Logger.d("department id  = " + id + Constants.special_orgi_department + "/" + depart.getName());
+//            Logger.d("department parentid  = " + id + "/" + depart.getName() + Constants.special_orgi_department);
             depts.add(depart);
         }
 
 
-        rootActivity.addSubscription(ApiFactory.postOrganizations(depts), new PgSubscriber<List<Organization>>(rootActivity) {
-            @Override
-            public void on_Next(List<Organization> organizationBean) {
-                ToastHelper.get().showShort(App.app.getString(R.string.add_department_success));
-                rootActivity.backStack();
-                postDeptIcon();
-            }
-        });
-    }
-
-    /**
-    *新增部门的图标
-    */
-    private void postDeptIcon() {
-        //TODO 上传部门的图标
+        return ApiFactory.postOrganizations(depts);
 
     }
 
@@ -164,55 +152,110 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     /**
      * 存新增的组织
      */
-    private void saveOrgi() {
-        orgna = new Organization();
-        orgna.setInherited(exvAddOrgi.isInherited());
-        orgna.setId(orgiId + "/" + orgaName);
-        orgna.setName(orgaName);
-        orgna.setParentId(orgiId);
-        Logger.d("isInherited" + orgna.isInherited());
-        orgna.setDescription(orgaDesc);
-        //TODO 设置icon
-        rootActivity.addSubscription(ApiFactory.postOrganization(orgna), new PgSubscriber<Organization>(rootActivity) {
+    private void postOrganization() {
+        Observable observable;
+        if (!exvAddOrgi.isInherited() && checkHasDept()) {
+            observable =  ApiFactory.postOrganization(newOrganization())
+                    .concatMap(organization -> postIsInherited(organization.getId()))
+                    .concatMap(o -> postDept());
+        }else{
+            observable = ApiFactory.postOrganization(newOrganization());
+        }
+
+
+        rootActivity.addSubscription(observable, new PgSubscriber(rootActivity) {
             @Override
-            public void on_Next(Organization orga) {
-                ToastHelper.get().showShort(orgna.getName()+"组织新增成功");
-                String id = orga.getId()+Constants.special_orgi_department;
-                rootActivity.setIsInherited(id,new IsInherited(orga.isInherited()));
-                if (icon!=null){
-                    saveIcon(orga);
-                }
-
-                //不是集成就添加自己的部门
-                if (!orga.isInherited()){
-                    saveDepartment(orga.getId());
-                }
-
+            public void on_Next(Object o) {
+                Logger.d("组织添加成功");
+                ToastHelper.get().showShort(App.app.getString(R.string.add_orgi_success));
+                saveOrgaIcon();
+                saveDeptIcon();
+                EventBus.getDefault().post(new Event.reflashOrgaList());
+                rootActivity.backStack();
             }
 
             @Override
-            public void on_Error() {
-                super.on_Error();
-                ToastHelper.get().showShort(orgna.getName()+"组织新增失败");
+            public void onError(Throwable e) {
+                super.onError(e);
+                ToastHelper.get().showShort(App.app.getString(R.string.add_orgi_false));
             }
         });
     }
 
+    private Observable<Object> postIsInherited(String orgaId) {
+        String id = orgaId + Constants.special_orgi_department;
+        return ApiFactory.putIsInheroted(id, new IsInherited(false));
+    }
+
     /**
-    *新增组织Icon
+    *检查是部门是否为0
+    */
+    private boolean checkHasDept() {
+        if (departments != null && departments.size() != 0) {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    private Organization newOrganization() {
+        orgna = new Organization();
+        orgna.setInherited(exvAddOrgi.isInherited());
+        orgna.setId(StringUtils.getCheckedOrgaId(orgiId) + "/" + orgaName);
+        orgna.setName(orgaName);
+        orgna.setParentId(orgiId);
+        orgna.setDescription(orgaDesc);
+        organizationId =orgna.getId();
+        return orgna;
+    }
+
+    /**
+     * 新增组织Icon
      */
-    private void saveIcon(Organization orga) {
-        if (icon!=null){
-            String orgaId = orga.getId();
+    private void saveOrgaIcon() {
+        if (icon != null) {
             RequestBody requestBody = PicloadManager.getUploadIconRequestBody(icon);
-            rootActivity.addSubscription(ApiFactory.postOrganizationIcon(orgaId, requestBody), new PgSubscriber(rootActivity) {
+            rootActivity.addSubscription(ApiFactory.postOrganizationIcon(organizationId, requestBody), new PgSubscriber() {
                 @Override
                 public void on_Next(Object o) {
-                    ToastHelper.get().showShort("组织图标上传成功");
                 }
             });
         }
 
+    }
+
+
+    /**
+     * 新增部门icon
+     */
+    private void saveDeptIcon() {
+        if (deptIconMappings.size()!=0) {
+            setMappingId(deptIconMappings);
+
+            List<Observable<Object>>  observables = new ArrayList<>();
+            for(Map<String,Bitmap> mapping:deptIconMappings){
+                for(String name:mapping.keySet()){
+                    RequestBody requestBody = PicloadManager.getUploadIconRequestBody(mapping.get(name));
+                    observables.add(ApiFactory.postOrganizationIcon(organizationId+Constants.special_orgi_department+"/"+name, requestBody));
+                }
+            }
+            rootActivity.addSubscription(Observable.merge(observables), new PgSubscriber() {
+                @Override
+                public void on_Next(Object o) {
+                    Logger.d("部门图标上传成功");
+                }
+            });
+        }
+
+    }
+
+    private void setMappingId(List<Map<String, Bitmap>> deptIconMappings) {
+        for(Map<String,Bitmap> mapping:deptIconMappings){
+            for(String name:mapping.keySet()){
+
+            }
+        }
     }
 
 
@@ -225,12 +268,21 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
             getExtendsDepartment(orgiId);
         } else if (departments != null) {
             //
+            setExData(false, departments);
             Logger.d("展示自己的部门");
-            exvAddOrgi.setListviewData(new ExtDeptAdapter(departments, true, (parentOrgisAdapter, position) -> {
+        }
+
+    }
+
+
+    private void setExData(Boolean isInherited, List<Organization> depts) {
+        if (isInherited) {
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(depts));
+        } else {
+            exvAddOrgi.setListviewData(new ExtDeptAdapter(depts, (parentOrgisAdapter, position) -> {
                 deleteItem(parentOrgisAdapter, position);
             }));
         }
-
     }
 
     /**
@@ -250,9 +302,8 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
             if (organizations.size() == 0) {
                 ToastHelper.get(mCx).showShort(mCx.getString(R.string.empty_depart_list));
             }
-            exvAddOrgi.setListviewData(new ExtDeptAdapter(organizations, false, (parentOrgisAdapter, position) -> {
 
-            }));
+            setExData(true, organizations);
         });
     }
 
@@ -274,7 +325,13 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     public void addDepartment(Event.addNewDepartment event) {
         newDepartment = event.getDepartment();
         departments.add(newDepartment);
-        Logger.d(" lis size = " +departments.size());
+
+        if (event.getIcon() != null) {
+            Map<String, Bitmap> mapping = new HashMap<>();
+            mapping.put(newDepartment.getName(), event.getIcon());
+            deptIconMappings.add(mapping);
+        }
+        Logger.d(" lis size = " + departments.size());
     }
 
 
@@ -285,7 +342,6 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
         super.onSaveState(outState);
         outState.putString("organiName", inputOrgiName.getInput());
         outState.putString("organiDesc", inputOrgiDesc.getInput());
-//        outState.putSerializable("listData", (Serializable) departments);
     }
 
     @Override
@@ -295,19 +351,12 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
             orgaName = savedInstanceState.getString("organiName");
 
             orgaDesc = savedInstanceState.getString("organiDesc");
-//            departments = (List<Organization>) savedInstanceState.get("listData");
-//            if (newDepartment != null) {
-//                departments.add(newDepartment);
-//                newDepartment = null;
-//            }
         }
 
-//        Logger.d("organiName = " + orgaName + "organiDesc = " + orgaDesc + "  list size =  " + departments.size());
 
-        if (departments!=null){
-            exvAddOrgi.setListviewData(new ExtDeptAdapter(departments, true, (parentOrgisAdapter, position) -> {
-                deleteItem(parentOrgisAdapter, position);
-            }));
+        ivHead.setImageBitmap(icon);
+        if (departments != null) {
+            setExData(false, departments);
         }
 
     }

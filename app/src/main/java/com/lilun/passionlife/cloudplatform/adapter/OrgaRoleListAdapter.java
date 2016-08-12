@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
 import com.lilun.passionlife.cloudplatform.bean.Role;
+import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.ui.App;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
         if (convertView == null) {
             convertView = View.inflate(App.app, R.layout.item_module_list, null);
             viewHolder = new ViewHolder();
-            viewHolder.module_icon = (ImageView) convertView.findViewById(R.id.module_list_icon);
+            viewHolder.module_icon = (CircleImageView) convertView.findViewById(R.id.module_list_icon);
             viewHolder.module_title = (TextView) convertView.findViewById(R.id.module_list_title);
             viewHolder.module_delete = (ImageView) convertView.findViewById(R.id.module_list_delete);
             convertView.setTag(viewHolder);
@@ -70,7 +71,7 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
         } else {
             //TODO 从网络url加载图片
             String RoleName = data.get(position - 1).getTitle();
-            viewHolder.module_icon.setBackgroundResource(R.drawable.add);
+            viewHolder.module_icon.setBackgroundResource(R.drawable.default_pic);
             viewHolder.module_title.setText(RoleName);
 
             viewHolder.module_delete.setVisibility(isShowDelete ? View.VISIBLE : View.GONE);
@@ -81,7 +82,7 @@ public class OrgaRoleListAdapter extends BaseModuleListAdapter {
     }
 
     class ViewHolder {
-        ImageView module_icon;
+        CircleImageView module_icon;
         TextView module_title;
         ImageView module_delete;
     }

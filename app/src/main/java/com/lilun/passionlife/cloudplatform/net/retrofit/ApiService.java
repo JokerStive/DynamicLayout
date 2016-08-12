@@ -36,6 +36,14 @@ public interface ApiService {
     @POST("Accounts")
     Observable<Account> register(@Body Account user);
 
+
+    /**
+     *新增组织机构图标
+     */
+    @Multipart
+    @POST("Accounts/{id}/picture")
+    Observable<Object> postAccountIcon(@Path("id") int userId, @Part("file\"; filename=\"account.png") RequestBody file);
+
     /**
      * 用户登录
      */
@@ -50,6 +58,11 @@ public interface ApiService {
     @GET("Accounts/me")
     Observable<Object> check401();
 
+
+
+
+
+//  GET  ========================================================================================================================================================
 
     /**
      * 获取用户所属组织列表
@@ -96,7 +109,7 @@ public interface ApiService {
     /**
      *获取所有的服务
      */
-    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
+//    @Headers("Cache-Control: public, max-age=604800,  max-stale=704800")
     @GET("Services")
     Observable<List<Service>> getServicess();
 
@@ -129,9 +142,17 @@ public interface ApiService {
     @GET("Roles")
     Observable<List<Role>> getRoleListFilter(@Query("filter") String filter);
 
+
+    /**
+     *获取role列表
+     */
+    @GET("Roles/{id}/principals")
+    Observable<List<Principal>> getRolePrincials(@Path("id") int roleId);
+
     /**
      *获取所有的权限
      */
+    @Headers("Cache-Control: public, max-age=604800,  max-stale=704800")
     @GET("Roles")
     Observable<List<Role>> getRoleList();
 
@@ -139,7 +160,7 @@ public interface ApiService {
     /**
      *获取account所属的role
      */
-    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
+//    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
     @GET("Accounts/{id}/roles")
     Observable<List<Role>> getAccountRole(@Path("id") int userId);
 
@@ -147,7 +168,7 @@ public interface ApiService {
     /**
      *获取account所属的role
      */
-    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
+//    @Headers("Cache-Control: public, max-age=300,  max-stale=500")
     @GET("Accounts/{id}/organizations")
     Observable<List<OrganizationAccount>> getAccountDept(@Path("id") int userId);
 
@@ -167,6 +188,11 @@ public interface ApiService {
      */
     @GET("OrganizationAccounts")
     Observable<List<OrganizationAccount>> getOrganizationAccountList(@Query("filter") String filter);
+
+
+
+
+//   POST ========================================================================================================================================================
 
 
     /**
@@ -240,6 +266,13 @@ public interface ApiService {
     @PUT("Accounts/{id}/roles/{role}")
     Observable<Object> postAccRole(@Path("id") int userId ,@Path("role") String role);
 
+
+
+
+//    DELETE  ========================================================================================================================================================
+
+
+
     /**
     *删除组织
     */
@@ -296,12 +329,23 @@ public interface ApiService {
 
 
 
+//    PUT========================================================================================================================================================
+
+
 
     /**
-     *更新一个account
+     *更新account所属组织
      */
     @PUT("Accounts/{id}")
     Observable<Account> putAccount(@Path("id") int accountId,@Body Account account);
+
+
+    /**
+     *更新account所属组织
+     */
+    @PUT("Accounts/{id}/organizations/{orgaId}")
+    Observable<OrganizationAccount> putDefBelongOrga(@Path("id") int accountId,@Path("orgaId") String orgaId,@Body OrganizationAccount oa);
+
 
 
 

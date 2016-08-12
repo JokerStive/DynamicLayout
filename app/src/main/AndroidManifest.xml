@@ -50,27 +50,27 @@
 
         <!-- 组织机构管理 -->
         <activity
-            android:name=".cloudplatform.ui.activity.OrganizationActivity"
+            android:name=".cloudplatform.ui.activity.ManagerOrganizationActivity"
             android:screenOrientation="portrait" />
 
         <!-- 角色管理 -->
         <activity
-            android:name=".cloudplatform.ui.activity.RoleManagerActivity"
+            android:name=".cloudplatform.ui.activity.ManagerRoleActivity"
             android:screenOrientation="portrait" />
 
         <!-- 员工管理 -->
         <activity
-            android:name=".cloudplatform.ui.activity.StaffManagerActivity"
+            android:name=".cloudplatform.ui.activity.ManagerStaffActivity"
             android:screenOrientation="portrait" />
 
         <!-- 员工管理 -->
         <activity
-            android:name=".cloudplatform.ui.activity.DeptManagerActivity"
+            android:name=".cloudplatform.ui.activity.ManagerDeptActivity"
             android:screenOrientation="portrait" />
 
         <!-- 模块管理 -->
         <activity
-            android:name=".cloudplatform.ui.activity.ModuleManagerActivity"
+            android:name=".cloudplatform.ui.activity.ManagerModuleActivity"
             android:screenOrientation="portrait" />
 
         <!-- 个人中心 -->
@@ -117,7 +117,17 @@
             android:theme="@style/Theme.FloatActivity" />
         <activity android:name=".cloudplatform.ui.activity.MessageListActivity" />
         <activity android:name=".cloudplatform.ui.activity.MessageIssueActivity" />
-        <activity android:name=".cloudplatform.ui.activity.MessageDetailActivity"></activity>
+        <activity android:name=".cloudplatform.ui.activity.MessageDetailActivity" />
+        <activity android:name=".cloudplatform.ui.activity.ChangeIpActivity" />
+        <activity
+            android:name=".cloudplatform.ui.activity.ListRoleActivity"
+            android:label="@string/title_activity_list_role"
+            android:theme="@style/AppTheme" />
+
+        <!---->
+        <activity
+            android:name=".cloudplatform.ui.activity.ManagerMessageActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

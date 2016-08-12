@@ -109,7 +109,7 @@
         </LinearLayout>
 
         <!--功能选择-->
-        <LinearLayout
+        <RelativeLayout
             android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,16 +118,29 @@
 
 
             <TextView
+                android:id="@+id/tv_service"
                 style="@style/def_textview"
                 android:text="@string/service_choise" />
 
             <com.lilun.passionlife.cloudplatform.custom_view.PullChoiseView
                 android:id="@+id/input_service"
                 android:layout_marginLeft="@dimen/hint_left_title"
+                android:layout_toRightOf="@id/tv_service"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-        </LinearLayout>
+            <!--<android.support.v7.widget.RecyclerView
+                android:id="@+id/service_settings"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/input_service"
+                android:layout_alignLeft="@id/input_service"
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+
+            </android.support.v7.widget.RecyclerView>-->
+
+        </RelativeLayout>
+
 
         <!--功能选择-->
         <LinearLayout

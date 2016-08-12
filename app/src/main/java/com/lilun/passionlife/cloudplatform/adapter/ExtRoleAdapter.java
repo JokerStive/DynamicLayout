@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -23,13 +23,16 @@ public class ExtRoleAdapter extends BaseAdapter {
 
     private  List<Role> data;
     private  OnItemDeleteListen listen;
-    private final boolean isEnable;
 
 
-    public ExtRoleAdapter(List<Role> data, boolean isEnable, OnItemDeleteListen listen) {
+    public ExtRoleAdapter(List<Role> data) {
+        this.data=data;
+        initData();
+    }
+
+    public ExtRoleAdapter(List<Role> data,  OnItemDeleteListen listen) {
         this.data=data;
         this.listen =listen;
-        this.isEnable = isEnable;
         initData();
     }
 
@@ -63,22 +66,35 @@ public class ExtRoleAdapter extends BaseAdapter {
 
             //字体颜色
             TextView tv = (TextView) convertView.findViewById(R.id.tv_title);
-            TextView delete = (TextView) convertView.findViewById(R.id.item_check);
-            FrameLayout fr_check = (FrameLayout) convertView.findViewById(R.id.fr_check);
-            if (!isEnable){
+            ImageView delete = (ImageView) convertView.findViewById(R.id.item_check);
+            ImageView edit = (ImageView) convertView.findViewById(R.id.item_edit);
+            if (listen==null){
                 tv.setTextColor(Color.GRAY);
             }
-            delete.setVisibility(isEnable ? View.VISIBLE:View.GONE);
+            delete.setVisibility(listen!=null ? View.VISIBLE:View.INVISIBLE);
+            edit.setVisibility(listen!=null ? View.VISIBLE:View.INVISIBLE);
 
-            fr_check.setOnClickListener(v -> {
-                listen.onItemDelete(ExtRoleAdapter.this,position);
+            delete.setOnClickListener(v -> {
+                if (listen!=null){
+                    listen.onItemDelete(ExtRoleAdapter.this,position);
+                }
 //                data.remove(position);
 //                notifyDataSetChanged();
             });
 
 
+            edit.setEnabled(!data.get(position).isNew());
+            edit.setOnClickListener(v -> {
+                if (v.isEnabled()){
+
+                        listen.onItemEdit(ExtRoleAdapter.this,position);
+
+                }
+            });
+
             holder.item_title= tv;
             holder.item_choise= delete;
+            holder.item_edit= edit;
             convertView.setTag(holder);
         }else{
             holder= (ViewHolder) convertView.getTag();
@@ -90,12 +106,14 @@ public class ExtRoleAdapter extends BaseAdapter {
 
    public static class ViewHolder{
       public   TextView  item_title;
-       public TextView  item_choise;
+       public ImageView  item_choise;
+       public ImageView  item_edit;
     }
 
 
     public interface  OnItemDeleteListen{
         void  onItemDelete(ExtRoleAdapter parentOrgisAdapter, int position);
+        void  onItemEdit(ExtRoleAdapter parentOrgisAdapter, int position);
     }
 
 }

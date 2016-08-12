@@ -17,8 +17,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerInParent="true"
-            app:border_color="@color/default_bg_green"
-            app:border_width="3dp"
+            app:border_color="@color/default_black"
+            app:border_width="1dp"
             tools:background="@drawable/add" />
         <ImageView
             android:id="@+id/module_list_delete"

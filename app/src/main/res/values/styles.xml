@@ -34,6 +34,12 @@
     </style>
 
 
+    <style name="def_require">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+
     <!--黑色的textView-->
     <style name="def_textview">
         <item name="android:layout_width">wrap_content</item>
@@ -85,7 +91,7 @@
         <item name="android:paddingTop">2dp</item>
         <item name="android:paddingBottom">2dp</item>
     </style>
-<!--
+    <!--
     <ListView
         android:id="@+id/extend_content"
         android:layout_width="match_parent"
@@ -97,6 +103,8 @@
         android:background="@drawable/shape_green"
         >-->
     <!--绿色填充的btn-->
+
+
     <style name="list_green">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -104,6 +112,10 @@
         <item name="android:scrollbars">none</item>
 
     </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

@@ -3,6 +3,7 @@ package com.lilun.passionlife.cloudplatform.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ public class BaseModuleActivity extends BaseNetActivity {
 
         title = (TextView) findViewById(R.id.title);
         edit = (TextView) findViewById(R.id.tv_edit);
+        assert edit != null;
         edit.setOnClickListener(listen -> {
             //编辑框被点击的事件
 //            Logger.d("点击编辑框");
@@ -56,6 +58,7 @@ public class BaseModuleActivity extends BaseNetActivity {
         });
 
         back = (ImageView) findViewById(R.id.back);
+        assert back != null;
         back.setOnClickListener(listener -> {
             if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
                 finish();
@@ -69,6 +72,7 @@ public class BaseModuleActivity extends BaseNetActivity {
         crumbView = (CrumbView) findViewById(R.id.crumb_view);
 
 
+        assert crumbView != null;
         crumbView.setActivity(this);
         create();
     }
@@ -117,7 +121,7 @@ public class BaseModuleActivity extends BaseNetActivity {
 
 
 
-    protected void openNewFragment(BaseFunctionFragment newFragment, String crumbTitle, Bundle bundle) {
+    protected void openNewFragment(Fragment newFragment, String crumbTitle, Bundle bundle) {
         if (bundle!=null){
             newFragment.setArguments(bundle);
         }

@@ -5,6 +5,6 @@
     android:gravity="center_horizontal"
     android:id="@+id/belong_orga_name"
     style="@style/def_textview"
-    android:text="物业" />
+     />
 
 

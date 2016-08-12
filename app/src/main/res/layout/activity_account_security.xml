@@ -1,74 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/back_gray">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/back_gray"
+    android:orientation="vertical">
 
 
     <View
-        android:layout_marginTop="20dp"
-        style="@style/line_gray"/>
+        style="@style/line_gray"
+        android:layout_marginTop="20dp" />
+
     <RelativeLayout
         android:id="@+id/belong"
         android:padding="10dp"
-        android:background="@color/default_white"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <TextView
-        android:id="@+id/iv_belong"
-        style="@style/def_textview"
-        android:layout_marginLeft="20dp"
-        android:text="@string/accounts"/>
-    <TextView
-        android:id="@+id/accounts_nub"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        style="@style/def_textview"
-        />
-     </RelativeLayout>
-
-    <View
-        style="@style/line_gray"/>
-
-    <LinearLayout
-        android:id="@+id/change_password"
-        android:padding="10dp"
-        android:orientation="horizontal"
-        android:background="@color/default_white"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    <TextView
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:textSize="20sp"
-        android:textColor="@color/default_black"
-        android:text="@string/change_password"
-        />
+        android:background="@color/default_white">
+
+        <TextView
+            android:id="@+id/iv_belong"
+            style="@style/def_textview"
+            android:text="@string/accounts" />
+
+        <TextView
+            android:id="@+id/accounts_nub"
+            style="@style/def_textview"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <View style="@style/line_gray" />
+
+    <RelativeLayout
+        android:padding="10dp"
+        android:id="@+id/change_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/default_white">
+
+        <TextView
+            style="@style/def_textview"
+            android:text="@string/change_password" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/change_password"/>
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/change_password" />
+    </RelativeLayout>
 
-    <View
-        style="@style/line_gray"/>
+    <View style="@style/line_gray" />
 
     <Button
-        android:layout_marginTop="50dp"
         android:id="@+id/logout"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         style="@style/btn_green"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:text="@string/logout"
-        />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/logout" />
 </LinearLayout>

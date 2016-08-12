@@ -39,6 +39,7 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import rx.Observable;
 
 /**
  * Created by youke on 2016/6/22.
@@ -140,7 +141,19 @@ public class EditStaffFragment extends BaseFunctionFragment {
             @Override
             public void on_Next(List<OrganizationAccount> depts) {
                 Logger.d("获取所属部门成功");
+//                belongDeptCount = depts.size();
+                for (int i=0;i<depts.size();i++){
+                    if (!depts.get(i).getOrganizationId().contains(Constants.special_orgi_department)){
+                        depts.remove(i);
+                        i--;
+                    }
+                }
+                if (depts.size()==0){
+                    return;
+                }
+
                 belongDeptCount = depts.size();
+//                getBelongRole_and_deptRole(depts);
                 for(int i=0;i<depts.size();i++){
                     depts.get(i).setBelong(true);
                     getDeptRoles(i,depts.get(i));
@@ -150,6 +163,9 @@ public class EditStaffFragment extends BaseFunctionFragment {
         });
     }
 
+    private void getBelongRole_and_deptRole(List<OrganizationAccount> depts) {
+
+    }
 
 
     /**
@@ -197,6 +213,10 @@ public class EditStaffFragment extends BaseFunctionFragment {
         if (belongRoles!=null){
             setData(belongRoles);
         }
+    }
+
+    private Observable<List<Role>> getBelongRole() {
+        return ApiFactory.getAccountRole(userId);
     }
 
 
@@ -434,29 +454,60 @@ public class EditStaffFragment extends BaseFunctionFragment {
     /**
      * 给account post 一个role
      */
-    private void postRole(double userId) {
+    private Observable<Object> postRole() {
+        List<Observable<Object>> observables = new ArrayList<>();
         for (Role role : allChoiseRole) {
             String roleName = role.getName();
-            Logger.d(" 添加的 roleName = " + roleName);
-            rootActivity.addSubscription(ApiFactory.postAccRole(userId, roleName), new PgSubscriber<Object>(rootActivity) {
+            observables.add(ApiFactory.postAccRole(userId, roleName));
+//            rootActivity.addSubscription(, new PgSubscriber<Object>(rootActivity) {
+//                @Override
+//                public void on_Next(Object o) {
+//                    Logger.d("添加所属职务---"+role.getTitle()+"--成功");
+//                    ToastHelper.get().showShort("添加所属z职务---"+role.getTitle()+"--成功");
+//                    then_post_belongRole(allChoiseRole.size());
+//                }
+//            });
+        }
+
+        if (observables.size()!=0){
+            return null;
+        }
+
+        return Observable.merge(observables);
+    }
+
+
+    private void postDeptAndRole(){
+        Observable observable = null;
+        if (postDepartment()!=null && postRole()!=null){
+            observable = Observable.merge(postDepartment(),postRole());
+        }
+
+        if (postRole()!=null){
+            observable = postRole();
+        }
+
+        if (postDepartment()!=null){
+            observable=postDepartment();
+        }
+
+        if (observable!=null){
+            rootActivity.addSubscription(observable, new PgSubscriber(rootActivity) {
                 @Override
                 public void on_Next(Object o) {
-                    Logger.d("添加所属职务---"+role.getTitle()+"--成功");
-                    ToastHelper.get().showShort("添加所属z职务---"+role.getTitle()+"--成功");
-                    then_post_belongRole(allChoiseRole.size());
+                    Logger.d("编辑员成功");
+//                    EventBus.getDefault().post(new Event.reflashStaffList());
+//                    rootActivity.backStack();
                 }
             });
         }
     }
 
-
-
     /**
      * 给account post一个depat
      *
-     * @param id
      */
-    private void postDepartment(double id) {
+    private Observable<List<OrganizationAccount>> postDepartment() {
         List<OrganizationAccount>  organizationAccountList = new ArrayList<>();
         for (Map<OrganizationAccount, List<Role>> map : deptAndRoleList) {
             for (OrganizationAccount oa1 : map.keySet()) {
@@ -468,50 +519,29 @@ public class EditStaffFragment extends BaseFunctionFragment {
 
         //没有新增一个部门，直接返回
         if (organizationAccountList.size()==0){
+            return null;
 //            rootActivity.backStack();
-            postRole(userId);
-            return;
+//            postRole();
+//            return;
         }
-        rootActivity.addSubscription(ApiFactory.postAccOrganization(id, organizationAccountList), new PgSubscriber<List<OrganizationAccount>>(rootActivity) {
-            @Override
-            public void on_Next(List<OrganizationAccount> oas) {
-                postRole(userId);
-                for (int i=0;i<deptAndRoleList.size();i++) {
-                    Map<OrganizationAccount, List<Role>> map = deptAndRoleList.get(i);
-                    for(OrganizationAccount oa1:map.keySet()){
-                        oa1.setBelong(true);
-                        for(int j=0;j<oas.size();j++){
-                            if (oa1.getOrganizationId().equals(oas.get(j).getOrganizationId())){
-                                oa1.setId(oas.get(i).getId());
-                            }
-                        }
-                    }
 
-                }
-            }
+        return ApiFactory.postAccOrganization(userId, organizationAccountList);
 
-        });
     }
 
 
 
-    private void then_post_belongRole(int size) {
-        if (dex_post_belongRole == size - 1) {
-            //刷新缓存
-            CacheUtils.putCache(userId+"",deptAndRoleList);
-            rootActivity.backStack();
-            return;
-        }
-        dex_post_belongRole++;
-    }
+
 
 
 //===============================================================================================================================
     @OnClick(R.id.save)
     void save() {
-        if (checkAccountData() && checkDeptData()) {
+        if (checkAccountData()) {
+            getCheckDeptAndRole();
             if (staffName.equals(inputStaffName.getInput()) && staffUsername.equals(inputStaffUsername.getInput())) {
-                postDepartment(userId);
+                postDeptAndRole();
+                rootActivity.backStack();
                 return;
             }
 
@@ -528,7 +558,9 @@ public class EditStaffFragment extends BaseFunctionFragment {
                 @Override
                 public void on_Next(Account account) {
                     //更新account成功之后
-                    postDepartment(userId);
+                    EventBus.getDefault().post(new Event.reflashStaffList());
+                    postDeptAndRole();
+                    rootActivity.backStack();
                 }
 
             });
@@ -536,23 +568,14 @@ public class EditStaffFragment extends BaseFunctionFragment {
 
     }
 
-    /**
-    *更新部门和职位
-    */
-    private void putDept(double userId) {
-        postDepartment(userId);
-//        postRole(userId);
-    }
 
-    /**
-    *检查是否选择了部门和职位
-    */
-    private boolean checkDeptData() {
+
+    private boolean getCheckDeptAndRole() {
         //检查是否至少选择了一个部门
-        if (deptAndRoleList.size() == 0) {
-            ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
-            return false;
-        }
+//        if (deptAndRoleList.size() == 0) {
+//            ToastHelper.get(mCx).showShort("请至少选择一个所属部门");
+//            return false;
+//        }
 
 
         //检查是否至少选择了一个所属职位
@@ -565,11 +588,11 @@ public class EditStaffFragment extends BaseFunctionFragment {
                 allChoiseRole.addAll(choiseRoles);
             }
         }
-
-        if (allChoiseRole.size() == 0) {
-            ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
-            return false;
-        }
+//
+//        if (allChoiseRole.size() == 0) {
+//            ToastHelper.get(mCx).showShort("请至少选择一个所属职位");
+//            return false;
+//        }
 
 
         //剔除掉本来的职位
@@ -577,6 +600,7 @@ public class EditStaffFragment extends BaseFunctionFragment {
             Role role = allChoiseRole.get(i);
             if (role.isBelong()) {
                 allChoiseRole.remove(role);
+                i--;
             }
         }
         return true;

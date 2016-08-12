@@ -7,10 +7,11 @@ import com.lilun.passionlife.cloudplatform.ui.fragment.ListOrgaFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class OrganizationActivity extends BaseModuleActivity {
+public class ManagerOrganizationActivity extends BaseModuleActivity {
 
     @Override
     protected void create() {
+//        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new ListOrgaFragment(),mCx.getString(R.string.organization)));
         EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new ListOrgaFragment(),mCx.getString(R.string.organization)));
 
     }

@@ -57,8 +57,11 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
         save = (TextView) findViewById(R.id.save);
         save.setOnClickListener(v -> {
             Logger.d(change_orga_id +"---"+change_orga_name);
-
-            EventBus.getDefault().post(new Event.ChangeChildOrganization(change_orga_id,change_orga_name));
+            String currentOrgaId = SpUtils.getString(Constants.key_currentOrgaId);
+            //切换的组织跟当前操作的组织不一致才刷新视图
+            if (!currentOrgaId.equals(change_orga_id)){
+                EventBus.getDefault().post(new Event.ChangeChildOrganization(change_orga_id,change_orga_name));
+            }
             finish();
         });
         crumbView.setActivity(this);
@@ -115,7 +118,7 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
         bundle = new Bundle();
         bundle.putSerializable("id", id);
         bundle.putSerializable("name", name);
-        Event.OpenNewFragmentEventCopy event = new Event.OpenNewFragmentEventCopy(new ChangeOrganizationFragment(), name);
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new ChangeOrganizationFragment(), name);
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
     }
@@ -127,7 +130,7 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
      * 替换fragment
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void openFragment(Event.OpenNewFragmentEventCopy event) {
+    public void openFragment(Event.OpenNewFragmentEvent event) {
         Bundle bundle = event.getBundle();
         openNewFragment(event.newFragment, event.cuumb_title, bundle);
     }
@@ -143,7 +146,6 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
         ft.addToBackStack(null);
         ft.commitAllowingStateLoss();
         setTitle(crumbTitle);
-
     }
 
 
@@ -165,7 +167,7 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //绑定
+        //解绑
         EventBus.getDefault().unregister(this);
     }
 

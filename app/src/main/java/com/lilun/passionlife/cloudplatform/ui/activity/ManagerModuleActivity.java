@@ -7,7 +7,7 @@ import com.lilun.passionlife.cloudplatform.ui.fragment.ListOrgaServiceFragment;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class ModuleManagerActivity extends BaseModuleActivity {
+public class ManagerModuleActivity extends BaseModuleActivity {
 
     @Override
     protected void create() {

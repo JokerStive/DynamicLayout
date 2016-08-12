@@ -29,6 +29,7 @@
     <dimen name="border_width">3dp</dimen>
     <dimen name="def_circle_width">50dp</dimen>
     <dimen name="def_circle_height">50dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 
 </resources>

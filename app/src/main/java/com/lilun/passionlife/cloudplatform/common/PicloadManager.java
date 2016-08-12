@@ -2,6 +2,7 @@ package com.lilun.passionlife.cloudplatform.common;
 
 import android.graphics.Bitmap;
 
+import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 
@@ -46,6 +47,16 @@ public class PicloadManager {
     }
 
 
+    /**
+     * 上传Account的url
+     */
+    public static String accountIconUrl(double accountId) {
+
+        String url = Constants.BASE_URL + "Accounts/" + (int)accountId + "/icon" + "?access_token=" + SpUtils.getString(TokenManager.TOKEN);
+        return url;
+    }
+
+
 
     /**
     *url转义
@@ -60,5 +71,45 @@ public class PicloadManager {
 
         return "";
     }
+
+
+
+    public static  int getServiceIcon(String serviceId) {
+        //模块管理
+        if (serviceId.equals(KnownServices.Module_Service)){
+            return R.drawable.module_manager;
+        }
+
+        //员工管理
+        else if(serviceId.equals(KnownServices.Account_Service)){
+            return R.drawable.staff_manager;
+        }
+
+        //角色管理
+        else  if(serviceId.equals(KnownServices.Role_Service)){
+            return R.drawable.role_manager;
+        }
+
+        //组织机构管理
+        else if(serviceId.equals(KnownServices.Organization_Service)){
+            return R.drawable.orgin_manager;
+        }
+
+
+
+        //部门管理
+        else if(serviceId.equals(KnownServices.Department_Service)){
+            return R.drawable.dept_manager;
+        }
+
+
+        //信息
+        else if(serviceId.equals(KnownServices.Information_Service)){
+            return R.drawable.message_manager;
+        }
+
+        return 0;
+    }
+
 
 }
