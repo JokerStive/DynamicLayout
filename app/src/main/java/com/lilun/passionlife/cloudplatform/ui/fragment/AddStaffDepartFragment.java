@@ -2,7 +2,6 @@ package com.lilun.passionlife.cloudplatform.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.adapter.addStaff_deptListAdapter;
@@ -22,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by Administrator on 2016/6/22.
@@ -32,8 +30,7 @@ public class AddStaffDepartFragment extends BaseFunctionFragment {
 
     @Bind(R.id.fl_dept)
     FlowLayout belongDept;
-    @Bind(R.id.save)
-    Button save;
+
     private addStaff_deptListAdapter adapter_dept;
     private List<String> alreadHaveDept;
 
@@ -93,8 +90,8 @@ public class AddStaffDepartFragment extends BaseFunctionFragment {
         belongDept.setAdapter(adapter_dept);
     }
 
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         List<Organization> choiseDepts = adapter_dept.getChoiseDepts();
 //        Logger.d("chois dept size=="+choiseDepts.size());
         if (adapter_dept.getChoiseDepts().size() != 0) {

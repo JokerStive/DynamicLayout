@@ -10,7 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
+import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.TokenManager;
 import com.lilun.passionlife.cloudplatform.ui.App;
+import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,6 +29,8 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
     public Context mCx;
     public Activity mAc;
     public TextView def_org;
+    protected double userId;
+    protected String orgaId;
 
 
     @Override
@@ -48,7 +53,8 @@ public abstract class BaseFunctionActivity extends BaseNetActivity {
         content.addView(setContent());
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-
+        userId = (double) SpUtils.getInt(TokenManager.USERID);
+        orgaId = SpUtils.getString(Constants.key_currentOrgaId);
         onCreate();
 
     }

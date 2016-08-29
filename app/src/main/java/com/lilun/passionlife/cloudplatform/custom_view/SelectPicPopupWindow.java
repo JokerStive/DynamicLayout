@@ -1,7 +1,6 @@
 package com.lilun.passionlife.cloudplatform.custom_view;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -18,6 +17,7 @@ import android.widget.PopupWindow;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.common.PicloadManager;
+import com.lilun.passionlife.cloudplatform.ui.App;
 
 import java.io.File;
 
@@ -35,27 +35,18 @@ public class SelectPicPopupWindow  extends PopupWindow implements OnClickListene
     public SelectPicPopupWindow(Activity context) {
         super(context);
         this.context=context;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mMenuView = inflater.inflate(R.layout.popup_carmera, null);
+        mMenuView = LayoutInflater.from(App.app).inflate(R.layout.popup_carmera, null);
         btn_take_photo = (FrameLayout) mMenuView.findViewById(R.id.btn_take_photo);
         btn_pick_photo = (FrameLayout) mMenuView.findViewById(R.id.btn_pick_photo);
         //取消按钮
         btn_take_photo.setOnClickListener(this);
         btn_pick_photo.setOnClickListener(this);
 
-        //设置SelectPicPopupWindow的View
         this.setContentView(mMenuView);
-        //设置SelectPicPopupWindow弹出窗体的宽
         this.setWidth(LayoutParams.MATCH_PARENT);
-        //设置SelectPicPopupWindow弹出窗体的高
         this.setHeight(LayoutParams.MATCH_PARENT);
-        //设置SelectPicPopupWindow弹出窗体可点击
         this.setFocusable(true);
-        //设置SelectPicPopupWindow弹出窗体动画效果
-//        this.setAnimationStyle(R.style.AnimBottom);
-        //实例化一个ColorDrawable颜色为半透明
         ColorDrawable dw = new ColorDrawable(0xb0000000);
-        //设置SelectPicPopupWindow弹出窗体的背景
         this.setBackgroundDrawable(dw);
 
         //mMenuView添加OnTouchListener监听判断获取触屏位置如果在选择框外面则销毁弹出框

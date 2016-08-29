@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 import com.inthecheesefactory.thecheeselibrary.fragment.support.v4.app.StatedFragment;
+import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.TokenManager;
@@ -35,6 +38,9 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
     protected boolean hasCheckAddPermission;
     protected boolean hasCheckEditPermission;
     protected boolean hasCheckDeletePermission;
+    private boolean isVisibleToUser=true;
+    private Button save;
+
     protected void setHasAddCheckPermission() {
         this.hasCheckAddPermission = true;
     }
@@ -48,13 +54,11 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
 
     @Override
     public void onCreate( Bundle savedInstanceState) {
-//        Logger.d("fragment oncreate");
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
         fragManager = getActivity().getSupportFragmentManager();
         rootActivity= (BaseModuleActivity) getActivity();
         mCx= App.app;
-//        bundle=savedInstanceState;
         orgiId= SpUtils.getString(Constants.key_currentOrgaId);
         userId = (double)SpUtils.getInt(TokenManager.USERID);
     }
@@ -62,16 +66,33 @@ public abstract class BaseFunctionFragment  extends StatedFragment {
     @Override
     public View onCreateView(LayoutInflater inflater,  ViewGroup container,  Bundle savedInstanceState) {
         this.inflater=inflater;
+        View baseView = inflater.inflate(R.layout.fragment_base_function, null);
+        FrameLayout frameLayout = (FrameLayout) baseView.findViewById(R.id.fm_container);
+        save = (Button) baseView.findViewById(R.id.save);
+        save.setOnClickListener(v -> {
+            save();
+        });
         view = setView();
+        frameLayout.addView(view);
         ButterKnife.bind(this, view);
-        return view;
+        return baseView;
     }
 
     public abstract View setView();
 
-
     @Subscribe
-    public void def(Event.postService event){
+    public void no(Event.OnSaveClick event){}
+
+
+    protected void setIsSaveShow(boolean isSaveShow){
+        save.setVisibility(isSaveShow?View.INVISIBLE:View.GONE);
+    }
+
+
+    /**
+    *保存按钮被点击的回调
+    */
+    protected void save() {
 
     }
 

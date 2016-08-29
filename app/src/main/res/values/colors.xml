@@ -24,4 +24,7 @@
     <color name="default_red">#ff343b</color>
 
 
+    <!--默认的红色-->
+    <color name="default_state_bg">#f8f8f8</color>
+
 </resources>

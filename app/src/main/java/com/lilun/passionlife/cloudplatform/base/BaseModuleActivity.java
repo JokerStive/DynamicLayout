@@ -3,12 +3,14 @@ package com.lilun.passionlife.cloudplatform.base;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -20,20 +22,39 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class BaseModuleActivity extends BaseNetActivity {
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    public TextView title;
+public class BaseModuleActivity extends BaseNetAppcomActivity {
 
+//    public TextView title;
+
+    //    CrumbView crumbView;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+
+    @Bind(R.id.crumb_view)
     CrumbView crumbView;
-    private ImageView back;
-    FrameLayout content;
+
+    @Bind(R.id.fr_crumb)
+    FrameLayout frCrumb;
+
+    @Bind(R.id.frag_container)
+    FrameLayout fragContainer;
+
+    @Bind(R.id.fab_add)
+    FloatingActionButton fabAdd;
+
+
+//    private ImageView back;
+//    FrameLayout content;
 
     public LayoutInflater inflater;
     public Context mCx;
     public Activity mAx;
     protected TextView edit;
     private String orgiId;
-
+//    private FloatingActionButton fba_add;
 
 
     @Override
@@ -41,6 +62,7 @@ public class BaseModuleActivity extends BaseNetActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_module);
         //绑定
+        ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
         //控件初始化
@@ -48,64 +70,91 @@ public class BaseModuleActivity extends BaseNetActivity {
         mAx = this;
         inflater = LayoutInflater.from(mCx);
 
-        title = (TextView) findViewById(R.id.title);
-        edit = (TextView) findViewById(R.id.tv_edit);
-        assert edit != null;
-        edit.setOnClickListener(listen -> {
-            //编辑框被点击的事件
-//            Logger.d("点击编辑框");
-            EventBus.getDefault().post(new Event.EditClickEvent());
-        });
+        findView();
+        create();
+    }
 
-        back = (ImageView) findViewById(R.id.back);
-        assert back != null;
-        back.setOnClickListener(listener -> {
+
+//    @OnClick(R.id.)
+
+    private void findView() {
+        assert toolbar != null;
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(v -> {
             if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
                 finish();
             } else {
                 getSupportFragmentManager().popBackStack();
             }
         });
+        toolbar.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id==R.id.module_edit){
+//                Logger.d("module edit");
+                EventBus.getDefault().post(new Event.EditClickEvent());
+            }
+            return true;
+        });
 
 
-        content = (FrameLayout) findViewById(R.id.frag_container);
-        crumbView = (CrumbView) findViewById(R.id.crumb_view);
-
+        assert fabAdd != null;
+        fabAdd.setOnClickListener(v -> {
+            EventBus.getDefault().post(new Event.AddX());
+        });
 
         assert crumbView != null;
         crumbView.setActivity(this);
-        create();
     }
 
     protected void create() {
+
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            menu.findItem(R.id.module_edit).setVisible(true);
+        }else{
+            menu.findItem(R.id.module_edit).setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_module_toolbar_menu, menu);
+        return true;
+    }
 
+    /**
+     * 设置fba是否显示
+     */
+    public void setFbaShow(boolean showFba) {
+        fabAdd.setVisibility(showFba ? View.VISIBLE : View.GONE);
+    }
 
     /**
      * 设置标题
      */
     public void setTitle(String tit) {
-        title.setText(tit);
+        toolbar.setTitle(tit);
     }
 
     /**
      * 设置编辑框是否显示
      */
     public void setIsEditShow(boolean isShow) {
-        edit.setVisibility(isShow ? View.VISIBLE : View.GONE);
+//        edit.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
-    public void setEditText(String s){
+
+    public void setEditText(String s) {
         edit.setText(s);
     }
 
-    public String getEditText(){
+    public String getEditText() {
         return edit.getText().toString();
     }
-
-
 
 
     /**
@@ -114,15 +163,12 @@ public class BaseModuleActivity extends BaseNetActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void openFragment(Event.OpenNewFragmentEvent event) {
         Bundle bundle = event.getBundle();
-        openNewFragment(event.newFragment, event.cuumb_title,bundle);
+        openNewFragment(event.newFragment, event.cuumb_title, bundle);
     }
 
 
-
-
-
     protected void openNewFragment(Fragment newFragment, String crumbTitle, Bundle bundle) {
-        if (bundle!=null){
+        if (bundle != null) {
             newFragment.setArguments(bundle);
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -135,12 +181,12 @@ public class BaseModuleActivity extends BaseNetActivity {
     }
 
 
-    public void backStack(){
+    public void backStack() {
         getSupportFragmentManager().popBackStack();
     }
 
     /**
-     *响应back键，回退fragment还是activity
+     * 响应back键，回退fragment还是activity
      */
     @Override
     public void onBackPressed() {
@@ -156,10 +202,9 @@ public class BaseModuleActivity extends BaseNetActivity {
     protected void onDestroy() {
         super.onDestroy();
         onUnsubscribe();
+        ButterKnife.unbind(this);
         EventBus.getDefault().unregister(this);
     }
-
-
 
 
 }

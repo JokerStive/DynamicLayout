@@ -58,12 +58,12 @@
     </style>
 
 
-    <!--灰色的textview-->
+    <!--默认的edit-->
     <style name="def_edit">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/def_tv_size_small</item>
-        <item name="android:textColor">@color/default_tv_gray</item>
+        <item name="android:textColor">@color/default_black</item>
     </style>
 
     <!--灰色的线条-->

@@ -18,6 +18,7 @@
     <string name="reg">切换地址</string>
     <string name="login_res">请重新登录</string>
     <string name="login_success">登录成功</string>
+    <string name="login_false">登录失败</string>
 
     <!--注册界面-->
     <string name="nick_name">昵&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;称</string>
@@ -201,17 +202,23 @@
     <string name="message_delete">删除信息</string>
     <string name="message_main">我的信息</string>
     <string name="message_about">关于我的</string>
+    <string name="message_type_delete">删除该类别</string>
+    <string name="message_type_edit">修改该类别</string>
     <!--发布消息-->
     <string name="message_title">标题</string>
     <string name="message_title_et">请输入标题</string>
     <string name="message_content">内容</string>
     <string name="message_content_et">请输入内容</string>
     <string name="message_allow_review">允许他人评论</string>
+    <string name="message_is_cat">是否为类别</string>
     <string name="message_publish">发表</string>
 
     <!--信息详情-->
     <string name="message_add_review">添加评论</string>
+
+    <!--权限-->
     <string name="no_permission">对不起，您没有权限</string>
+    <string name="check_permission_false">权限检查失败,请稍后再试</string>
 
 
     <!--alertDialog-->

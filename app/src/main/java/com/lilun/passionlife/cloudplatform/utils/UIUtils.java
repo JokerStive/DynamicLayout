@@ -1,8 +1,12 @@
 package com.lilun.passionlife.cloudplatform.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.Display;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.lilun.passionlife.cloudplatform.ui.App;
 
@@ -42,5 +46,22 @@ public class UIUtils {
     }
 
 
+    public static View inflate(int res) {
+        return LayoutInflater.from(App.app).inflate(res,null);
+    }
 
+
+    public static void toggleKeyBoard(){
+        InputMethodManager imm = (InputMethodManager) App.app.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    /**
+     * 设置当前activity透明度
+     */
+    public static void setBackgroundAlpha(Activity activity,float bgAlpha) {
+        WindowManager.LayoutParams lp = activity.getWindow().getAttributes();
+        lp.alpha = bgAlpha;
+        activity.getWindow().setAttributes(lp);
+    }
 }

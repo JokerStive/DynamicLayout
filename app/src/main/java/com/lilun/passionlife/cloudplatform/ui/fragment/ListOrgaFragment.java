@@ -5,18 +5,17 @@ import android.view.View;
 import android.widget.GridView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.adapter.OrgaListAdapter;
-import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
-import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
+import com.lilun.passionlife.cloudplatform.adapter.ListOrganizationAdapter;
+import com.lilun.passionlife.cloudplatform.base.BaseModuleLoadingFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
+import com.lilun.passionlife.cloudplatform.common.Admin;
 import com.lilun.passionlife.cloudplatform.common.KnowPermission;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
 import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
-import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
@@ -30,25 +29,18 @@ import butterknife.Bind;
 /**
  * Created by youke on 2016/6/22.
  */
-public class ListOrgaFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListOrgaFragment extends BaseModuleLoadingFragment{
 
     @Bind(R.id.module_list)
     GridView gvModuleList;
 
     private List<Organization> orgiChildren;
-    private OrgaListAdapter adapter;
+    private ListOrganizationAdapter adapter;
     private String orgaAddPermission = KnownServices.Organization_Service + KnowPermission.addPermission;
     private String orgaEditPermission = KnownServices.Organization_Service + KnowPermission.editPermission;
     private String orgaDeletePermission = KnownServices.Organization_Service + KnowPermission.deletePermission;
 
 
-    @Override
-    public View setView() {
-        //设置编辑框显示
-        rootActivity.setTitle(mCx.getString(R.string.organization));
-        rootActivity.setIsEditShow(true);
-        return inflater.inflate(R.layout.fragment_module_list, null);
-    }
 
 
     @Override
@@ -56,6 +48,13 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
         super.onCreate(savedInstanceState);
         getOrgiChildren();
 
+    }
+
+    @Override
+    protected View createSuccessView() {
+        View rootView = inflater.inflate(R.layout.fragment_module_list, null);
+        gvModuleList = (GridView) rootView.findViewById(R.id.module_list);
+        return rootView;
     }
 
     /**
@@ -66,21 +65,31 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
         getOrgiChildren();
     }
 
+    @Subscribe
+    public void addOrga(Event.AddX event) {
+        openAddOrgaFragment();
+    }
+
+    @Subscribe
+    public void onEditClick(Event.EditClickEvent event) {
+        if (adapter!=null){
+            adapter.setIsDeleteShow();
+        }
+    }
+
+    @Override
+    protected void onErrorPageClick() {
+        super.onErrorPageClick();
+        getOrgiChildren();
+    }
+
     @Override
     public void onStart() {
         super.onStart();
-        bundle = new Bundle();
-        if (adapter!=null){
-            gvModuleList.setAdapter(adapter);
-        }
-        gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
-            if (position == 0) {
-                openAddOrgaFragment();
-
-            }else{
-                openEditOrgaFragment(position);
-            }
-        });
+        rootActivity.setTitle(App.app.getString(R.string.organization));
+        rootActivity.setIsEditShow(true);
+        rootActivity.setFbaShow(true);
+        rootActivity.invalidateOptionsMenu();
     }
 
 
@@ -91,12 +100,12 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
     */
     private void openAddOrgaFragment() {
         if (isAdmin() || hasCheckAddPermission){
-            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), mCx.getString(R.string.add_orgi)));
+            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), App.app.getString(R.string.add_orgi)));
         }else{
             rootActivity.checkHasPermission(userId, orgaAddPermission, hasPermission -> {
                 setHasAddCheckPermission();
                 if (hasPermission) {
-                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), mCx.getString(R.string.add_orgi)));
+                    EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddOrganizationFragment(), App.app.getString(R.string.add_orgi)));
                 }else{
                     ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
                 }
@@ -127,8 +136,9 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
 
 
     private void editOrga(int position) {
-        bundle.putSerializable("organiChildren",orgiChildren.get(position-1));
-        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditOrganizationFragment(), mCx.getString(R.string.edit_orgi));
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("organiChildren",orgiChildren.get(position));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditOrganizationFragment(), App.app.getString(R.string.edit_orgi));
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
     }
@@ -137,37 +147,56 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
     *获取组织列表
     */
     public void getOrgiChildren() {
-                rootActivity.addSubscription(ApiFactory.getOrgiChildren(orgiId), new PgSubscriber<List<Organization>>(rootActivity) {
+        if (loadingPager!=null){
+            showLoading();
+        }
+                rootActivity.addSubscription(ApiFactory.getOrgiChildren(orgiId), new PgSubscriber<List<Organization>>() {
                     @Override
                     public void on_Next(List<Organization> organizations) {
+
                         for(int i=0;i<organizations.size();i++){
                             String id = organizations.get(i).getId();
-                            if (StringUtils.isSpecialOrga(id)){
+                            if (Admin.isRootOrganization(id)){
                                 organizations.remove(organizations.get(i));
                                 i--;
                             }
                         }
+                        if (organizations.size()==0){
+                            showEmpty();
+                            return;
+                        }
                         orgiChildren=organizations;
-                        adapter = new OrgaListAdapter(organizations,ListOrgaFragment.this);
-                        gvModuleList.setAdapter(adapter);
+                        showOrganization();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        super.onError(e);
+                        showError();
                     }
                 });
 
+
+
     }
 
-
-    @Subscribe
-    public void onEditClick(Event.EditClickEvent event){
-        //TODO 检查当前用户有咩有删除组织机构的权限
-        setEdText(adapter);
+    private void showOrganization() {
+        showSuccess();
+        if (orgiChildren!=null){
+            gvModuleList.setNumColumns(orgiChildren.size()==1?1:2);
+            adapter = new ListOrganizationAdapter(orgiChildren,R.layout.item_module_list);
+            adapter.setOnItemDeleteListener(this::confireDeleteItem);
+            gvModuleList.setAdapter(adapter);
+            gvModuleList.setOnItemClickListener((parent, view, position, id) -> openEditOrgaFragment(position));
+        }
     }
 
 
     /**
      *删除其中的一个组织
      */
-    @Override
-    public void onDeleteClick(int position) {
+
+    public void confireDeleteItem(int position) {
         if (isAdmin() || hasCheckDeletePermission){
             deleteOrga(position);
             return;
@@ -194,8 +223,9 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
                     @Override
                     public void on_Next(Object integer) {
                         orgiChildren.remove(position);
-                        adapter.notifyDataSetChanged();
-                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_orgi_success));
+                        setGvModuleColumns(gvModuleList,orgiChildren);
+                        adapter.removeAt(position);
+                        ToastHelper.get(App.app).showShort(App.app.getString(R.string.delete_orgi_success));
                     }
                 });
 
@@ -207,8 +237,9 @@ public class ListOrgaFragment extends BaseFunctionFragment implements BaseModule
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //设置编辑框框不显示
         rootActivity.setIsEditShow(false);
+        rootActivity.setFbaShow(false);
+        rootActivity.invalidateOptionsMenu();
     }
 
 

@@ -16,6 +16,7 @@ import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseNetActivity;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.common.Constants;
+import com.lilun.passionlife.cloudplatform.common.constans.BelongOass;
 import com.lilun.passionlife.cloudplatform.custom_view.CrumbView;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.ui.fragment.ChangeOrganizationFragment;
@@ -81,8 +82,8 @@ public class ChangeOrganizationActivity extends BaseNetActivity {
 
 
         //
-        String belongId = SpUtils.getString(Constants.key_currentBelongOrgaId);
-        String belongName = SpUtils.getString(Constants.key_currentBelongOrgaName);
+        String belongId = SpUtils.getString(BelongOass.oas_id);
+        String belongName = SpUtils.getString(BelongOass.oas_name);
         if (!TextUtils.isEmpty(belongId) && !TextUtils.isEmpty(belongName)){
             openNewFragment(belongName, belongId);
             current_orga.setText(belongName);

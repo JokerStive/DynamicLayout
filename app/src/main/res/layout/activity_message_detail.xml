@@ -56,7 +56,7 @@
             tools:text="内容打谁ha------------------------------------------------------------------------------------------------------------------" />
 
         <LinearLayout
-            android:id="@+id/ll_detail_image"
+            android:id="@+id/ll_info_pic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/line_0"
@@ -77,20 +77,57 @@
         style="@style/line_gray"
         android:layout_below="@id/ll_detail_content" />
 
-    <com.lilun.passionlife.cloudplatform.custom_view.XListView
-        android:id="@+id/xlv_review_list"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/review_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/relativeLayout"
+        android:layout_below="@id/line_1"/>
+
+
+   <!-- <RelativeLayout
+        android:id="@+id/dialog_review"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line_1">
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" >
+        <EditText
+            android:id="@+id/et_review"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="5dp"
+            android:textColor="@color/default_black"
+            android:background="@drawable/message_review_bg"
+            />
 
-    </com.lilun.passionlife.cloudplatform.custom_view.XListView>
+        <TextView
+            android:id="@+id/review"
+            style="@style/def_require"
+            android:layout_below="@id/et_review"
+            android:layout_alignRight="@id/et_review"
+            android:background="@drawable/shape_green"
+            android:text="发表评论"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/default_bg_green"
+            />
+
+    </RelativeLayout>-->
+
+
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
+        android:padding="10dp"
         android:background="@drawable/shape_gray"
-        android:padding="10dp">
+        >
+
 
         <LinearLayout
             android:id="@+id/message_review"
@@ -111,8 +148,8 @@
                 style="@style/def_textview"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:textSize="@dimen/def_tv_size"
-                android:text="@string/message_add_review"  />
+                android:text="@string/message_add_review"
+                android:textSize="@dimen/def_tv_size" />
 
         </LinearLayout>
 
@@ -120,12 +157,12 @@
             android:id="@+id/im_message_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"
+            android:layout_gravity="center_vertical"
 
             android:src="@drawable/message_share" />
 
-            >
+        >
 
 
     </RelativeLayout>

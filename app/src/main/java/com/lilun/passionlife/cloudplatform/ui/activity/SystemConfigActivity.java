@@ -10,8 +10,9 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.common.constans.BelongOass;
 import com.lilun.passionlife.cloudplatform.ui.App;
-import com.lilun.passionlife.cloudplatform.utils.ACache;
+import com.lilun.passionlife.cloudplatform.utils.CacheUtils;
 import com.lilun.passionlife.cloudplatform.utils.IntentUtils;
 import com.lilun.passionlife.cloudplatform.utils.SpUtils;
 
@@ -81,7 +82,7 @@ public class SystemConfigActivity extends BaseFunctionActivity {
         os.setTitle(App.app.getString(R.string.module_manager));
         os.setDescription(App.app.getString(R.string.module_manager_desc));
         os.setServiceId(KnownServices.Module_Service);
-        visibleOrgiService = (List<OrganizationService>) ACache.get(App.app).getAsObject(Constants.cacheKey_service);
+        visibleOrgiService = (List<OrganizationService>) CacheUtils.getCache(BelongOass.modules);
 
         if (visibleOrgiService != null ) {
             for(int i=0;i<visibleOrgiService.size();i++){

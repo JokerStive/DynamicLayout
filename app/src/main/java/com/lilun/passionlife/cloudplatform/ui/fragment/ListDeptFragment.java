@@ -5,9 +5,8 @@ import android.view.View;
 import android.widget.GridView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.adapter.OrgaListAdapter;
-import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
-import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
+import com.lilun.passionlife.cloudplatform.adapter.ListOrganizationAdapter;
+import com.lilun.passionlife.cloudplatform.base.BaseModuleLoadingFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
@@ -28,78 +27,145 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
-import butterknife.Bind;
 import rx.Observable;
 
 /**
  * Created by youke on 2016/6/22.
  */
-public class ListDeptFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListDeptFragment extends BaseModuleLoadingFragment {
 
-    @Bind(R.id.module_list)
+    
     GridView gvModuleList;
 
     private List<Organization> depts;
-    private OrgaListAdapter adapter;
+    private ListOrganizationAdapter adapter;
     private String deptAddPermission = KnownServices.Department_Service + KnowPermission.addPermission;
     private String deptEditPermission = KnownServices.Department_Service + KnowPermission.editPermission;
     private String deptDeletePermission = KnownServices.Department_Service + KnowPermission.deletePermission;
-    private Double userId;
     private Boolean isInherited = false;
     private String isInheritedId;
     private int operationIndex;
     private int mPosition;
     private String url;
 
-
-    @Override
-    public View setView() {
-        //设置编辑框显示
-        rootActivity.setTitle(mCx.getString(R.string.dept_manager));
-        rootActivity.setIsEditShow(true);
-        return inflater.inflate(R.layout.fragment_module_list, null);
-    }
-
-
-    /**
-     *新增或者编辑了角色，需要刷新组织列表视图
-     */
-    @Subscribe
-    public void reflashDeptList(Event.reflashDeptList event){
-        getOrgiChildren();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getOrgiChildren();
+        Observable<List<Organization>> observable;
         if (Admin.isRootOrganization(orgiId)) {
-            return;
+            observable = getDeptsObser(null);
+        } else {
+            observable = checkIsInHeritedObser().concatMap(this::getDeptsObser);
         }
-        isInheritedId = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department;
-        rootActivity.getIsInherited(isInheritedId, isInherited -> {
-            this.isInherited = isInherited;
-        });
+
+        getDepts(observable);
     }
+
+
+
+    @Override
+    protected View createSuccessView() {
+        View rootView = inflater.inflate(R.layout.fragment_module_list, null);
+        gvModuleList = (GridView) rootView.findViewById(R.id.module_list);
+        return rootView;
+    }
+
+
+    @Subscribe
+    public void reflashRoleList(Event.reflashRoleList event) {
+        getDepts(getDeptsObser(null));
+    }
+
+
+    @Subscribe
+    public void addStaff(Event.AddX event) {
+        operationIndex=0;
+        openAddDeptFragment();
+    }
+
+    @Subscribe
+    public void onEditClick(Event.EditClickEvent event) {
+        if (adapter != null) {
+            adapter.setIsDeleteShow();
+        }
+    }
+
+
+    @Override
+    protected void onErrorPageClick() {
+        super.onErrorPageClick();
+        getDepts(isInherited?getDeptsObser(null): checkIsInHeritedObser().concatMap(this::getDeptsObser));
+    }
+
 
 
     @Override
     public void onStart() {
         super.onStart();
-        bundle = new Bundle();
+        rootActivity.setTitle(App.app.getString(R.string.dept_manager));
+        rootActivity.setIsEditShow(true);
+        rootActivity.setFbaShow(true);
+        rootActivity.invalidateOptionsMenu();
         if (adapter!=null){
-            gvModuleList.setAdapter(adapter);
+            showDepts();
         }
-        gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
-            operationIndex = position;
-            mPosition = position;
-            if (position == 0) {
-                openAddDeptFragment();
-            } else {
-                openEditDeptFragment();
-            }
-        });
+    }
 
+
+    /**
+     * 检查是否是继承
+     */
+    private Observable<Boolean> checkIsInHeritedObser() {
+        isInheritedId = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department;
+        return ApiFactory.getIsInherited(isInheritedId);
+    }
+
+
+    /**
+    *获取部门列表的obser
+    */
+    private Observable<List<Organization>>  getDeptsObser(Boolean isInherited){
+        if (isInherited!=null){
+            this.isInherited = isInherited;
+        }
+        url = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department;
+        return ApiFactory.getOrgiDepartment(url);
+    }
+
+    private void getDepts(Observable<List<Organization>> observable) {
+        rootActivity.addSubscription(observable, new PgSubscriber<List<Organization>>() {
+            @Override
+            public void on_Next(List<Organization> organizations) {
+                if (organizations.size()==0){
+                    showEmpty();
+                    return;
+                }
+                depts = organizations;
+                showDepts();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+
+            }
+
+        });
+    }
+
+    private void showDepts() {
+        showSuccess();
+        if (depts!=null){
+            setGvModuleColumns(gvModuleList,depts);
+            adapter = new ListOrganizationAdapter(depts,R.layout.item_module_list);
+            adapter.setOnItemDeleteListener(this::confireDeleteItem);
+            gvModuleList.setAdapter(adapter);
+            gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
+                operationIndex=2;
+                mPosition=position;
+                openEditDeptFragment();
+            });
+        }
     }
 
     /**
@@ -185,7 +251,7 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
     @Subscribe
     public void copySuccess(Event.CopyDeptSuccess event) {
         if (operationIndex == 0) {
-            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddDeptFragment(), mCx.getString(R.string.dept_add)));
+            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddDeptFragment(), App.app.getString(R.string.dept_add)));
         } else if (operationIndex == -1) {
             deleteDept(mPosition);
         } else {
@@ -198,40 +264,22 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
      * 部门编辑
      */
     private void editDept(int position) {
+        Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.orgaDept, depts.get(position - 1));
-        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditDeptFragment(), mCx.getString(R.string.edit_dept));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditDeptFragment(), App.app.getString(R.string.edit_dept));
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
     }
 
-    /**
-     * 获取部门列表
-     */
-    public void getOrgiChildren() {
-        url = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_department;
-        rootActivity.addSubscription(ApiFactory.getOrgiDepartment(url), new PgSubscriber<List<Organization>>(rootActivity) {
-            @Override
-            public void on_Next(List<Organization> organizations) {
-                depts = organizations;
-                adapter = new OrgaListAdapter(organizations, ListDeptFragment.this);
-                gvModuleList.setAdapter(adapter);
-            }
-        });
-
-    }
 
 
-    @Subscribe
-    public void onEditClick(Event.EditClickEvent event) {
-        setEdText(adapter);
-    }
 
 
     /**
      * 删除其中的一个部门
      */
-    @Override
-    public void onDeleteClick(int position) {
+
+    public void confireDeleteItem(int position) {
         operationIndex = -1;
         mPosition = position;
         if (isAdmin() || hasCheckDeletePermission) {
@@ -262,8 +310,9 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
                     @Override
                     public void on_Next(Object integer) {
                         depts.remove(position);
-                        adapter.notifyDataSetChanged();
-                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_dept_success));
+                        setGvModuleColumns(gvModuleList,depts);
+                        adapter.removeAt(position);
+                        ToastHelper.get(App.app).showShort(App.app.getString(R.string.delete_dept_success));
                     }
                 });
 
@@ -276,8 +325,9 @@ public class ListDeptFragment extends BaseFunctionFragment implements BaseModule
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        //设置编辑框框不显示
         rootActivity.setIsEditShow(false);
+        rootActivity.setFbaShow(false);
+        rootActivity.invalidateOptionsMenu();
     }
 
 

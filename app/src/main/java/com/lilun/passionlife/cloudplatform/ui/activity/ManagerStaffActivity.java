@@ -10,6 +10,8 @@ import org.greenrobot.eventbus.EventBus;
 public class ManagerStaffActivity extends BaseModuleActivity {
 
 
+
+
     @Override
     protected void create() {
         EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new ListStaffFragment(),mCx.getString(R.string.staff_manager)));

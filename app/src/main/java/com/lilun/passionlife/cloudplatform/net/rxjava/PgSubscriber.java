@@ -2,11 +2,9 @@ package com.lilun.passionlife.cloudplatform.net.rxjava;
 
 import android.content.Context;
 
-import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.custom_view.ProgressDialog;
-import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.DealErrorUtils;
-import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
+import com.orhanobut.logger.Logger;
 
 import rx.Subscriber;
 
@@ -55,8 +53,8 @@ public abstract class PgSubscriber<T> extends Subscriber<T>  {
             DealErrorUtils.dealError(e);
             on_Error();
         }catch (Throwable e1) {
-            ToastHelper.get().showShort(App.app.getString(R.string.net_time_out));
-//            Logger.d(e1.toString());
+//            ToastHelper.get().showShort(App.app.getString(R.string.net_time_out));
+            Logger.d(e1.toString());
         }
 
     }
@@ -74,14 +72,14 @@ public abstract class PgSubscriber<T> extends Subscriber<T>  {
             pd = new ProgressDialog(context,"加载中...");
             pd.setCancelable(false);
         }
-        pd.show();
+        pd.showDialog();
 
 
     }
 
     public void dismissProgressDialog(){
         if (pd != null) {
-            pd.dismiss();
+            pd.dissmissDialog();
             pd = null;
         }
     }

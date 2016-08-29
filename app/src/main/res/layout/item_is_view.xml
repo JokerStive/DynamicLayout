@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:id="@+id/rl_isX"
+    android:padding="10dp"
+    >
+
+
+
+
+    <ImageView
+        android:id="@+id/isView_isX"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:background="@drawable/selector_btn_choise"
+        android:enabled="false" />
+
+
+    <TextView
+        android:id="@+id/isView_title"
+        android:layout_toRightOf="@id/isView_isX"
+        style="@style/def_textview"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/default_black"
+        tools:text="研发部" />
+
+
+</RelativeLayout>

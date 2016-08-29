@@ -54,55 +54,42 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     private List<OrganizationService> visibleOrgiService;
     private List<OrganizationService> settingVisibleService;
     private int serviceCount;
-    private int index=0;
-    private SelectPicPopupWindow popupWindow;;
+    private int index = 0;
+    private SelectPicPopupWindow popupWindow;
+    ;
 
     //RXjava取消注册，以避免内存泄露
     public void onUnsubscribe() {
         if (mCompositeSubscription != null && mCompositeSubscription.hasSubscriptions()) {
             mCompositeSubscription.unsubscribe();
+//            mCompositeSubscription.remove();
         }
     }
 
     public void addSubscription(Observable observable, Subscriber subscriber) {
-        if (mCompositeSubscription == null) {
-            mCompositeSubscription = new CompositeSubscription();
-        }
+        mCompositeSubscription = new CompositeSubscription();
         if (subscriber instanceof PgSubscriber) {
             pgSubscriber = (PgSubscriber) subscriber;
         }
         mCompositeSubscription.add(observable
-//                .doOnSubscribe(() -> {
-//                    String token = SpUtils.getString(TokenManager.TOKEN);
-//                    if (!TextUtils.isEmpty(token)) {
-//                        if (!TokenManager.isTokenEnble()) {
-//                            mCompositeSubscription.unsubscribe();
-//                            Logger.d("登录失效");
-//                            EventBus.getDefault().post(new Event.AuthoriseEvent());
-//                            if (pgSubscriber != null) {
-//                                pgSubscriber.dismissProgressDialog();
-//                            }
-//                        }
-//                    }
-//                })
+//
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber));
     }
 
 
-
     /**
-     *接受token过期事件，跳转登录界面
+     * 接受token过期事件，跳转登录界面
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void login(Event.AuthoriseEvent event){
+    public void login(Event.AuthoriseEvent event) {
         Logger.d("get event 跳转登录界面");
         TokenManager.translateLogin(BaseNetAppcomActivity.this);
     }
 
     @Subscribe
-    public void Event401(Event.Event401 event){
+    public void Event401(Event.Event401 event) {
         addSubscription(ApiFactory.check401(), new PgSubscriber() {
             @Override
             public void on_Next(Object o) {
@@ -111,18 +98,17 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-
     public boolean isAdmin() {
         return SpUtils.getBoolean(Constants.ADMIN);
     }
 
 
     /**
-    *获取用户所属组织列表
-    */
+     * 获取用户所属组织列表
+     */
     protected void getBelongOrga(callBack_getBelongOrga listen) {
         double userId = Double.valueOf(SpUtils.getInt(TokenManager.USERID));
-        addSubscription(ApiFactory.getOrganizationList(userId,null), new PgSubscriber<List<OrganizationAccount>>(this) {
+        addSubscription(ApiFactory.getOrganizationList(userId, null), new PgSubscriber<List<OrganizationAccount>>(this) {
             @Override
             public void on_Next(List<OrganizationAccount> organizations) {
                 listen.onGetBelongOrga(organizations);
@@ -139,21 +125,16 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
     /**
      * 从网络获取功能服务列表
      */
-    public void getSerListFromNet(String defOrgaId,callBack_visible_service callBack) {
-        if (defOrgaId!=null) {
+    public void getSerListFromNet(String defOrgaId, callBack_visible_service callBack) {
+        if (defOrgaId != null) {
             String url;
-            if (defOrgaId.equals(Admin.id)){
+            if (defOrgaId.equals(Admin.id)) {
                 url = "" + Constants.special_orgi_service;
-            }else{
-                url = defOrgaId+Constants.special_orgi_service;
+            } else {
+                url = defOrgaId + Constants.special_orgi_service;
             }
             addSubscription(ApiFactory.getOrgiServices(url), new PgSubscriber<List<OrganizationService>>(this) {
                 @Override
@@ -175,7 +156,7 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-    public List<OrganizationService> checkSettingVisible(List<OrganizationService> servicess){
+    public List<OrganizationService> checkSettingVisible(List<OrganizationService> servicess) {
 //        OrganizationService.SettingsBean settings;
 //        for (int i=0;i<servicess.size();i++){
 //            settings = servicess.get(i).getSettings();
@@ -191,11 +172,8 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-
-
-
-    public String checkHasPermission(double userId, String permission, callBack_hsdPermission listen){
-        addSubscription(ApiFactory.hasPermission(userId,permission), new PgSubscriber<Boolean>() {
+    public String checkHasPermission(double userId, String permission, callBack_hsdPermission listen) {
+        addSubscription(ApiFactory.hasPermission(userId, permission), new PgSubscriber<Boolean>(this) {
             @Override
             public void on_Next(Boolean hasPermisson) {
                 listen.setHasPermission(hasPermisson);
@@ -205,20 +183,20 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
     private void then(int serviceCount, callBack_visible_service callBack) {
-        Logger.d("index = "+index);
-        if (index==serviceCount-1){
+        Logger.d("index = " + index);
+        if (index == serviceCount - 1) {
             callBack.onGetVisibleService(visibleOrgiService);
-            ACache.get(App.app).put(Constants.cacheKey_service,(Serializable)visibleOrgiService);
+            ACache.get(App.app).put(Constants.cacheKey_service, (Serializable) visibleOrgiService);
             return;
         }
         index++;
     }
 
     /**
-    *获取组织机构的直接儿子
-    */
+     * 获取组织机构的直接儿子
+     */
 
-    public void getOrgiChildren(String parentId,callBack_orgiChildren listen) {
+    public void getOrgiChildren(String parentId, callBack_orgiChildren listen) {
         addSubscription(ApiFactory.getOrgiChildren(parentId), new PgSubscriber<List<Organization>>(this) {
             @Override
             public void on_Next(List<Organization> orgss) {
@@ -230,21 +208,20 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
 
 
     /**
-    *获取部门列表
-    */
-    public void getOrgaDepartment(String organiId,callBack_getOrgaDepartment listen) {
-        String url = StringUtils.getCheckedOrgaId(organiId)+ Constants.special_orgi_department;
+     * 获取部门列表
+     */
+    public void getOrgaDepartment(String organiId, callBack_getOrgaDepartment listen) {
+        String url = StringUtils.getCheckedOrgaId(organiId) + Constants.special_orgi_department;
         addSubscription(ApiFactory.getOrgiDepartment(url), new PgSubscriber<List<Organization>>(this) {
             @Override
             public void on_Next(List<Organization> depts) {
-                CacheUtils.putCacheExpri(Constants.cacheKey_department,depts,Constants.SHORT_CACHE_TIME);
+                CacheUtils.putCacheExpri(Constants.cacheKey_department, depts, Constants.SHORT_CACHE_TIME);
                 listen.onGetOrgaDepartment(depts);
             }
 
 
         });
     }
-
 
 
     /**
@@ -262,7 +239,7 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
                 }
                 //去除admin和自定义的role  /物业：设计师
                 for (int i = 0; i < role.size(); i++) {
-                    if (role.get(i).getOrganizationId()!=null || role.get(i).getName().equals("admin")) {
+                    if (role.get(i).getOrganizationId() != null || role.get(i).getName().equals("admin")) {
                         role.remove(i);
                     }
                 }
@@ -274,9 +251,9 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
 
 
     /**
-    *获取组织下的role
-    */
-    public void getOrgRoleList(String orgId, callBack_getRole listen){
+     * 获取组织下的role
+     */
+    public void getOrgRoleList(String orgId, callBack_getRole listen) {
         String s = orgId + Constants.special_orgi_role;
         addSubscription(ApiFactory.getOrgiRole(s), new PgSubscriber<List<Role>>(this) {
             @Override
@@ -290,9 +267,9 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
 
 
     /**
-     *获取组织下的role
+     * 获取组织下的role
      */
-    public void getOrgRolesWithFilter(String orgId, callBack_getRole listen){
+    public void getOrgRolesWithFilter(String orgId, callBack_getRole listen) {
         String s = orgId + Constants.special_orgi_role;
         addSubscription(ApiFactory.getOrgiRoleFilter(s, FilterUtils.role()), new PgSubscriber<List<Role>>(this) {
             @Override
@@ -306,9 +283,9 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
 
 
     /**
-    *设置 id 是否isInherited
-    */
-    public void setIsInherited(String id ,IsInherited isInherited){
+     * 设置 id 是否isInherited
+     */
+    public void setIsInherited(String id, IsInherited isInherited) {
         addSubscription(ApiFactory.putIsInheroted(id, isInherited), new PgSubscriber(this) {
             @Override
             public void on_Next(Object o) {
@@ -318,11 +295,10 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-
     /**
-     *设置 id 是否isInherited
+     * 设置 id 是否isInherited
      */
-    public void getIsInherited(String id,callBack_getIsInherited listen){
+    public void getIsInherited(String id, callBack_getIsInherited listen) {
         addSubscription(ApiFactory.getIsInherited(id), new PgSubscriber<Boolean>(this) {
             @Override
             public void on_Next(Boolean isInherited) {
@@ -332,47 +308,45 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-
-
-
-
-
-    public abstract class callBack_visible_service{
+    public abstract class callBack_visible_service {
         public abstract void onGetVisibleService(List<OrganizationService> oss);
-        public void onError(){}
+
+        public void onError() {
+        }
     }
 
-    public interface callBack_orgiChildren{
+    public interface callBack_orgiChildren {
         void onGetOgriChildren(List<Organization> orgis);
     }
 
-    public interface callBack_getOrgaDepartment{
+    public interface callBack_getOrgaDepartment {
         void onGetOrgaDepartment(List<Organization> depts);
     }
 
-    public interface callBack_getAuthrovity{
+    public interface callBack_getAuthrovity {
         void onGetAuthrovity(List<Role> authrovites);
     }
 
 
-    public abstract class callBack_getBelongOrga{
+    public abstract class callBack_getBelongOrga {
         public abstract void onGetBelongOrga(List<OrganizationAccount> orgas);
-        public void onError(){}
+
+        public void onError() {
+        }
     }
 
-    public interface callBack_getRole{
+    public interface callBack_getRole {
         void onGetRoleList(List<Role> roles);
     }
 
 
-    public interface callBack_getIsInherited{
+    public interface callBack_getIsInherited {
         void onGetIsInherited(Boolean isInherited);
     }
 
-    public interface callBack_hsdPermission{
+    public interface callBack_hsdPermission {
         void setHasPermission(Boolean hasPermission);
     }
-
 
 
     //    =====================================================================================================================
@@ -399,7 +373,7 @@ public class BaseNetAppcomActivity extends AppCompatActivity {
     }
 
 
-    public void choiseHeadPic(View parent){
+    public void choiseHeadPic(View parent) {
         popupWindow = new SelectPicPopupWindow(this);
         popupWindow.showAtLocation(parent, Gravity.CENTER, 0, 0);
     }

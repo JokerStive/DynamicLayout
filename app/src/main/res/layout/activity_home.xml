@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:cube_ptr="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorLayout"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+    <RelativeLayout
+        android:id="@+id/rl_title_bae"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/home_title"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/home_personal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/personal" />
+
+        <TextView
+            android:id="@+id/tv_deforgi"
+            style="@style/def_textview"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/home_personal"
+            android:paddingRight="20dp"
+            tools:text="财务部" />
+
+        <TextView
+            android:id="@+id/home_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/app_name"
+            android:textColor="@color/default_black"
+            android:textSize="@dimen/title_size" />
+
+        <ImageView
+            android:id="@+id/home_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/setting"
+             />
+
+    </RelativeLayout>
+<!--
+        <in.srain.cube.views.ptr.PtrFrameLayout
+            android:id="@+id/home_ptr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            cube_ptr:ptr_duration_to_close="300"
+            cube_ptr:ptr_duration_to_close_header="2000"
+            cube_ptr:ptr_keep_header_when_refresh="true"
+            cube_ptr:ptr_pull_to_fresh="false"
+            cube_ptr:ptr_ratio_of_header_height_to_refresh="1.2"
+            cube_ptr:ptr_resistance="1.7">-->
+
+    <FrameLayout
+        android:id="@+id/fl_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+        <!--</in.srain.cube.views.ptr.PtrFrameLayout>-->
+    </LinearLayout>
+</android.support.design.widget.CoordinatorLayout>

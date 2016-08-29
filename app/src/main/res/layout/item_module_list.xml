@@ -1,40 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="30dp">
+    android:padding="20dp"
+    android:background="@drawable/shape_gray_shadow"
+    >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
-            android:id="@+id/module_list_icon"
-            android:padding="10dp"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
-            app:border_color="@color/default_black"
-            app:border_width="1dp"
-            tools:background="@drawable/default_pic" />
-        <ImageView
-            android:id="@+id/module_list_delete"
-            android:layout_toRightOf="@id/module_list_icon"
-            android:layout_alignParentTop="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/delete"/>
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/module_list_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/delete_extra"
+        android:layout_alignParentRight="true"
+
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        >
+
+    <ImageView
+        android:id="@+id/module_list_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:layout_gravity="center_horizontal"
+        tools:background="@drawable/default_pic" />
+
 
     <TextView
         android:id="@+id/module_list_title"
         style="@style/def_textview"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:maxLines="1"
+        android:layout_gravity="center_horizontal"
         tools:text="这是功能" />
 
+    <TextView
+        android:id="@+id/module_list_desc"
+        style="@style/def_textview_gray"
+        android:layout_marginTop="10dp"
+        android:maxLines="1"
+        android:layout_gravity="center_horizontal"
+        tools:text="这是功能" />
+    </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

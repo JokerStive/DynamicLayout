@@ -8,8 +8,7 @@
         android:width="1dp"
         android:color="@color/default_tv_gray"
          />
-    <padding android:left="40dp"
-        android:right="40dp"/>
+
 
 
 </shape>

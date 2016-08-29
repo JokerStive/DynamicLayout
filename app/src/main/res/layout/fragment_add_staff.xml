@@ -38,7 +38,7 @@
                     android:src="@drawable/head_portrait" />
             </RelativeLayout>
 
-            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            <com.lilun.passionlife.cloudplatform.custom_view.InputView
                 android:id="@+id/input_staff_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
                 app:reg_hint="@string/staff_name_eet1"
                 app:reg_title="@string/staff_name" />
 
-            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            <com.lilun.passionlife.cloudplatform.custom_view.InputView
                 android:id="@+id/input_staff_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                 app:reg_hint="@string/staff_name_eet2"
                 app:reg_title="@string/staff_username" />
 
-            <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+            <com.lilun.passionlife.cloudplatform.custom_view.InputView
                 android:id="@+id/input_staff_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,12 +107,7 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/save"
-            style="@style/btn_green"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:text="@string/save" />
+
     </RelativeLayout>
 
 

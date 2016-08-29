@@ -1,10 +1,12 @@
 package com.lilun.passionlife.cloudplatform.net.retrofit;
 
 import com.lilun.passionlife.cloudplatform.bean.Account;
+import com.lilun.passionlife.cloudplatform.bean.InformationReview;
 import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.LoginRes;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationAccount;
+import com.lilun.passionlife.cloudplatform.bean.OrganizationInformation;
 import com.lilun.passionlife.cloudplatform.bean.OrganizationService;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
@@ -191,6 +193,13 @@ public interface ApiService {
 
 
 
+    /**
+     *获取orgaInformation
+     */
+    @GET("OrganizationInformations")
+    Observable<List<OrganizationInformation>> getOrgaInfos(@Query("filter") String filter);
+
+
 
 //   POST ========================================================================================================================================================
 
@@ -228,7 +237,7 @@ public interface ApiService {
      *新增principal
      */
     @POST("Roles/{id}/principals")
-    Observable<Object> postPrincipal(@Path("id")  int roleId,@Body List<Principal> principals);
+    Observable<Object> postPrincipal(@Path("id")  String roleId,@Body List<Principal> principals);
 
 
 
@@ -267,6 +276,21 @@ public interface ApiService {
     Observable<Object> postAccRole(@Path("id") int userId ,@Path("role") String role);
 
 
+    /**
+     *新增一个information
+     */
+    @POST("OrganizationInformations")
+    Observable<OrganizationInformation> postOassInfo(@Body OrganizationInformation oi);
+
+
+
+    /**
+     *新增一个review
+     */
+    @POST("OrganizationInformations")
+    Observable<InformationReview> postReview(@Body InformationReview review);
+
+
 
 
 //    DELETE  ========================================================================================================================================================
@@ -296,13 +320,13 @@ public interface ApiService {
      *删除Role
      */
     @DELETE("Roles/{id}")
-    Observable<Object> deleteRole(@Path("id") int roleId);
+    Observable<Object> deleteRole(@Path("id") String roleId);
 
     /**
      *删除Role下面的principal
      */
     @DELETE("Roles/{id}/principals/{fk}")
-    Observable<Object> deletePrincipal(@Path("id") int roleId,@Path("fk") int ptId);
+    Observable<Object> deletePrincipal(@Path("id") String roleId,@Path("fk") int ptId);
 
 
 
@@ -328,6 +352,11 @@ public interface ApiService {
 
 
 
+    /**
+     *删除Account指定的role
+     */
+    @DELETE("OrganizationInformations/{id}")
+    Observable<Object> deleteInfo(@Path("id") int infoId);
 
 //    PUT========================================================================================================================================================
 
@@ -370,7 +399,7 @@ public interface ApiService {
      *更新Role
      */
     @PUT("Role/{id}")
-    Observable<OrganizationService> putRole(@Path("id") int roleId,@Body Role role);
+    Observable<OrganizationService> putRole(@Path("id") String roleId,@Body Role role);
 
 
     /**

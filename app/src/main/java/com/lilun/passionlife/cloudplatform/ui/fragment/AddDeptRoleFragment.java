@@ -11,10 +11,9 @@ import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
-import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by youke on 2016/6/22.
@@ -35,10 +33,16 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
 
     @Bind(R.id.head)
     TextView head;
+
     @Bind(R.id.iv_head)
     CircleImageView ivHead;
+
     @Bind(R.id.input_role_name)
-    RegItemView inputOrgiName;
+    InputView inputOrgiName;
+
+    @Bind(R.id.input_role_desc)
+    InputView inputOrgiDesc;
+
     @Bind(R.id.lv_auth_list)
     ListView lvAuthList;
 
@@ -62,15 +66,6 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
         return view;
     }
 
-    @OnClick(R.id.btn_auth_add)
-    /**
-     *角色--新增权限
-     */
-    void role_auth_add() {
-//        choiseAuthrisIndex = StringUtils.removeRepet(choiseAuthrisIndex);
-//        Logger.d("---"+choiseAuthrisIndex);
-//        EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddAuthrovityFragment(), mCx.getString(R.string.authority_add)));
-    }
 
 
     @Override
@@ -95,10 +90,10 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
     /**
      *
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         //TODO 这只是一个临时方案，post一个Role...,以后直接关联OrganizationRole
-        if (StringUtils.checkEmpty(inputOrgiName.getInput())) {
+        if (StringUtils.checkEmpty(inputOrgiName.getInput(),inputOrgiDesc.getInput())) {
             postRole();
         }
     }
@@ -109,7 +104,6 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
             if (choiseAuthrovity!=null && choiseAuthrovity.size()!=0){
                 for(Integer index:choiseAuthrovity){
                     Principal pc = new Principal();
-//                    pc.setId(StringUtils.randow());
                     pc.setPrincipalType("ROLE");
                     pc.setPrincipalId(roles.get(index).getName());
                     principals.add(pc);
@@ -134,14 +128,7 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
         return choiseAuthrisIndex;
     }
 
-    private void then(List<Integer> integers) {
-        if (index ==integers.size()-1){
-            ToastHelper.get(mCx).showShort(mCx.getString(R.string.add_orgRole_success));
-            rootActivity.backStack();
-            return;
-        }
-        index++;
-    }
+
 
     /**
      * 临时方案：post一个Role
@@ -150,7 +137,9 @@ public class AddDeptRoleFragment extends BaseFunctionFragment {
         Role role = new Role();
         String name = orgiId + ":" + inputOrgiName.getInput();
         role.setName(name);
+        role.setId(name);
         role.setTitle(inputOrgiName.getInput());
+        role.setDescription(inputOrgiDesc.getInput());
         role.setNew(true);
         Logger.d("待添加的role title==="+role.getTitle());
 

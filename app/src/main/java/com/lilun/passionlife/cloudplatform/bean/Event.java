@@ -291,36 +291,79 @@ public class Event {
     }
 
 
-//   组织管理 ====================================================================================
+    /**
+     * save按钮被点击了
+     */
+    public static class OnSaveClick {
+
+    }
+
+
+    //   组织管理 ====================================================================================
     //需要刷新组织列表
     public static class reflashOrgaList {
 
     }
 
-//   部门管理管理 ====================================================================================
+    //   部门管理管理 ====================================================================================
     //需要刷新组织列表
     public static class reflashDeptList {
 
     }
 
 
-//   角色管理管理 ====================================================================================
+    //   角色管理管理 ====================================================================================
     //需要刷新组织列表
     public static class reflashRoleList {
 
     }
 
 
-//   员工管理管理 ====================================================================================
+    //   员工管理管理 ====================================================================================
     //需要刷新组织列表
     public static class reflashStaffList {
 
     }
 
 
-//   功能模块管理 ====================================================================================
+    //   功能模块管理 ====================================================================================
     //需要刷新组织列表
     public static class reflashServiceList {
+        OrganizationService os;
 
+        public reflashServiceList(OrganizationService os) {
+            this.os = os;
+        }
+
+        public OrganizationService getOs() {
+            return os;
+        }
     }
+
+    //   信息管理 ====================================================================================
+    public static class reflashInfo {
+        public reflashInfo(OrganizationInformation info) {
+            this.info = info;
+        }
+
+        public OrganizationInformation getInfo() {
+            return info;
+        }
+
+        private OrganizationInformation info;
+    }
+
+    /**
+    *create by youke
+    *desc : 显示删除信息的事件
+    */
+    public  static class setMessageDeleteShow{}
+
+
+    /**
+     *create by youke
+     *desc : module_activity 新增事件
+     */
+    public  static class AddX{}
+
 }

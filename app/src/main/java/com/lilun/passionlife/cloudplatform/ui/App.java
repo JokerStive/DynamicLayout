@@ -11,6 +11,8 @@ import com.orhanobut.logger.Logger;
  */
 public class App extends Application {
     public static  Context app;
+    public static  int parentId;
+    public static  boolean isAdmin;
 
     @Override
     public void onCreate() {

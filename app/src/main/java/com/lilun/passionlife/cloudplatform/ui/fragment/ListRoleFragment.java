@@ -5,9 +5,8 @@ import android.view.View;
 import android.widget.GridView;
 
 import com.lilun.passionlife.R;
-import com.lilun.passionlife.cloudplatform.adapter.OrgaRoleListAdapter;
-import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
-import com.lilun.passionlife.cloudplatform.base.BaseModuleListAdapter;
+import com.lilun.passionlife.cloudplatform.adapter.ListOrgaRolesAdapter;
+import com.lilun.passionlife.cloudplatform.base.BaseModuleLoadingFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.IsInherited;
 import com.lilun.passionlife.cloudplatform.bean.Principal;
@@ -33,25 +32,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import butterknife.Bind;
 import rx.Observable;
 
 /**
  * Created by Administrator on 2016/6/22.
  */
-public class ListRoleFragment extends BaseFunctionFragment implements BaseModuleListAdapter.onDeleteClickListerer {
+public class ListRoleFragment extends BaseModuleLoadingFragment {
 
-    @Bind(R.id.module_list)
+
     GridView gvModuleList;
 
 
-
-    private OrgaRoleListAdapter adapter;
+    private ListOrgaRolesAdapter adapter;
     private List<Role> roles;
     private String roleAddPermission = KnownServices.Role_Service + KnowPermission.addPermission;
     private String roleEditPermission = KnownServices.Role_Service + KnowPermission.editPermission;
     private String roleDeletePermission = KnownServices.Role_Service + KnowPermission.deletePermission;
-    private Boolean isInherited=false;
+    private Boolean isInherited = false;
 
     private int operationIndex = -1;
     private String isInheritedId;
@@ -59,58 +56,131 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     private List<Role> roleList;
     private List<Map<Role, List<Principal>>> rolePrincipalsMappingList;
 
-    @Override
-    public View setView() {
-        rootActivity.setTitle(mCx.getString(R.string.role_manager));
-        rootActivity.setIsEditShow(true);
-        return inflater.inflate(R.layout.fragment_module_list, null);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getOrgaRoles();
-        if (Admin.isRootOrganization(orgiId)){
-            return;
+        Observable<List<Role>> observable;
+        if (Admin.isRootOrganization(orgiId)) {
+            observable = getRolesObser(null);
+        } else {
+            observable = checkIsInHeritedObser().concatMap(this::getRolesObser);
         }
-        isInheritedId = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_role;
-        rootActivity.getIsInherited(isInheritedId, isInherited -> {
-            this.isInherited = isInherited;
-        });
+        getOrgaRoles(observable);
 
     }
 
+    @Override
+    protected View createSuccessView() {
+        View rootView = inflater.inflate(R.layout.fragment_module_list, null);
+        gvModuleList = (GridView) rootView.findViewById(R.id.module_list);
+        return rootView;
+    }
+
     /**
-     *新增或者编辑了角色，需要刷新组织列表视图
+     * 检查是否是继承
+     */
+    private Observable<Boolean> checkIsInHeritedObser() {
+        isInheritedId = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_role;
+        return ApiFactory.getIsInherited(isInheritedId);
+    }
+
+    /**
+     * 获取职位列表
+     */
+    private Observable<List<Role>> getRolesObser(Boolean isInherited) {
+        if (isInherited != null) {
+            this.isInherited = isInherited;
+        }
+        String url = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_role;
+        return ApiFactory.getOrgiRoleFilter(url, FilterUtils.role());
+    }
+
+    private void getOrgaRoles(Observable<List<Role>> observable) {
+        if (loadingPager!=null){
+            showLoading();
+        }
+        rootActivity.addSubscription(observable, new PgSubscriber<List<Role>>() {
+            @Override
+            public void on_Next(List<Role> roless) {
+                if (roless.size()==0){
+                    showEmpty();
+                    return;
+                }
+                roles = roless;
+                showRoles();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                super.onError(e);
+
+            }
+
+        });
+    }
+
+    /**
+     * 新增或者编辑了角色，需要刷新组织列表视图
      */
     @Subscribe
-    public void reflashRoleList(Event.reflashRoleList event){
-        getOrgaRoles();
+    public void reflashRoleList(Event.reflashRoleList event) {
+        getOrgaRoles(getRolesObser(null));
+    }
+
+
+    @Subscribe
+    public void addStaff(Event.AddX event) {
+        operationIndex=0;
+        openAddRoleFragment();
+    }
+
+    @Subscribe
+    public void onEditClick(Event.EditClickEvent event) {
+        if (adapter != null) {
+            adapter.setIsDeleteShow();
+        }
+    }
+
+
+    @Override
+    protected void onErrorPageClick() {
+        super.onErrorPageClick();
+        getOrgaRoles(isInherited?getRolesObser(null): checkIsInHeritedObser().concatMap(this::getRolesObser));
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        bundle = new Bundle();
-        if (adapter!=null){
-            gvModuleList.setAdapter(adapter);
+        rootActivity.setTitle(App.app.getString(R.string.role_manager));
+        rootActivity.setIsEditShow(true);
+        rootActivity.setFbaShow(true);
+        rootActivity.invalidateOptionsMenu();
+        if (adapter != null) {
+            showRoles();
         }
-        gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
-            operationIndex = position;
-            mPosition = position;
-            if (position == 0) {
-                openAddRoleFragment(position);
-            } else {
-                openEditRoleFragment();
 
-            }
-        });
+    }
+
+    private void showRoles() {
+        showSuccess();
+        if (roles != null) {
+            gvModuleList.setNumColumns(roles.size() == 1 ? 1 : 2);
+            adapter = new ListOrgaRolesAdapter(roles, R.layout.item_module_list);
+            adapter.setOnItemDeleteListener(this::confireDeleteItem);
+            gvModuleList.setAdapter(adapter);
+            gvModuleList.setOnItemClickListener((parent, view, position, id) -> {
+                operationIndex=2;
+                mPosition=position;
+                openEditRoleFragment();
+            });
+        }
 
     }
 
     /**
-    *打开编辑角色页面
-    */
+     * 打开编辑角色页面
+     */
     private void openEditRoleFragment() {
         if (isAdmin() || hasCheckEditPermission) {
             copyRole();
@@ -127,30 +197,29 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     }
 
     /**
-    *打开新增角色页面
-    */
-    private void openAddRoleFragment(int position) {
-        if (position == 0) {
-            if (isAdmin() || hasCheckAddPermission) {
-                copyRole();
-                return;
-            }
-            rootActivity.checkHasPermission(userId, roleAddPermission, hasPermission -> {
-                setHasAddCheckPermission();
-                if (hasPermission) {
-                    copyRole();
-                } else {
-                    ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
-                }
-            });
+     * 打开新增角色页面
+     */
+    private void openAddRoleFragment() {
+        if (isAdmin() || hasCheckAddPermission) {
+            copyRole();
+            return;
         }
+        rootActivity.checkHasPermission(userId, roleAddPermission, hasPermission -> {
+            setHasAddCheckPermission();
+            if (hasPermission) {
+                copyRole();
+            } else {
+                ToastHelper.get().showShort(App.app.getString(R.string.no_permission));
+            }
+        });
+
     }
 
     /**
      * 复制一份roles到当前组织下面
      */
     private void copyRole() {
-        if (isInherited  && checkHasRoles()) {
+        if (isInherited && checkHasRoles()) {
             new AlertDiaog(rootActivity, App.app.getString(R.string.isInhe_copy_role_operate), this::testFlatMap);
         } else {
             EventBus.getDefault().post(new Event.CopyRoleSuccess());
@@ -159,8 +228,8 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     }
 
     /**
-    *concatMap
-    */
+     * concatMap
+     */
     private void testFlatMap() {
         Observable<Object> objectObservable = ApiFactory.putIsInheroted(isInheritedId, new IsInherited(false))
                 .concatMap(o -> postRole())
@@ -174,8 +243,19 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
         });
     }
 
+    @Subscribe
+    public void copySuccess(Event.CopyRoleSuccess event) {
+        if (operationIndex == 0) {
+            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(), App.app.getString(R.string.role_add)));
+        } else if (operationIndex == -1) {
+            deleteRole(mPosition);
+        } else {
+            editRole(mPosition);
+        }
+    }
+
     private Observable<List<Role>> postRole() {
-        isInherited=false;
+        isInherited = false;
         return ApiFactory.postRoles(roleList);
     }
 
@@ -187,7 +267,7 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
             Role role = roless.get(i);
             Map<Role, List<Principal>> roleListMap = rolePrincipalsMappingList.get(i);
             List<Principal> principals = roleListMap.get(roleList.get(i));
-            Observables.add(ApiFactory.postPrincipal((Double) role.getId(), principals));
+            Observables.add(ApiFactory.postPrincipal(role.getId(), principals));
         }
         return Observable.merge(Observables);
     }
@@ -196,15 +276,16 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
      * 检查是否有职位列表
      */
     private boolean checkHasRoles() {
-        if (roles != null && roles.size()!=0) {
+        if (roles != null && roles.size() != 0) {
             roleList = new ArrayList<>();
             rolePrincipalsMappingList = new ArrayList<>();
             Logger.d("职位当前orgaId = " + orgiId + Constants.special_orgi_role);
             for (Role role : roles) {
                 Map<Role, List<Principal>> mapping = new HashMap<>();
-                role.setId(null);
+//                role.setId(null);
                 String name = role.getTitle() == null ? "" : role.getTitle();
                 role.setName(orgiId + ":" + name);
+                role.setId(orgiId + ":" + name);
                 role.setOrganizationId(orgiId + Constants.special_orgi_role);
                 List<Principal> principals = role.getPrincipals();
                 for (Principal principal : principals) {
@@ -225,52 +306,17 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
 
 
 
-    @Subscribe
-    public void copySuccess(Event.CopyRoleSuccess event) {
-        if (operationIndex == 0) {
-            EventBus.getDefault().post(new Event.OpenNewFragmentEvent(new AddRoleFragment(), mCx.getString(R.string.role_add)));
-        } else if (operationIndex == -1) {
-            deleteRole(mPosition);
-        } else {
-            editRole(mPosition);
-        }
-    }
-
 
     private void editRole(int position) {
+        Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.role, roles.get(position - 1));
-        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditRoleFragment(), mCx.getString(R.string.role_edit));
+        Event.OpenNewFragmentEvent event = new Event.OpenNewFragmentEvent(new EditRoleFragment(), App.app.getString(R.string.role_edit));
         event.setBundle(bundle);
         EventBus.getDefault().post(event);
     }
 
-    /**
-     * 获取角色列表数据
-     */
-    private void getOrgaRoles() {
-        String url = StringUtils.getCheckedOrgaId(orgiId) + Constants.special_orgi_role;
-        rootActivity.addSubscription(ApiFactory.getOrgiRoleFilter(url, FilterUtils.role()), new PgSubscriber<List<Role>>(rootActivity) {
-            @Override
-            public void on_Next(List<Role> roless) {
-                roles = roless;
-                Logger.d("roless size = " + roless.size());
-                adapter = new OrgaRoleListAdapter(roless, ListRoleFragment.this);
-                gvModuleList.setAdapter(adapter);
-            }
 
-        });
-    }
-
-
-    @Subscribe
-    public void onEditClick(Event.EditClickEvent event) {
-        if (adapter != null) {
-            setEdText(adapter);
-        }
-    }
-
-    @Override
-    public void onDeleteClick(int position) {
+    public void confireDeleteItem(int position) {
         operationIndex = -1;
         mPosition = position;
         if (isAdmin() || hasCheckDeletePermission) {
@@ -291,14 +337,13 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     private void deleteRole(int position) {
         new AlertDiaog(rootActivity, App.app.getString(R.string.confire_delete), () -> {
             if (roles != null && roles.size() != 0) {
-                double rolesId = (double) roles.get(position).getId();
-                Logger.d("roles = " + rolesId);
-                rootActivity.addSubscription(ApiFactory.deleteRole(rolesId), new PgSubscriber<Object>(rootActivity) {
+                rootActivity.addSubscription(ApiFactory.deleteRole(roles.get(position).getId()), new PgSubscriber<Object>(rootActivity) {
                     @Override
                     public void on_Next(Object integer) {
                         roles.remove(position);
-                        adapter.notifyDataSetChanged();
-                        ToastHelper.get(mCx).showShort(mCx.getString(R.string.delete_orgRole_success));
+                        setGvModuleColumns(gvModuleList,roles);
+                        adapter.removeAt(position);
+                        ToastHelper.get(App.app).showShort(App.app.getString(R.string.delete_orgRole_success));
                     }
                 });
 
@@ -312,5 +357,9 @@ public class ListRoleFragment extends BaseFunctionFragment implements BaseModule
     public void onDestroyView() {
         super.onDestroyView();
         rootActivity.setIsEditShow(false);
+        rootActivity.setFbaShow(false);
+        rootActivity.invalidateOptionsMenu();
     }
+
+
 }

@@ -1,49 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CalendarView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-   >
+    android:background="@color/default_white"
+    android:orientation="vertical"
+    android:padding="10dp">
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical"
-        android:background="@color/default_white">
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/message_writer"
-        style="@style/def_textview"
-        tools:text="张三"
-        android:textSize="@dimen/def_tv_size_small"
-        />
+        <TextView
+            android:id="@+id/message_writer"
+            style="@style/def_textview"
+            android:textSize="@dimen/def_tv_size_small"
+            tools:text="张三" />
 
-    <TextView
-        android:id="@+id/message_time"
-        style="@style/def_textview"
-        tools:text="今天19:21"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/default_tv_gray"
-        android:textSize="@dimen/def_tv_size_small_1"
-        />
+        <TextView
+            android:id="@+id/message_time"
+            style="@style/def_textview"
+            android:layout_below="@id/message_writer"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/default_tv_gray"
+            android:textSize="@dimen/def_tv_size_small_1"
+            tools:text="今天19:21" />
+
+        <ImageView
+            android:id="@+id/message_delete"
+            style="@style/def_require"
+            android:visibility="invisible"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/message_delete" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/message_title"
         style="@style/def_textview"
-        tools:text="只能家居的含义"
         android:layout_marginTop="10dp"
         android:textSize="@dimen/def_tv_size"
-        />
+        tools:text="只能家居的含义" />
 
     <TextView
         android:id="@+id/message_content"
         style="@style/def_textview"
-        tools:text="只能家居的含义"
         android:layout_marginTop="10dp"
+        android:maxLines="5"
         android:textColor="@color/default_tv_gray"
         android:textSize="@dimen/def_tv_size_small"
-        />
+        tools:text="只能家居的含义sfdaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" />
 
-    </LinearLayout>
-</CalendarView>
+</LinearLayout>
+

@@ -6,8 +6,12 @@ package com.lilun.passionlife.cloudplatform.utils;
 public class FilterUtils {
 
 
-    public static String belongOgaFilter(){
-        return "{\"include\":\"organization\"}";
+    /**
+    *根据organizationId获取组织下的information
+    */
+    public static String orgaInfoFilter(String orgaId,int parentId){
+//        "\"include\":\"reviews\""
+        return "{\"include\":\"reviews\",\"where\":{\"organizationId\":\""+StringUtils.getCheckedOrgaId(orgaId)+"/#information\",\"parentId\":\""+parentId+"\"}}";
     }
 
 

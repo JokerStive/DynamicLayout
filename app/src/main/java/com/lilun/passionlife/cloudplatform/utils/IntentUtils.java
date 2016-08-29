@@ -2,8 +2,10 @@ package com.lilun.passionlife.cloudplatform.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 
 import com.lilun.passionlife.cloudplatform.common.KnownServices;
+import com.lilun.passionlife.cloudplatform.ui.App;
 import com.lilun.passionlife.cloudplatform.ui.activity.ManagerDeptActivity;
 import com.lilun.passionlife.cloudplatform.ui.activity.ManagerMessageActivity;
 import com.lilun.passionlife.cloudplatform.ui.activity.ManagerModuleActivity;
@@ -12,6 +14,8 @@ import com.lilun.passionlife.cloudplatform.ui.activity.ManagerRoleActivity;
 import com.lilun.passionlife.cloudplatform.ui.activity.ManagerStaffActivity;
 import com.lilun.passionlife.cloudplatform.ui.activity.SystemConfigActivity;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2016/6/3.
  */
@@ -19,6 +23,18 @@ public class IntentUtils {
     public static void startAct(Activity old,Class<?> clazz){
         Intent intent = new Intent(old,clazz);
         old.startActivity(intent);
+    }
+
+    public static void startAct(Activity old,Intent intent){
+        old.startActivity(intent);
+    }
+
+    public static Intent getBundleIntent(Class<?> target, String key,Serializable data){
+        Intent intent = new Intent(App.app,target);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(key, data);
+        intent.putExtras(bundle);
+        return intent;
     }
 
 

@@ -335,8 +335,9 @@ public class HomeActivity extends BaseActivity {
         OrganizationService service = event.getService();
         if (visibleOrgiService != null) {
             for (int i = 0; i < visibleOrgiService.size(); i++) {
-                if (visibleOrgiService.get(i).getId().equals(service.getId())) {
+                if (visibleOrgiService.get(i).getServiceId().equals(service.getServiceId())) {
                     visibleOrgiService.remove(i);
+                    i--;
                 }
             }
             visibleOrgiService.add(service);
@@ -353,15 +354,16 @@ public class HomeActivity extends BaseActivity {
     @Subscribe
     public void putService(Event.putService event) {
         OrganizationService service = event.getService();
-        String visible = "true";
+
         if (visibleOrgiService != null) {
             for (int i = 0; i < visibleOrgiService.size(); i++) {
                 if (visibleOrgiService.get(i).getId().equals(service.getId())) {
                     visibleOrgiService.remove(i);
+                    i--;
                 }
             }
         }
-        if (Boolean.parseBoolean(visible)) {
+        if (isConfig(service)) {
             //如果是可见的在添加进来
             visibleOrgiService.add(service);
         }

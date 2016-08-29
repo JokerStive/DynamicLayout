@@ -13,6 +13,10 @@ public class KnownServices {
     public static final String Department_Service = "Department";
 
 
+    public static final String ISCONFIG_Service = "isConfig";
+
+
+
 //    public static String getSpecialRole(String parentId){
 //        if (TextUtils.isEmpty(parentId)){
 //            return "/#"

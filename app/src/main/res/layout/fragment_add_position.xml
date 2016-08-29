@@ -34,7 +34,7 @@
             android:src="@drawable/head_portrait"/>
     </RelativeLayout>
 
-    <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+    <com.lilun.passionlife.cloudplatform.custom_view.InputView
         android:id="@+id/input_role_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

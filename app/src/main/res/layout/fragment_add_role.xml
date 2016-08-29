@@ -36,7 +36,7 @@
                 android:src="@drawable/head_portrait" />
         </RelativeLayout>
 
-        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+        <com.lilun.passionlife.cloudplatform.custom_view.InputView
             android:id="@+id/input_role_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
             app:reg_hint="@string/role_name_et1"
             app:reg_title="@string/role_name" />
 
-        <com.lilun.passionlife.cloudplatform.custom_view.RegItemView
+        <com.lilun.passionlife.cloudplatform.custom_view.InputView
             android:id="@+id/input_role_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,6 +70,7 @@
                android:visibility="gone"
                android:text="@string/authority_add"/>
            <ListView
+               android:paddingLeft="20dp"
                android:background="@drawable/shape_green"
                android:id="@+id/lv_auth_list"
                android:layout_below="@id/tv_aut"
@@ -84,11 +85,5 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/save"
-        style="@style/btn_green"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:text="@string/save"
-        />
+
 </RelativeLayout>

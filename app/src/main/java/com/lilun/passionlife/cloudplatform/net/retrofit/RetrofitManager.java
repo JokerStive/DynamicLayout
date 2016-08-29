@@ -18,12 +18,58 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * 配置okhttp和retrofit
  */
 public class RetrofitManager {
-
-    private Retrofit retrofit;
-    private  OkHttpClient okhttpClient;
+//
+//    public static String BASE_URL = "";
+//    private Retrofit retrofit;
 
     private RetrofitManager() {
 
+//        HttpLoggingInterceptor log = new HttpLoggingInterceptor();
+//        log.setLevel(HttpLoggingInterceptor.Level.BODY);
+////
+////        //缓存路劲
+//        File cacheFile = new F ile(App.app.getCacheDir(),"retrofitResCache");
+////        //缓存大小
+//        Cache cache = new Cache(cacheFile, 10 * 1024 * 1024);
+//
+//        okhttpClient = new OkHttpClient.Builder()
+//                //超时时长
+//                .connectTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+//                .readTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
+//                //超时重连
+//                .retryOnConnectionFailure(true)
+//                .addNetworkInterceptor(new HttpInterceptor())
+//                .addInterceptor(log)
+//                //缓存
+//                .cache(cache)
+//                .build();
+
+//
+//        retrofit = new Retrofit.Builder()
+//                .client(okhttpClient)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+//                .baseUrl(Constants.BASE_URL)
+//                .build();
+
+    }
+
+
+//
+//    //在访问HttpMethods时创建单例
+//
+//    private static class SingletonHolder {
+//        private static  RetrofitManager INSTANCE = new RetrofitManager();
+//    }
+
+    /**
+    *获取retrofit实例
+    */
+    public static <S> S createService(String url,Class<S> serviceClass) {
+        return RetrofitBuilder(url).build().create(serviceClass);
+    }
+
+    private static OkHttpClient.Builder httpClientBuilder(){
         HttpLoggingInterceptor log = new HttpLoggingInterceptor();
         log.setLevel(HttpLoggingInterceptor.Level.BODY);
 //
@@ -32,7 +78,7 @@ public class RetrofitManager {
 //        //缓存大小
         Cache cache = new Cache(cacheFile, 10 * 1024 * 1024);
 
-        okhttpClient = new OkHttpClient.Builder()
+      return new OkHttpClient.Builder()
                 //超时时长
                 .connectTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
                 .readTimeout(Constants.DEFAULT_TIMEOUT, TimeUnit.SECONDS)
@@ -41,49 +87,16 @@ public class RetrofitManager {
                 .addNetworkInterceptor(new HttpInterceptor())
                 .addInterceptor(log)
                 //缓存
-                .cache(cache)
-                .build();
+                .cache(cache);
+    }
 
 
-        retrofit = new Retrofit.Builder()
-                .client(okhttpClient)
+    private static Retrofit.Builder RetrofitBuilder(String url){
+        return new Retrofit.Builder()
+                .client(httpClientBuilder().build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(Constants.BASE_URL)
-                .build();
-
+                .baseUrl(Constants.BASE_URL);
     }
-
-    void setRetrofitUrl(String url){
-        retrofit = new Retrofit.Builder()
-                .baseUrl(url)
-                .build();
-    }
-
-    //在访问HttpMethods时创建单例
-
-    private static class SingletonHolder {
-        private static  RetrofitManager INSTANCE = new RetrofitManager();
-    }
-
-    /**
-    *获取retrofit实例
-    */
-    public static Retrofit getRetrofit() {
-        return SingletonHolder.INSTANCE.retrofit;
-    }
-
-
-    /**
-     *获取retrofit实例
-     */
-    public static RetrofitManager getRetrofitManager() {
-        return SingletonHolder.INSTANCE;
-    }
-
-    /**
-    *获取okhttpClient实例
-    */
-    public static OkHttpClient getOkHttpClient(){return SingletonHolder.INSTANCE.okhttpClient;}
 
 }

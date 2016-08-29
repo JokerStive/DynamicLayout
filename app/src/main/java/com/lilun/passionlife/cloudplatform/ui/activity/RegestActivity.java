@@ -5,7 +5,7 @@ import android.widget.Button;
 
 import com.lilun.passionlife.R;
 import com.lilun.passionlife.cloudplatform.base.BaseFunctionActivity;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 
 import butterknife.Bind;
 
@@ -13,15 +13,15 @@ public class RegestActivity extends BaseFunctionActivity {
 
 
     @Bind(R.id.reg_nick_name)
-    RegItemView regNickName;
+    InputView regNickName;
     @Bind(R.id.reg_username)
-    RegItemView regUsername;
+    InputView regUsername;
     @Bind(R.id.btn_auth_code)
     Button btnAuthCode;
     @Bind(R.id.reg_auth_code)
-    RegItemView regAuthCode;
+    InputView regAuthCode;
     @Bind(R.id.reg_pwd)
-    RegItemView regPwd;
+    InputView regPwd;
 
     @Override
     public View setContent() {

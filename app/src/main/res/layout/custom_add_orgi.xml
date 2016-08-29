@@ -69,7 +69,7 @@
         android:layout_alignLeft="@id/ll"
         android:layout_below="@id/ll"
         android:layout_marginTop="@dimen/lv_to_tv"
-        android:background="@drawable/gb"
+        android:background="@drawable/shape_green"
         android:divider="@null"
         android:listSelector="@android:color/transparent"
         android:scrollbars="none"

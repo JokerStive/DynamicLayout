@@ -15,7 +15,7 @@ import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import rx.Observable;
 
 /**
@@ -44,19 +43,15 @@ public class EditRoleFragment extends BaseFunctionFragment {
     CircleImageView ivHead;
 
     @Bind(R.id.input_role_name)
-    RegItemView inputRoleName;
+    InputView inputRoleName;
 
     @Bind(R.id.input_role_desc)
-    RegItemView inputRoleDesc;
+    InputView inputRoleDesc;
 
     @Bind(R.id.lv_auth_list)
     ListView lvAuthList;
 
-/*
-* 1.post一个Role
-* 2.轮询post选中的权限
-*
-* */
+
 
     private List<Integer> choiseAuthrisIndex = new ArrayList<>();
     private AuthrovityListAdapter adapter;
@@ -65,7 +60,7 @@ public class EditRoleFragment extends BaseFunctionFragment {
     private List<Principal> principals;
     private List<Role> allAuthrovity;
     private List<Integer> isHaveIndex = new ArrayList<>();
-    private Double roleId;
+    private String roleId;
     private String roleDesc;
     private boolean needGetPrinsFromNet;
 
@@ -98,7 +93,7 @@ public class EditRoleFragment extends BaseFunctionFragment {
             roleName = roleName == null ? role.getTitle() : roleName;
             roleDesc = roleDesc==null? role.getDescription():roleDesc;
             principals = role.getPrincipals();
-            roleId = (Double) role.getId();
+            roleId = role.getId();
 //            getRolePrincipals(roleId);
         }
     }
@@ -113,15 +108,12 @@ public class EditRoleFragment extends BaseFunctionFragment {
      */
     public void getAuthrovityList() {
         rootActivity.getAuthrovityList(authrovites -> {
-                rootActivity.addSubscription(ApiFactory.getRolePrincials(roleId), new PgSubscriber<List<Principal>>() {
-                    @Override
-                    public void on_Next(List<Principal> principals) {
-                        EditRoleFragment.this.principals = principals;
-                        setPrincipalsData(authrovites);
-                    }
-                });
+            allAuthrovity = authrovites;
+            setPrincipalsData(allAuthrovity);
         });
-    }
+        }
+
+
 
     /**
     *设置哪些权限勾选
@@ -131,11 +123,10 @@ public class EditRoleFragment extends BaseFunctionFragment {
             for (int j = 0; j < principals.size(); j++) {
                 if (principals.get(j).getPrincipalId().equals(authrovites.get(i).getName())) {
                     authrovites.get(i).setHave(true);
-//                        isHaveIndex.add(i);
                 }
             }
         }
-        allAuthrovity = authrovites;
+//        allAuthrovity = authrovites;
         adapter = new AuthrovityListAdapter(authrovites, false);
         //本来拥有的权限取消
         adapter.setOnHaveCancleListener((position, item_authro_choise) -> new AlertDiaog(rootActivity, "确定删除？", () -> {
@@ -164,8 +155,8 @@ public class EditRoleFragment extends BaseFunctionFragment {
     /**
      *
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         checkDataChanges();
     }
 
@@ -190,14 +181,14 @@ public class EditRoleFragment extends BaseFunctionFragment {
     }
 
     private void checkRoleChanges() {
-        Observable observable;
+        Observable observable = null;
         List<Principal> principals = checkPrincipalChange();
 
         if (checkRoleChange() && principals.size()!=0){
             observable = putRole().concatMap(role -> putPrincilaps(principals));
         }else if(principals.size()!=0){
             observable = putPrincilaps(principals);
-        }else{
+        }else if (checkRoleChange()){
             observable = putRole();
         }
 
@@ -210,6 +201,7 @@ public class EditRoleFragment extends BaseFunctionFragment {
               }
           });
       }else{
+          EventBus.getDefault().post(new Event.reflashRoleList());
           rootActivity.backStack();
       }
 

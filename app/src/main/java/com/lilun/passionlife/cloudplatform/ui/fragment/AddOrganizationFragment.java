@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -17,7 +16,7 @@ import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.ExtendItem;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
@@ -53,15 +52,14 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
 
 
     @Bind(R.id.input_role_name)
-    RegItemView inputOrgiName;
+    InputView inputOrgiName;
 
     @Bind(R.id.exv_add_orgi)
     ExtendItem exvAddOrgi;
 
-    @Bind(R.id.save)
-    Button save;
+
     @Bind(R.id.input_orgi_desc)
-    RegItemView inputOrgiDesc;
+    InputView inputOrgiDesc;
 
     private List<Organization> departments = new ArrayList<>();
     private List<Map<String, Bitmap>> deptIconMappings;
@@ -97,8 +95,8 @@ public class AddOrganizationFragment extends BaseFunctionFragment implements Ext
     /**
      * 保存
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         orgaName = inputOrgiName.getInput();
         orgaDesc = inputOrgiDesc.getInput();
         if (TextUtils.isEmpty(orgaName) || TextUtils.isEmpty(orgaDesc)) {

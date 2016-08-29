@@ -3,7 +3,6 @@ package com.lilun.passionlife.cloudplatform.ui.fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,7 +18,7 @@ import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.custom_view.ViewContainer;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
@@ -54,7 +53,7 @@ public class EditStaffFragment extends BaseFunctionFragment {
     CircleImageView ivHead;
 
     @Bind(R.id.input_staff_name)
-    RegItemView inputStaffName;
+    InputView inputStaffName;
 
 
 //    @Bind(R.id.lv_role)
@@ -65,13 +64,11 @@ public class EditStaffFragment extends BaseFunctionFragment {
     LinearLayout belongRole;
 
     @Bind(R.id.input_staff_username)
-    RegItemView inputStaffUsername;
+    InputView inputStaffUsername;
 
     @Bind(R.id.input_staff_password)
-    RegItemView inputStaffPassword;
+    InputView inputStaffPassword;
 
-    @Bind(R.id.save)
-    Button save;
 
     private addStaff_roleListAdapter adapter_role;
     private List<Organization> departments;
@@ -105,7 +102,6 @@ public class EditStaffFragment extends BaseFunctionFragment {
 
     @Override
     public View setView() {
-        rootActivity.setTitle(mCx.getString(R.string.staff_edit));
         View view = inflater.inflate(R.layout.fragment_add_staff, null);
         return view;
     }
@@ -113,7 +109,8 @@ public class EditStaffFragment extends BaseFunctionFragment {
 
     @Override
     public void onStart() {
-        super.onStart(); rootActivity.setTitle(mCx.getString(R.string.service_edit));
+        super.onStart();
+        rootActivity.setTitle(mCx.getString(R.string.staff_edit));
         tilt = mCx.getString(R.string.delete_belong_dept);
         Bundle bundle = getArguments();
 
@@ -317,9 +314,9 @@ public class EditStaffFragment extends BaseFunctionFragment {
     public void filtBelongRole(List<Role> value, List<Role> roles) {
         for (int i = 0; i < value.size(); i++) {
             for (int j = 0; j < roles.size(); j++) {
-                double id = (double) value.get(i).getId();
-                double id1 = (double) roles.get(j).getId();
-                if (id == id1) {
+                String id = value.get(i).getId();
+                String id1 = roles.get(j).getId();
+                if (id.equals(id1)) {
                     value.get(i).setBelong(true);
                 }
             }
@@ -535,8 +532,8 @@ public class EditStaffFragment extends BaseFunctionFragment {
 
 
 //===============================================================================================================================
-    @OnClick(R.id.save)
-    void save() {
+@Override
+protected void save() {
         if (checkAccountData()) {
             getCheckDeptAndRole();
             if (staffName.equals(inputStaffName.getInput()) && staffUsername.equals(inputStaffUsername.getInput())) {

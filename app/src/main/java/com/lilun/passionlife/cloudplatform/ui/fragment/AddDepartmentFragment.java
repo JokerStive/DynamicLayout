@@ -3,7 +3,6 @@ package com.lilun.passionlife.cloudplatform.ui.fragment;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -11,7 +10,7 @@ import com.lilun.passionlife.cloudplatform.base.BaseFunctionFragment;
 import com.lilun.passionlife.cloudplatform.bean.Event;
 import com.lilun.passionlife.cloudplatform.bean.Organization;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.utils.StringUtils;
 import com.lilun.passionlife.cloudplatform.utils.ToastHelper;
 import com.orhanobut.logger.Logger;
@@ -33,12 +32,11 @@ public class AddDepartmentFragment extends BaseFunctionFragment {
     @Bind(R.id.iv_head)
     CircleImageView ivHead;
     @Bind(R.id.input_department_name)
-    RegItemView inputDepartmentName;
+    InputView inputDepartmentName;
 
-    @Bind(R.id.save)
-    Button save;
+
     @Bind(R.id.input_department_desc)
-    RegItemView inputDepartmentDesc;
+    InputView inputDepartmentDesc;
     private String orgId;
     private Organization orgna;
     private View view;
@@ -71,8 +69,9 @@ public class AddDepartmentFragment extends BaseFunctionFragment {
 
 
 
-    @OnClick(R.id.save)
-    void save(){
+
+    @Override
+    public void save(){
         String depName = inputDepartmentName.getInput();
         String depDesc= inputDepartmentDesc.getInput();
         if(TextUtils.isEmpty(depName)  || TextUtils.isEmpty(depDesc)){

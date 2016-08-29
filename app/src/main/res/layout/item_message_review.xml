@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
 
     >
@@ -14,18 +14,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <com.lilun.passionlife.cloudplatform.custom_view.CircleImageView
-            android:id="@+id/reviewer_head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/head_portrait" />
+
 
         <LinearLayout
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@id/reviewer_head"
             android:layout_width="wrap_content"
-            android:layout_marginLeft="10dp"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
@@ -37,10 +30,10 @@
                 tools:text="张三w" />
 
             <TextView
-                android:id="@+id/iv_message_review"
+                android:id="@+id/reviewer_time"
                 style="@style/def_textview_gray"
                 android:layout_marginTop="5dp"
-                android:text="@string/message_add_review"
+                tools:text="@string/message_add_review"
                 android:textSize="@dimen/def_tv_size_small_2" />
         </LinearLayout>
 

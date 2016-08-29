@@ -11,7 +11,7 @@ import com.lilun.passionlife.cloudplatform.bean.Principal;
 import com.lilun.passionlife.cloudplatform.bean.Role;
 import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 import rx.Observable;
 
 /**
@@ -37,10 +36,10 @@ public class AddRoleFragment extends BaseFunctionFragment {
     CircleImageView ivHead;
 
     @Bind(R.id.input_role_name)
-    RegItemView inputOrgiName;
+    InputView inputOrgiName;
 
     @Bind(R.id.input_role_desc)
-    RegItemView inputOrgaDesc;
+    InputView inputOrgaDesc;
 
 
     @Bind(R.id.lv_auth_list)
@@ -85,20 +84,18 @@ public class AddRoleFragment extends BaseFunctionFragment {
     }
 
 
-//    adapter = new AuthrovityListAdapter(authrovites, false);
-//    roles = authrovites;
-//    lvAuthList.setAdapter(adapter);
+
 
     /**
      *
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         if (StringUtils.checkEmpty(inputOrgiName.getInput(), inputOrgaDesc.getInput())) {
             Observable observable=null;
             Observable<Role> roleObservable = postRole();
             if (haveChoiseRole()) {
-                observable = roleObservable.concatMap(role -> postPrincipa((double) role.getId()));
+                observable = roleObservable.concatMap(role -> postPrincipa(role.getId()));
             }
 
             if (observable==null){
@@ -125,7 +122,7 @@ public class AddRoleFragment extends BaseFunctionFragment {
         return true;
     }
 
-    private Observable<Object> postPrincipa(double roleId) {
+    private Observable<Object> postPrincipa(String roleId) {
         List<Integer> choiseAuthrovity = getChoiseAuthrovity(choiseAuthrisIndex);
         List<Principal> principals = new ArrayList<>();
         for (Integer index : choiseAuthrovity) {
@@ -165,19 +162,15 @@ public class AddRoleFragment extends BaseFunctionFragment {
      */
     private Observable<Role> postRole() {
         return ApiFactory.postRole(newRole());
-//        rootActivity.addSubscription(ApiFactory.postRole( newRole()), new PgSubscriber<Role>(rootActivity) {
-//            @Override
-//            public void on_Next(Role role) {
-//                Double roleId = (Double) role.getId();
-//                postPrincipa(roleId);
-//            }
-//        });
+
     }
 
 
     private Role newRole() {
         Role role = new Role();
+
         String name = orgiId + ":" + inputOrgiName.getInput();
+        role.setId(orgiId + ":" + inputOrgiName.getInput());
         role.setName(name);
         role.setDescription(inputOrgaDesc.getInput());
         role.setTitle(inputOrgiName.getInput());

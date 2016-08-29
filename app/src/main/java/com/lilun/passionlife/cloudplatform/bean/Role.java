@@ -10,7 +10,7 @@ import java.util.List;
 public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Object id;
+    private String id;
     private String name;
     private String description;
     private String created;
@@ -52,13 +52,12 @@ public class Role implements Serializable {
         return organizationId;
     }
 
-    public Object getId() {
+    public String getId() {
         return id;
     }
 
-    public Role setId(Object id) {
+    public void setId(String id) {
         this.id = id;
-        return this;
     }
 
     public Role setOrganizationId(String organizationId) {

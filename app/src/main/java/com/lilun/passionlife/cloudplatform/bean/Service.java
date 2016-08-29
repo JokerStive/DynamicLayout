@@ -28,7 +28,7 @@ public class Service {
      * visible : {"id":"visible","title":" ","type":"bool","value":"false"}
      */
 
-    private SettingsBean settings;
+    private Object settings;
     private String description;
     private String createdAt;
     private String updatedAt;
@@ -54,11 +54,11 @@ public class Service {
         this.title = title;
     }
 
-    public SettingsBean getSettings() {
+    public Object getSettings() {
         return settings;
     }
 
-    public void setSettings(SettingsBean settings) {
+    public void setSettings(Object settings) {
         this.settings = settings;
     }
 
@@ -126,7 +126,7 @@ public class Service {
         this.Icon = Icon;
     }
 
-    public static class SettingsBean {
-
-    }
+//    public static class SettingsBean {
+//
+//    }
 }

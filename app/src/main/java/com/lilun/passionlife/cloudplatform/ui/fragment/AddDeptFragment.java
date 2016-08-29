@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -20,7 +19,7 @@ import com.lilun.passionlife.cloudplatform.common.Constants;
 import com.lilun.passionlife.cloudplatform.common.PicloadManager;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.ExtendItem;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
@@ -56,15 +55,14 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
 
 
     @Bind(R.id.input_orgi_name)
-    RegItemView inputOrgiName;
+    InputView inputOrgiName;
 
     @Bind(R.id.exv_add_orgi)
     ExtendItem exvAddOrgi;
 
-    @Bind(R.id.save)
-    Button save;
+
     @Bind(R.id.input_orgi_desc)
-    RegItemView inputOrgiDesc;
+    InputView inputOrgiDesc;
 
     private List<Role> roles;
     private List<Map<Role, List<Principal>>> rolePrinMapping = new ArrayList<>();
@@ -120,8 +118,8 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
     /**
      * 保存
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         orgaName = inputOrgiName.getInput();
         orgaDesc = inputOrgiDesc.getInput();
         if (TextUtils.isEmpty(orgaName) || TextUtils.isEmpty(orgaDesc)) {
@@ -157,7 +155,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
             Role role = roless.get(i);
             Map<Role, List<Principal>> roleListMap = rolePrinMapping.get(i);
             List<Principal> principals = roleListMap.get(roles.get(i));
-            observables.add(ApiFactory.postPrincipal((double) role.getId(), principals));
+            observables.add(ApiFactory.postPrincipal(role.getId(), principals));
         }
 
         return Observable.merge(observables);
@@ -278,7 +276,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
     }
 
     /**
-     * 从内存中删除一个dep  并刷新视图
+     * 从内存中删除一个role  并刷新视图
      */
     private void deleteItem(ExtRoleAdapter parentOrgisAdapter, int position) {
         roles.remove(position);
@@ -330,6 +328,7 @@ public class AddDeptFragment extends BaseFunctionFragment implements ExtendItem.
             mapping.put(newRole, principals);
             rolePrinMapping.add(mapping);
         }
+
     }
 
 

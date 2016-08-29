@@ -38,6 +38,14 @@ public class StringUtils {
         return dateTime.getMillis() / 1000;
     }
 
+    public static String IOS2UTC(String isoTime1){
+        String[] ss = isoTime1.split("\\.");
+        String isoTime = ss[0] + "+08:00";
+        DateTimeFormatter parser2 = ISODateTimeFormat.dateTimeNoMillis();
+        DateTime dateTime = parser2.parseDateTime(isoTime);
+        return dateTime.toString();
+    }
+
 
     /**
      * list数据去重复
@@ -163,5 +171,18 @@ public class StringUtils {
 
     }
 
+    public static String getString(int res){
+        if (res!=0){
+            return App.app.getString(res);
+        }
+        return "";
+    }
 
+
+    public static  String filteEmpty(String s){
+        if (TextUtils.isEmpty(s)){
+            return "";
+        }
+        return s;
+    }
 }

@@ -26,6 +26,20 @@
             </intent-filter>
             -->
         </activity>
+
+        <activity
+            android:name=".cloudplatform.ui.activity.MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
+        <activity
+            android:name=".cloudplatform.ui.home.HomeView"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
+
+
         <activity
             android:name=".cloudplatform.ui.activity.SettingActivity"
             android:screenOrientation="portrait" />
@@ -33,7 +47,7 @@
             android:name=".cloudplatform.ui.activity.RegestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".cloudplatform.ui.activity.LoginActivity"
+            android:name=".cloudplatform.ui.login.LoginView"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -61,6 +75,7 @@
         <!-- 员工管理 -->
         <activity
             android:name=".cloudplatform.ui.activity.ManagerStaffActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
 
         <!-- 员工管理 -->
@@ -127,7 +142,9 @@
         <!---->
         <activity
             android:name=".cloudplatform.ui.activity.ManagerMessageActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan"
             android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

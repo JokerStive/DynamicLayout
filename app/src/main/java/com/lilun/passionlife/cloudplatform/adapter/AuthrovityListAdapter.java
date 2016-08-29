@@ -33,7 +33,7 @@ public class AuthrovityListAdapter extends BaseAdapter {
     public AuthrovityListAdapter(List<Role> data, boolean isShowDelete) {
         this.data = data;
         this.isShowDelete = isShowDelete;
-        mCBFlag = new HashMap<Integer, Boolean>();
+        mCBFlag = new HashMap<>();
         Logger.d("data size = " + data.size());
         initData();
     }

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.lilun.passionlife.R;
@@ -22,7 +21,7 @@ import com.lilun.passionlife.cloudplatform.common.KnownServices;
 import com.lilun.passionlife.cloudplatform.custom_view.AlertDiaog;
 import com.lilun.passionlife.cloudplatform.custom_view.CircleImageView;
 import com.lilun.passionlife.cloudplatform.custom_view.ExtendItem;
-import com.lilun.passionlife.cloudplatform.custom_view.RegItemView;
+import com.lilun.passionlife.cloudplatform.custom_view.InputView;
 import com.lilun.passionlife.cloudplatform.net.retrofit.ApiFactory;
 import com.lilun.passionlife.cloudplatform.net.rxjava.PgSubscriber;
 import com.lilun.passionlife.cloudplatform.ui.App;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
-import butterknife.OnClick;
 
 /**
  * Created by youke on 2016/6/22.
@@ -55,15 +53,14 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
     CircleImageView ivHead;
 
     @Bind(R.id.input_orgi_name)
-    RegItemView inputOrgiName;
+    InputView inputOrgiName;
 
     @Bind(R.id.exv_add_orgi)
     ExtendItem exvAddOrgi;
 
-    @Bind(R.id.save)
-    Button save;
+
     @Bind(R.id.input_orgi_desc)
-    RegItemView inputOrgiDesc;
+    InputView inputOrgiDesc;
 
     private String roleEditPermission = KnownServices.Role_Service + KnowPermission.editPermission;
     private List<OrganizationAccount> data;
@@ -135,8 +132,8 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
     /**
      * 保存
      */
-    @OnClick(R.id.save)
-    void save() {
+    @Override
+    protected void save() {
         checkOrganitionIsSame();
 
     }
@@ -151,7 +148,7 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
                     Role role = allOwnRole.get(i);
                     if (!role.isNew()){
                         //删除本来的部门
-                        double roleId = (double) role.getId();
+                        String roleId = role.getId();
                         rootActivity.addSubscription(ApiFactory.deleteRole(roleId), new PgSubscriber<Object>(rootActivity) {
                             @Override
                             public void on_Next(Object o) {
@@ -194,7 +191,7 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
                         Role role = Roles.get(i);
                         Map<Role, List<Principal>> roleListMap = rolePrinMapping.get(i);
                         List<Principal> principals = roleListMap.get(roleList.get(i));
-                        postPrincipal((double) role.getId(), principals);
+                        postPrincipal(role.getId(), principals);
                     }
                 }
 
@@ -212,7 +209,7 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
     /**
     *改role新增prin
     */
-    private void postPrincipal(double roleId, List<Principal> lp) {
+    private void postPrincipal(String roleId, List<Principal> lp) {
         for(Principal p:lp){
             if (p.getId()!=null){
                 p.setId(null);
@@ -430,7 +427,7 @@ public class EditDeptFragment extends BaseFunctionFragment implements ExtendItem
             //如果点击的不是新增而是原来就有的，就要delete职位
             else {
                 new AlertDiaog(rootActivity, "确定移除该职位？", () -> {
-                    double roleId = (double) allOwnRole.get(position).getId();
+                    String roleId = allOwnRole.get(position).getId();
                     rootActivity.addSubscription(ApiFactory.deleteRole(roleId), new PgSubscriber<Object>(rootActivity) {
                         @Override
                         public void on_Next(Object o) {

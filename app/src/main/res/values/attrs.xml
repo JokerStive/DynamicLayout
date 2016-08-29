@@ -13,7 +13,7 @@
     </declare-styleable>
 
     <!--RegItemView-->
-    <declare-styleable name="RegItemView">
+    <declare-styleable name="InputView">
         <attr name="reg_title" format="string" />
         <attr name="reg_hint" format="string" />
     </declare-styleable>

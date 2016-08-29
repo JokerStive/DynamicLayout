@@ -82,6 +82,9 @@ public class Constants {
     //特殊的组织——Rstaff
     public static String special_orgi_staff="/#staff";
 
+    //特殊的组织——Information
+    public static String special_orgi_info="/#information";
+
     //标示--Role
     public static String role="role";
 

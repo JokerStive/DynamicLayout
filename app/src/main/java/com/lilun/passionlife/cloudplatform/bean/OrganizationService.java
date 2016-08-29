@@ -31,7 +31,7 @@ public class OrganizationService implements Serializable{
     private String id;
     private String title;
     private String description;
-    private SettingsBean settings;
+    private Object settings;
     private String organizationId;
     private String serviceId;
     private String serviceName;
@@ -61,11 +61,11 @@ public class OrganizationService implements Serializable{
         this.description = description;
     }
 
-    public SettingsBean getSettings() {
+    public Object getSettings() {
         return settings;
     }
 
-    public void setSettings(SettingsBean settings) {
+    public void setSettings(Object settings) {
         this.settings = settings;
     }
 
@@ -93,40 +93,40 @@ public class OrganizationService implements Serializable{
         this.Icon = Icon;
     }
 
-    public static class SettingsBean implements Serializable{
-
-        private static final long serialVersionUID = 1L;
-        private String visible;
-        private String wigth;
-
-        public String getWigth() {
-            return wigth;
-        }
-
-        public SettingsBean setWigth(String wigth) {
-            this.wigth = wigth;
-            return this;
-        }
-
-        public String getHeight() {
-            return height;
-        }
-
-        public SettingsBean setHeight(String height) {
-            this.height = height;
-            return this;
-        }
-
-        private String height;
-
-        public String getVisible() {
-            return visible;
-        }
-
-        public void setVisible(String visible) {
-            this.visible = visible;
-        }
-
-
-    }
+//    public static class SettingsBean implements Serializable{
+//
+//        private static final long serialVersionUID = 1L;
+//        private String visible;
+//        private String wigth;
+//
+//        public String getWigth() {
+//            return wigth;
+//        }
+//
+//        public SettingsBean setWigth(String wigth) {
+//            this.wigth = wigth;
+//            return this;
+//        }
+//
+//        public String getHeight() {
+//            return height;
+//        }
+//
+//        public SettingsBean setHeight(String height) {
+//            this.height = height;
+//            return this;
+//        }
+//
+//        private String height;
+//
+//        public String getVisible() {
+//            return visible;
+//        }
+//
+//        public void setVisible(String visible) {
+//            this.visible = visible;
+//        }
+//
+//
+//    }
 }
